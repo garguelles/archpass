@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import {
   Card,
@@ -18,12 +19,15 @@ import {
   Ticket,
   ArrowUpRight,
 } from 'lucide-react';
+import { EditEventModal } from './edit-event-modal';
 
 // Mock data (in a real app, this would come from an API or database)
-const eventData = {
+const initialEventData = {
   name: 'ETH Global 2024',
+  description: 'The largest Ethereum hackathon and conference',
   date: 'Aug 15-19, 2024',
   location: 'San Francisco, CA',
+  headerImage: 'https://example.com/event-image.jpg',
   attendees: 1000,
   totalRevenue: 50000,
   ticketsSold: 800,
@@ -36,14 +40,28 @@ const eventData = {
 };
 
 export default function EventDashboard() {
+  const [eventData, setEventData] = useState(initialEventData);
   const params = useParams();
   const eventSlug = params.eventSlug as string;
+
+  const handleEventUpdate = (updatedEvent: Partial<typeof eventData>) => {
+    setEventData((prevData) => ({ ...prevData, ...updatedEvent }));
+  };
 
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">{eventData.name} Dashboard</h1>
-        <Button>Edit Event</Button>
+        <EditEventModal
+          event={{
+            name: eventData.name,
+            description: eventData.description,
+            location: eventData.location,
+            eventDate: eventData.date,
+            headerImage: eventData.headerImage,
+          }}
+          onEventUpdated={handleEventUpdate}
+        />
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
