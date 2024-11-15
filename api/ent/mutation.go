@@ -638,6 +638,8 @@ type EventMutation struct {
 	name             *string
 	description      *string
 	event_slug       *string
+	start_date       *time.Time
+	end_date         *time.Time
 	location         *string
 	image_url        *string
 	contract_address *string
@@ -876,6 +878,78 @@ func (m *EventMutation) OldEventSlug(ctx context.Context) (v string, err error) 
 // ResetEventSlug resets all changes to the "event_slug" field.
 func (m *EventMutation) ResetEventSlug() {
 	m.event_slug = nil
+}
+
+// SetStartDate sets the "start_date" field.
+func (m *EventMutation) SetStartDate(t time.Time) {
+	m.start_date = &t
+}
+
+// StartDate returns the value of the "start_date" field in the mutation.
+func (m *EventMutation) StartDate() (r time.Time, exists bool) {
+	v := m.start_date
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStartDate returns the old "start_date" field's value of the Event entity.
+// If the Event object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EventMutation) OldStartDate(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStartDate is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStartDate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStartDate: %w", err)
+	}
+	return oldValue.StartDate, nil
+}
+
+// ResetStartDate resets all changes to the "start_date" field.
+func (m *EventMutation) ResetStartDate() {
+	m.start_date = nil
+}
+
+// SetEndDate sets the "end_date" field.
+func (m *EventMutation) SetEndDate(t time.Time) {
+	m.end_date = &t
+}
+
+// EndDate returns the value of the "end_date" field in the mutation.
+func (m *EventMutation) EndDate() (r time.Time, exists bool) {
+	v := m.end_date
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEndDate returns the old "end_date" field's value of the Event entity.
+// If the Event object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EventMutation) OldEndDate(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEndDate is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEndDate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEndDate: %w", err)
+	}
+	return oldValue.EndDate, nil
+}
+
+// ResetEndDate resets all changes to the "end_date" field.
+func (m *EventMutation) ResetEndDate() {
+	m.end_date = nil
 }
 
 // SetLocation sets the "location" field.
@@ -1387,7 +1461,7 @@ func (m *EventMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *EventMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 13)
 	if m.name != nil {
 		fields = append(fields, event.FieldName)
 	}
@@ -1396,6 +1470,12 @@ func (m *EventMutation) Fields() []string {
 	}
 	if m.event_slug != nil {
 		fields = append(fields, event.FieldEventSlug)
+	}
+	if m.start_date != nil {
+		fields = append(fields, event.FieldStartDate)
+	}
+	if m.end_date != nil {
+		fields = append(fields, event.FieldEndDate)
 	}
 	if m.location != nil {
 		fields = append(fields, event.FieldLocation)
@@ -1435,6 +1515,10 @@ func (m *EventMutation) Field(name string) (ent.Value, bool) {
 		return m.Description()
 	case event.FieldEventSlug:
 		return m.EventSlug()
+	case event.FieldStartDate:
+		return m.StartDate()
+	case event.FieldEndDate:
+		return m.EndDate()
 	case event.FieldLocation:
 		return m.Location()
 	case event.FieldImageURL:
@@ -1466,6 +1550,10 @@ func (m *EventMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldDescription(ctx)
 	case event.FieldEventSlug:
 		return m.OldEventSlug(ctx)
+	case event.FieldStartDate:
+		return m.OldStartDate(ctx)
+	case event.FieldEndDate:
+		return m.OldEndDate(ctx)
 	case event.FieldLocation:
 		return m.OldLocation(ctx)
 	case event.FieldImageURL:
@@ -1511,6 +1599,20 @@ func (m *EventMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetEventSlug(v)
+		return nil
+	case event.FieldStartDate:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStartDate(v)
+		return nil
+	case event.FieldEndDate:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEndDate(v)
 		return nil
 	case event.FieldLocation:
 		v, ok := value.(string)
@@ -1655,6 +1757,12 @@ func (m *EventMutation) ResetField(name string) error {
 		return nil
 	case event.FieldEventSlug:
 		m.ResetEventSlug()
+		return nil
+	case event.FieldStartDate:
+		m.ResetStartDate()
+		return nil
+	case event.FieldEndDate:
+		m.ResetEndDate()
 		return nil
 	case event.FieldLocation:
 		m.ResetLocation()

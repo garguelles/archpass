@@ -22,6 +22,8 @@ func (Event) Fields() []ent.Field {
 		field.String("event_slug").
 			NotEmpty().
 			Unique(),
+		field.Time("start_date"),
+		field.Time("end_date"),
 		field.Text("location"),
 		field.String("image_url"),
 		field.Int("user_id"),

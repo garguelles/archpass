@@ -79,6 +79,34 @@ func (eu *EventUpdate) SetNillableEventSlug(s *string) *EventUpdate {
 	return eu
 }
 
+// SetStartDate sets the "start_date" field.
+func (eu *EventUpdate) SetStartDate(t time.Time) *EventUpdate {
+	eu.mutation.SetStartDate(t)
+	return eu
+}
+
+// SetNillableStartDate sets the "start_date" field if the given value is not nil.
+func (eu *EventUpdate) SetNillableStartDate(t *time.Time) *EventUpdate {
+	if t != nil {
+		eu.SetStartDate(*t)
+	}
+	return eu
+}
+
+// SetEndDate sets the "end_date" field.
+func (eu *EventUpdate) SetEndDate(t time.Time) *EventUpdate {
+	eu.mutation.SetEndDate(t)
+	return eu
+}
+
+// SetNillableEndDate sets the "end_date" field if the given value is not nil.
+func (eu *EventUpdate) SetNillableEndDate(t *time.Time) *EventUpdate {
+	if t != nil {
+		eu.SetEndDate(*t)
+	}
+	return eu
+}
+
 // SetLocation sets the "location" field.
 func (eu *EventUpdate) SetLocation(s string) *EventUpdate {
 	eu.mutation.SetLocation(s)
@@ -373,6 +401,12 @@ func (eu *EventUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := eu.mutation.EventSlug(); ok {
 		_spec.SetField(event.FieldEventSlug, field.TypeString, value)
 	}
+	if value, ok := eu.mutation.StartDate(); ok {
+		_spec.SetField(event.FieldStartDate, field.TypeTime, value)
+	}
+	if value, ok := eu.mutation.EndDate(); ok {
+		_spec.SetField(event.FieldEndDate, field.TypeTime, value)
+	}
 	if value, ok := eu.mutation.Location(); ok {
 		_spec.SetField(event.FieldLocation, field.TypeString, value)
 	}
@@ -586,6 +620,34 @@ func (euo *EventUpdateOne) SetEventSlug(s string) *EventUpdateOne {
 func (euo *EventUpdateOne) SetNillableEventSlug(s *string) *EventUpdateOne {
 	if s != nil {
 		euo.SetEventSlug(*s)
+	}
+	return euo
+}
+
+// SetStartDate sets the "start_date" field.
+func (euo *EventUpdateOne) SetStartDate(t time.Time) *EventUpdateOne {
+	euo.mutation.SetStartDate(t)
+	return euo
+}
+
+// SetNillableStartDate sets the "start_date" field if the given value is not nil.
+func (euo *EventUpdateOne) SetNillableStartDate(t *time.Time) *EventUpdateOne {
+	if t != nil {
+		euo.SetStartDate(*t)
+	}
+	return euo
+}
+
+// SetEndDate sets the "end_date" field.
+func (euo *EventUpdateOne) SetEndDate(t time.Time) *EventUpdateOne {
+	euo.mutation.SetEndDate(t)
+	return euo
+}
+
+// SetNillableEndDate sets the "end_date" field if the given value is not nil.
+func (euo *EventUpdateOne) SetNillableEndDate(t *time.Time) *EventUpdateOne {
+	if t != nil {
+		euo.SetEndDate(*t)
 	}
 	return euo
 }
@@ -913,6 +975,12 @@ func (euo *EventUpdateOne) sqlSave(ctx context.Context) (_node *Event, err error
 	}
 	if value, ok := euo.mutation.EventSlug(); ok {
 		_spec.SetField(event.FieldEventSlug, field.TypeString, value)
+	}
+	if value, ok := euo.mutation.StartDate(); ok {
+		_spec.SetField(event.FieldStartDate, field.TypeTime, value)
+	}
+	if value, ok := euo.mutation.EndDate(); ok {
+		_spec.SetField(event.FieldEndDate, field.TypeTime, value)
 	}
 	if value, ok := euo.mutation.Location(); ok {
 		_spec.SetField(event.FieldLocation, field.TypeString, value)

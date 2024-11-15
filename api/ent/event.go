@@ -24,6 +24,10 @@ type Event struct {
 	Description string `json:"description,omitempty"`
 	// EventSlug holds the value of the "event_slug" field.
 	EventSlug string `json:"event_slug,omitempty"`
+	// StartDate holds the value of the "start_date" field.
+	StartDate time.Time `json:"start_date,omitempty"`
+	// EndDate holds the value of the "end_date" field.
+	EndDate time.Time `json:"end_date,omitempty"`
 	// Location holds the value of the "location" field.
 	Location string `json:"location,omitempty"`
 	// ImageURL holds the value of the "image_url" field.
@@ -97,7 +101,7 @@ func (*Event) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case event.FieldName, event.FieldDescription, event.FieldEventSlug, event.FieldLocation, event.FieldImageURL, event.FieldContractAddress, event.FieldTransactionHash, event.FieldBlockNumber:
 			values[i] = new(sql.NullString)
-		case event.FieldCreatedAt, event.FieldModifiedAt:
+		case event.FieldStartDate, event.FieldEndDate, event.FieldCreatedAt, event.FieldModifiedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -137,6 +141,18 @@ func (e *Event) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field event_slug", values[i])
 			} else if value.Valid {
 				e.EventSlug = value.String
+			}
+		case event.FieldStartDate:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field start_date", values[i])
+			} else if value.Valid {
+				e.StartDate = value.Time
+			}
+		case event.FieldEndDate:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field end_date", values[i])
+			} else if value.Valid {
+				e.EndDate = value.Time
 			}
 		case event.FieldLocation:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -245,6 +261,12 @@ func (e *Event) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("event_slug=")
 	builder.WriteString(e.EventSlug)
+	builder.WriteString(", ")
+	builder.WriteString("start_date=")
+	builder.WriteString(e.StartDate.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("end_date=")
+	builder.WriteString(e.EndDate.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("location=")
 	builder.WriteString(e.Location)

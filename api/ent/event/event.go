@@ -20,6 +20,10 @@ const (
 	FieldDescription = "description"
 	// FieldEventSlug holds the string denoting the event_slug field in the database.
 	FieldEventSlug = "event_slug"
+	// FieldStartDate holds the string denoting the start_date field in the database.
+	FieldStartDate = "start_date"
+	// FieldEndDate holds the string denoting the end_date field in the database.
+	FieldEndDate = "end_date"
 	// FieldLocation holds the string denoting the location field in the database.
 	FieldLocation = "location"
 	// FieldImageURL holds the string denoting the image_url field in the database.
@@ -73,6 +77,8 @@ var Columns = []string{
 	FieldName,
 	FieldDescription,
 	FieldEventSlug,
+	FieldStartDate,
+	FieldEndDate,
 	FieldLocation,
 	FieldImageURL,
 	FieldUserID,
@@ -127,6 +133,16 @@ func ByDescription(opts ...sql.OrderTermOption) OrderOption {
 // ByEventSlug orders the results by the event_slug field.
 func ByEventSlug(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldEventSlug, opts...).ToFunc()
+}
+
+// ByStartDate orders the results by the start_date field.
+func ByStartDate(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldStartDate, opts...).ToFunc()
+}
+
+// ByEndDate orders the results by the end_date field.
+func ByEndDate(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldEndDate, opts...).ToFunc()
 }
 
 // ByLocation orders the results by the location field.

@@ -5,7 +5,7 @@ import (
 
 	"github.com/garguelles/archpass/ent"
 	"github.com/garguelles/archpass/ent/user"
-	databasse "github.com/garguelles/archpass/internal/adapter/database"
+	"github.com/garguelles/archpass/internal/adapter/database"
 	"github.com/garguelles/archpass/internal/domain/dto"
 	"github.com/garguelles/archpass/internal/domain/repository"
 )
@@ -17,7 +17,7 @@ type UserRepository struct {
 
 func NewUserRepository(ctx *context.Context) repository.IUserRepository {
 	return &UserRepository{
-		client: *databasse.EntClient(),
+		client: *database.EntClient(),
 		ctx:    ctx,
 	}
 }

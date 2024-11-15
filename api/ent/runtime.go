@@ -26,11 +26,11 @@ func init() {
 	// event.EventSlugValidator is a validator for the "event_slug" field. It is called by the builders before save.
 	event.EventSlugValidator = eventDescEventSlug.Validators[0].(func(string) error)
 	// eventDescCreatedAt is the schema descriptor for created_at field.
-	eventDescCreatedAt := eventFields[9].Descriptor()
+	eventDescCreatedAt := eventFields[11].Descriptor()
 	// event.DefaultCreatedAt holds the default value on creation for the created_at field.
 	event.DefaultCreatedAt = eventDescCreatedAt.Default.(func() time.Time)
 	// eventDescModifiedAt is the schema descriptor for modified_at field.
-	eventDescModifiedAt := eventFields[10].Descriptor()
+	eventDescModifiedAt := eventFields[12].Descriptor()
 	// event.DefaultModifiedAt holds the default value on creation for the modified_at field.
 	event.DefaultModifiedAt = eventDescModifiedAt.Default.(func() time.Time)
 	// event.UpdateDefaultModifiedAt holds the default value on update for the modified_at field.
