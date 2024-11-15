@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -15,6 +14,7 @@ const events = [
   {
     id: 1,
     name: 'ETH Global 2024',
+    slug: 'eth-global-24',
     date: 'Nov 15-17, 2024',
     location: 'San Francisco, CA',
     attendees: 1000,
@@ -22,6 +22,7 @@ const events = [
   {
     id: 2,
     name: 'Devcon 2024',
+    slug: 'devcon-24',
     date: 'Oct 1-4, 2024',
     location: 'Bangkok, Thailand',
     attendees: 3500,
@@ -29,6 +30,7 @@ const events = [
   {
     id: 3,
     name: 'NFT NYC',
+    slug: 'nft-nyc',
     date: 'Apr 5-7, 2024',
     location: 'New York, NY',
     attendees: 1500,
@@ -46,7 +48,7 @@ export default function DashboardPage() {
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {events.map((event) => (
           <Link
-            href={`/dashboard/events/${event.id}`}
+            href={`/dashboard/${event.slug}`}
             key={event.id}
             className="transition-transform hover:scale-105"
           >
