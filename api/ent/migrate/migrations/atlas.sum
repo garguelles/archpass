@@ -1,4 +1,5 @@
-h1:0fBgvj1QYcNg/7lVNjdFuvnod9ZZQkW9pFC4rNY7zBM=
+h1:q5EyURImU2Dkwyh6z0EGUXA6b5qnSNiuK09FOx2HQiE=
 20240901152416_initialize_user.sql h1:m69cHf9c8E7M5FEJd5F84MGN9M7fMxw6/bsXThEuPOw=
 20240901155140_add_bio_to_user.sql h1:d/29F2ril7lY5lCtKabSkKyBjOLAn/hwRX1c08ZTsVg=
 20241115154206_initial_fields.sql h1:8nmKnduxycOP/rG+/KikyAObyQleNqkJWthtUzouSaQ=
+20241115175310_event_dates.sql h1:fGaBdXmi9k4MYzmH3bgEAdBTMF10tx09qCL1B8N86Kc=

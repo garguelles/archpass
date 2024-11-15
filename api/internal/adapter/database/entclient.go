@@ -1,4 +1,4 @@
-package databasse
+package database
 
 import (
 	"log"

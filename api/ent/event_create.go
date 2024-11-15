@@ -49,6 +49,18 @@ func (ec *EventCreate) SetEventSlug(s string) *EventCreate {
 	return ec
 }
 
+// SetStartDate sets the "start_date" field.
+func (ec *EventCreate) SetStartDate(t time.Time) *EventCreate {
+	ec.mutation.SetStartDate(t)
+	return ec
+}
+
+// SetEndDate sets the "end_date" field.
+func (ec *EventCreate) SetEndDate(t time.Time) *EventCreate {
+	ec.mutation.SetEndDate(t)
+	return ec
+}
+
 // SetLocation sets the "location" field.
 func (ec *EventCreate) SetLocation(s string) *EventCreate {
 	ec.mutation.SetLocation(s)
@@ -241,6 +253,12 @@ func (ec *EventCreate) check() error {
 			return &ValidationError{Name: "event_slug", err: fmt.Errorf(`ent: validator failed for field "Event.event_slug": %w`, err)}
 		}
 	}
+	if _, ok := ec.mutation.StartDate(); !ok {
+		return &ValidationError{Name: "start_date", err: errors.New(`ent: missing required field "Event.start_date"`)}
+	}
+	if _, ok := ec.mutation.EndDate(); !ok {
+		return &ValidationError{Name: "end_date", err: errors.New(`ent: missing required field "Event.end_date"`)}
+	}
 	if _, ok := ec.mutation.Location(); !ok {
 		return &ValidationError{Name: "location", err: errors.New(`ent: missing required field "Event.location"`)}
 	}
@@ -296,6 +314,14 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 	if value, ok := ec.mutation.EventSlug(); ok {
 		_spec.SetField(event.FieldEventSlug, field.TypeString, value)
 		_node.EventSlug = value
+	}
+	if value, ok := ec.mutation.StartDate(); ok {
+		_spec.SetField(event.FieldStartDate, field.TypeTime, value)
+		_node.StartDate = value
+	}
+	if value, ok := ec.mutation.EndDate(); ok {
+		_spec.SetField(event.FieldEndDate, field.TypeTime, value)
+		_node.EndDate = value
 	}
 	if value, ok := ec.mutation.Location(); ok {
 		_spec.SetField(event.FieldLocation, field.TypeString, value)

@@ -41,6 +41,8 @@ var (
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "event_slug", Type: field.TypeString, Unique: true},
+		{Name: "start_date", Type: field.TypeTime},
+		{Name: "end_date", Type: field.TypeTime},
 		{Name: "location", Type: field.TypeString, Size: 2147483647},
 		{Name: "image_url", Type: field.TypeString},
 		{Name: "contract_address", Type: field.TypeString, Nullable: true},
@@ -58,7 +60,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "events_users_events",
-				Columns:    []*schema.Column{EventsColumns[11]},
+				Columns:    []*schema.Column{EventsColumns[13]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
