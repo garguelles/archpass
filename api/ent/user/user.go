@@ -3,7 +3,10 @@
 package user
 
 import (
+	"time"
+
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 const (
@@ -15,8 +18,30 @@ const (
 	FieldWalletAddress = "wallet_address"
 	// FieldBio holds the string denoting the bio field in the database.
 	FieldBio = "bio"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
+	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
+	FieldUpdatedAt = "updated_at"
+	// EdgeEvents holds the string denoting the events edge name in mutations.
+	EdgeEvents = "events"
+	// EdgeAttendeeTickets holds the string denoting the attendee_tickets edge name in mutations.
+	EdgeAttendeeTickets = "attendee_tickets"
 	// Table holds the table name of the user in the database.
 	Table = "users"
+	// EventsTable is the table that holds the events relation/edge.
+	EventsTable = "events"
+	// EventsInverseTable is the table name for the Event entity.
+	// It exists in this package in order to avoid circular dependency with the "event" package.
+	EventsInverseTable = "events"
+	// EventsColumn is the table column denoting the events relation/edge.
+	EventsColumn = "user_id"
+	// AttendeeTicketsTable is the table that holds the attendee_tickets relation/edge.
+	AttendeeTicketsTable = "attendees"
+	// AttendeeTicketsInverseTable is the table name for the Attendee entity.
+	// It exists in this package in order to avoid circular dependency with the "attendee" package.
+	AttendeeTicketsInverseTable = "attendees"
+	// AttendeeTicketsColumn is the table column denoting the attendee_tickets relation/edge.
+	AttendeeTicketsColumn = "user_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -24,6 +49,8 @@ var Columns = []string{
 	FieldID,
 	FieldWalletAddress,
 	FieldBio,
+	FieldCreatedAt,
+	FieldUpdatedAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -39,6 +66,12 @@ func ValidColumn(column string) bool {
 var (
 	// WalletAddressValidator is a validator for the "wallet_address" field. It is called by the builders before save.
 	WalletAddressValidator func(string) error
+	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
+	DefaultCreatedAt func() time.Time
+	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
+	DefaultUpdatedAt func() time.Time
+	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
+	UpdateDefaultUpdatedAt func() time.Time
 )
 
 // OrderOption defines the ordering options for the User queries.
@@ -57,4 +90,56 @@ func ByWalletAddress(opts ...sql.OrderTermOption) OrderOption {
 // ByBio orders the results by the bio field.
 func ByBio(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldBio, opts...).ToFunc()
+}
+
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
+}
+
+// ByUpdatedAt orders the results by the updated_at field.
+func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
+}
+
+// ByEventsCount orders the results by events count.
+func ByEventsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newEventsStep(), opts...)
+	}
+}
+
+// ByEvents orders the results by events terms.
+func ByEvents(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newEventsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByAttendeeTicketsCount orders the results by attendee_tickets count.
+func ByAttendeeTicketsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newAttendeeTicketsStep(), opts...)
+	}
+}
+
+// ByAttendeeTickets orders the results by attendee_tickets terms.
+func ByAttendeeTickets(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newAttendeeTicketsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+func newEventsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(EventsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, EventsTable, EventsColumn),
+	)
+}
+func newAttendeeTicketsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(AttendeeTicketsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, AttendeeTicketsTable, AttendeeTicketsColumn),
+	)
 }

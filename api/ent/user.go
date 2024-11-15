@@ -5,10 +5,11 @@ package ent
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"github.com/pragma-collective/0xStarter-api/ent/user"
+	"github.com/garguelles/archpass/ent/user"
 )
 
 // User is the model entity for the User schema.
@@ -19,8 +20,44 @@ type User struct {
 	// WalletAddress holds the value of the "wallet_address" field.
 	WalletAddress string `json:"wallet_address,omitempty"`
 	// Bio holds the value of the "bio" field.
-	Bio          string `json:"bio,omitempty"`
+	Bio string `json:"bio,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	// UpdatedAt holds the value of the "updated_at" field.
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the UserQuery when eager-loading is set.
+	Edges        UserEdges `json:"edges"`
 	selectValues sql.SelectValues
+}
+
+// UserEdges holds the relations/edges for other nodes in the graph.
+type UserEdges struct {
+	// Events holds the value of the events edge.
+	Events []*Event `json:"events,omitempty"`
+	// AttendeeTickets holds the value of the attendee_tickets edge.
+	AttendeeTickets []*Attendee `json:"attendee_tickets,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [2]bool
+}
+
+// EventsOrErr returns the Events value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) EventsOrErr() ([]*Event, error) {
+	if e.loadedTypes[0] {
+		return e.Events, nil
+	}
+	return nil, &NotLoadedError{edge: "events"}
+}
+
+// AttendeeTicketsOrErr returns the AttendeeTickets value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) AttendeeTicketsOrErr() ([]*Attendee, error) {
+	if e.loadedTypes[1] {
+		return e.AttendeeTickets, nil
+	}
+	return nil, &NotLoadedError{edge: "attendee_tickets"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -32,6 +69,8 @@ func (*User) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case user.FieldWalletAddress, user.FieldBio:
 			values[i] = new(sql.NullString)
+		case user.FieldCreatedAt, user.FieldUpdatedAt:
+			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -65,6 +104,18 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.Bio = value.String
 			}
+		case user.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				u.CreatedAt = value.Time
+			}
+		case user.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				u.UpdatedAt = value.Time
+			}
 		default:
 			u.selectValues.Set(columns[i], values[i])
 		}
@@ -76,6 +127,16 @@ func (u *User) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (u *User) Value(name string) (ent.Value, error) {
 	return u.selectValues.Get(name)
+}
+
+// QueryEvents queries the "events" edge of the User entity.
+func (u *User) QueryEvents() *EventQuery {
+	return NewUserClient(u.config).QueryEvents(u)
+}
+
+// QueryAttendeeTickets queries the "attendee_tickets" edge of the User entity.
+func (u *User) QueryAttendeeTickets() *AttendeeQuery {
+	return NewUserClient(u.config).QueryAttendeeTickets(u)
 }
 
 // Update returns a builder for updating this User.
@@ -106,6 +167,12 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("bio=")
 	builder.WriteString(u.Bio)
+	builder.WriteString(", ")
+	builder.WriteString("created_at=")
+	builder.WriteString(u.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("updated_at=")
+	builder.WriteString(u.UpdatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

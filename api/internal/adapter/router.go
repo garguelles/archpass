@@ -3,9 +3,9 @@ package adapter
 import (
 	"net/http"
 
+	"github.com/garguelles/archpass/internal/adapter/handler"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/pragma-collective/0xStarter-api/internal/adapter/handler"
 )
 
 func Router() *echo.Echo {

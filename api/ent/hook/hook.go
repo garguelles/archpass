@@ -6,8 +6,44 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/pragma-collective/0xStarter-api/ent"
+	"github.com/garguelles/archpass/ent"
 )
+
+// The AttendeeFunc type is an adapter to allow the use of ordinary
+// function as Attendee mutator.
+type AttendeeFunc func(context.Context, *ent.AttendeeMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AttendeeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.AttendeeMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AttendeeMutation", m)
+}
+
+// The EventFunc type is an adapter to allow the use of ordinary
+// function as Event mutator.
+type EventFunc func(context.Context, *ent.EventMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f EventFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.EventMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.EventMutation", m)
+}
+
+// The TicketFunc type is an adapter to allow the use of ordinary
+// function as Ticket mutator.
+type TicketFunc func(context.Context, *ent.TicketMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f TicketFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.TicketMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TicketMutation", m)
+}
 
 // The UserFunc type is an adapter to allow the use of ordinary
 // function as User mutator.

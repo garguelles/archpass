@@ -8,8 +8,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/pragma-collective/0xStarter-api/ent/predicate"
-	"github.com/pragma-collective/0xStarter-api/ent/user"
+	"github.com/garguelles/archpass/ent/predicate"
+	"github.com/garguelles/archpass/ent/user"
 )
 
 // UserDelete is the builder for deleting a User entity.

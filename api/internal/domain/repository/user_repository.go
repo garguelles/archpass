@@ -1,8 +1,8 @@
 package repository
 
 import (
-	"github.com/pragma-collective/0xStarter-api/ent"
-	"github.com/pragma-collective/0xStarter-api/internal/domain/dto"
+	"github.com/garguelles/archpass/ent"
+	"github.com/garguelles/archpass/internal/domain/dto"
 )
 
 type IUserRepository interface {

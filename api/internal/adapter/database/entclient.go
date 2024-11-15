@@ -4,9 +4,9 @@ import (
 	"log"
 	"os"
 
+	"github.com/garguelles/archpass/ent"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
-	"github.com/pragma-collective/0xStarter-api/ent"
 )
 
 var client *ent.Client

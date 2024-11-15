@@ -12,7 +12,10 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"github.com/pragma-collective/0xStarter-api/ent/user"
+	"github.com/garguelles/archpass/ent/attendee"
+	"github.com/garguelles/archpass/ent/event"
+	"github.com/garguelles/archpass/ent/ticket"
+	"github.com/garguelles/archpass/ent/user"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -73,7 +76,10 @@ var (
 func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			user.Table: user.ValidColumn,
+			attendee.Table: attendee.ValidColumn,
+			event.Table:    event.ValidColumn,
+			ticket.Table:   ticket.ValidColumn,
+			user.Table:     user.ValidColumn,
 		})
 	})
 	return columnCheck(table, column)

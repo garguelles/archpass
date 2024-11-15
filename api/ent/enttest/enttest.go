@@ -5,12 +5,12 @@ package enttest
 import (
 	"context"
 
-	"github.com/pragma-collective/0xStarter-api/ent"
+	"github.com/garguelles/archpass/ent"
 	// required by schema hooks.
-	_ "github.com/pragma-collective/0xStarter-api/ent/runtime"
+	_ "github.com/garguelles/archpass/ent/runtime"
 
 	"entgo.io/ent/dialect/sql/schema"
-	"github.com/pragma-collective/0xStarter-api/ent/migrate"
+	"github.com/garguelles/archpass/ent/migrate"
 )
 
 type (

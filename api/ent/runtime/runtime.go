@@ -2,7 +2,7 @@
 
 package runtime
 
-// The schema-stitching logic is generated in github.com/pragma-collective/0xStarter-api/ent/runtime.go
+// The schema-stitching logic is generated in github.com/garguelles/archpass/ent/runtime.go
 
 const (
 	Version = "v0.14.1"                                         // Version of ent codegen.
