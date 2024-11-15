@@ -35,7 +35,7 @@ export default function RootLayout({
 }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="flex bg-background items-center justify-center">
+      <body className="bg-background items-center justify-center">
         <div className="min-h-screen bg-background text-foreground">
           <header className="container mx-auto py-6 px-4">
             <nav className="flex justify-between items-center">
