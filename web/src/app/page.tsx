@@ -9,34 +9,8 @@ import {
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <header className="container mx-auto py-6 px-4">
-        <nav className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold">ArchPass</h1>
-          <div className="space-x-4">
-            <Link
-              href="/events"
-              className="hover:text-muted-foreground transition-colors"
-            >
-              Events
-            </Link>
-            <Link
-              href="/about"
-              className="hover:text-muted-foreground transition-colors"
-            >
-              About
-            </Link>
-            <Link
-              href="/contact"
-              className="hover:text-muted-foreground transition-colors"
-            >
-              Contact
-            </Link>
-          </div>
-        </nav>
-      </header>
-
-      <main className="container mx-auto px-4 py-12">
+    <>
+      <main className="container mx-auto px-4 py-12 text-foreground">
         <section className="text-center mb-16">
           <h2 className="text-4xl font-bold mb-4">
             Decentralized Ticketing for the Web3 Era
@@ -45,13 +19,13 @@ export default function Home() {
             Secure, transparent, and efficient event ticketing powered by
             blockchain technology.
           </p>
-          <Button variant="outline" size="lg">
-            Get Started
+          <Button size="lg" asChild>
+            <Link href="/events">Explore Events</Link>
           </Button>
         </section>
 
         <section className="grid md:grid-cols-3 gap-8">
-          <Card className="bg-card/50 border-muted">
+          <Card className="bg-card text-card-foreground">
             <CardHeader>
               <CardTitle>Secure Transactions</CardTitle>
               <CardDescription>
@@ -60,7 +34,7 @@ export default function Home() {
               </CardDescription>
             </CardHeader>
           </Card>
-          <Card className="bg-card/50 border-muted">
+          <Card className="bg-card text-card-foreground">
             <CardHeader>
               <CardTitle>Transparent Pricing</CardTitle>
               <CardDescription>
@@ -69,7 +43,7 @@ export default function Home() {
               </CardDescription>
             </CardHeader>
           </Card>
-          <Card className="bg-card/50 border-muted">
+          <Card className="bg-card text-card-foreground">
             <CardHeader>
               <CardTitle>Easy Integration</CardTitle>
               <CardDescription>
@@ -83,6 +57,6 @@ export default function Home() {
       <footer className="container mx-auto py-6 px-4 text-center text-muted-foreground">
         <p>&copy; 2024 ArchPass. All rights reserved.</p>
       </footer>
-    </div>
+    </>
   );
 }

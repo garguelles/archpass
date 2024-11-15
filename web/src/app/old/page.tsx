@@ -5,8 +5,8 @@ import WalletWrapper from 'src/components/WalletWrapper';
 import { ONCHAINKIT_LINK } from 'src/links';
 import OnchainkitSvg from 'src/svg/OnchainkitSvg';
 import { useAccount } from 'wagmi';
-import LoginButton from '../components/LoginButton';
-import SignupButton from '../components/SignupButton';
+import LoginButton from '@/components/LoginButton';
+import SignupButton from '@/components/SignupButton';
 
 export default function Page() {
   const { address } = useAccount();
