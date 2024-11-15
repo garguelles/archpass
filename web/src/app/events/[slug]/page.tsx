@@ -1,4 +1,7 @@
+'https://place-hold.it/800x400';
+
 import Image from 'next/image';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -8,7 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { CalendarIcon, MapPinIcon, UserIcon } from 'lucide-react';
+import { CalendarIcon, MapPinIcon, StarIcon } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -30,7 +33,8 @@ const eventData = {
     name: 'ETH Global',
     description:
       "ETH Global is the world's largest Ethereum hackathon and conference organizer, bringing together developers, entrepreneurs, and enthusiasts from around the globe.",
-    avatarUrl: '/placeholder.svg?height=100&width=100',
+    avatarUrl: 'https://place-hold.it/100x100',
+    reviewCount: 128,
   },
 };
 
@@ -84,13 +88,20 @@ export default function EventPage({ params }: { params: { eventId: string } }) {
                     {eventData.organizer.name.slice(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
-                <div>
+                <div className="space-y-1">
                   <h3 className="text-lg font-semibold">
                     {eventData.organizer.name}
                   </h3>
                   <p className="text-sm text-muted-foreground">
                     {eventData.organizer.description}
                   </p>
+                  <Link
+                    href="#reviews"
+                    className="text-sm text-primary flex items-center hover:underline"
+                  >
+                    <StarIcon className="mr-1 h-4 w-4" />
+                    {eventData.organizer.reviewCount} attestations
+                  </Link>
                 </div>
               </CardContent>
             </Card>
