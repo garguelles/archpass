@@ -6,12 +6,15 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/pragma-collective/0xStarter-api/ent/predicate"
-	"github.com/pragma-collective/0xStarter-api/ent/user"
+	"github.com/garguelles/archpass/ent/attendee"
+	"github.com/garguelles/archpass/ent/event"
+	"github.com/garguelles/archpass/ent/predicate"
+	"github.com/garguelles/archpass/ent/user"
 )
 
 // UserUpdate is the builder for updating User entities.
@@ -55,13 +58,106 @@ func (uu *UserUpdate) SetNillableBio(s *string) *UserUpdate {
 	return uu
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (uu *UserUpdate) SetCreatedAt(t time.Time) *UserUpdate {
+	uu.mutation.SetCreatedAt(t)
+	return uu
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableCreatedAt(t *time.Time) *UserUpdate {
+	if t != nil {
+		uu.SetCreatedAt(*t)
+	}
+	return uu
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (uu *UserUpdate) SetUpdatedAt(t time.Time) *UserUpdate {
+	uu.mutation.SetUpdatedAt(t)
+	return uu
+}
+
+// AddEventIDs adds the "events" edge to the Event entity by IDs.
+func (uu *UserUpdate) AddEventIDs(ids ...int) *UserUpdate {
+	uu.mutation.AddEventIDs(ids...)
+	return uu
+}
+
+// AddEvents adds the "events" edges to the Event entity.
+func (uu *UserUpdate) AddEvents(e ...*Event) *UserUpdate {
+	ids := make([]int, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return uu.AddEventIDs(ids...)
+}
+
+// AddAttendeeTicketIDs adds the "attendee_tickets" edge to the Attendee entity by IDs.
+func (uu *UserUpdate) AddAttendeeTicketIDs(ids ...int) *UserUpdate {
+	uu.mutation.AddAttendeeTicketIDs(ids...)
+	return uu
+}
+
+// AddAttendeeTickets adds the "attendee_tickets" edges to the Attendee entity.
+func (uu *UserUpdate) AddAttendeeTickets(a ...*Attendee) *UserUpdate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uu.AddAttendeeTicketIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
 }
 
+// ClearEvents clears all "events" edges to the Event entity.
+func (uu *UserUpdate) ClearEvents() *UserUpdate {
+	uu.mutation.ClearEvents()
+	return uu
+}
+
+// RemoveEventIDs removes the "events" edge to Event entities by IDs.
+func (uu *UserUpdate) RemoveEventIDs(ids ...int) *UserUpdate {
+	uu.mutation.RemoveEventIDs(ids...)
+	return uu
+}
+
+// RemoveEvents removes "events" edges to Event entities.
+func (uu *UserUpdate) RemoveEvents(e ...*Event) *UserUpdate {
+	ids := make([]int, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return uu.RemoveEventIDs(ids...)
+}
+
+// ClearAttendeeTickets clears all "attendee_tickets" edges to the Attendee entity.
+func (uu *UserUpdate) ClearAttendeeTickets() *UserUpdate {
+	uu.mutation.ClearAttendeeTickets()
+	return uu
+}
+
+// RemoveAttendeeTicketIDs removes the "attendee_tickets" edge to Attendee entities by IDs.
+func (uu *UserUpdate) RemoveAttendeeTicketIDs(ids ...int) *UserUpdate {
+	uu.mutation.RemoveAttendeeTicketIDs(ids...)
+	return uu
+}
+
+// RemoveAttendeeTickets removes "attendee_tickets" edges to Attendee entities.
+func (uu *UserUpdate) RemoveAttendeeTickets(a ...*Attendee) *UserUpdate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uu.RemoveAttendeeTicketIDs(ids...)
+}
+
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (uu *UserUpdate) Save(ctx context.Context) (int, error) {
+	uu.defaults()
 	return withHooks(ctx, uu.sqlSave, uu.mutation, uu.hooks)
 }
 
@@ -84,6 +180,14 @@ func (uu *UserUpdate) Exec(ctx context.Context) error {
 func (uu *UserUpdate) ExecX(ctx context.Context) {
 	if err := uu.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (uu *UserUpdate) defaults() {
+	if _, ok := uu.mutation.UpdatedAt(); !ok {
+		v := user.UpdateDefaultUpdatedAt()
+		uu.mutation.SetUpdatedAt(v)
 	}
 }
 
@@ -114,6 +218,102 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := uu.mutation.Bio(); ok {
 		_spec.SetField(user.FieldBio, field.TypeString, value)
+	}
+	if value, ok := uu.mutation.CreatedAt(); ok {
+		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)
+	}
+	if value, ok := uu.mutation.UpdatedAt(); ok {
+		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if uu.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.EventsTable,
+			Columns: []string{user.EventsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedEventsIDs(); len(nodes) > 0 && !uu.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.EventsTable,
+			Columns: []string{user.EventsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.EventsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.EventsTable,
+			Columns: []string{user.EventsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.AttendeeTicketsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AttendeeTicketsTable,
+			Columns: []string{user.AttendeeTicketsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(attendee.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedAttendeeTicketsIDs(); len(nodes) > 0 && !uu.mutation.AttendeeTicketsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AttendeeTicketsTable,
+			Columns: []string{user.AttendeeTicketsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(attendee.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.AttendeeTicketsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AttendeeTicketsTable,
+			Columns: []string{user.AttendeeTicketsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(attendee.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -163,9 +363,101 @@ func (uuo *UserUpdateOne) SetNillableBio(s *string) *UserUpdateOne {
 	return uuo
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (uuo *UserUpdateOne) SetCreatedAt(t time.Time) *UserUpdateOne {
+	uuo.mutation.SetCreatedAt(t)
+	return uuo
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableCreatedAt(t *time.Time) *UserUpdateOne {
+	if t != nil {
+		uuo.SetCreatedAt(*t)
+	}
+	return uuo
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (uuo *UserUpdateOne) SetUpdatedAt(t time.Time) *UserUpdateOne {
+	uuo.mutation.SetUpdatedAt(t)
+	return uuo
+}
+
+// AddEventIDs adds the "events" edge to the Event entity by IDs.
+func (uuo *UserUpdateOne) AddEventIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.AddEventIDs(ids...)
+	return uuo
+}
+
+// AddEvents adds the "events" edges to the Event entity.
+func (uuo *UserUpdateOne) AddEvents(e ...*Event) *UserUpdateOne {
+	ids := make([]int, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return uuo.AddEventIDs(ids...)
+}
+
+// AddAttendeeTicketIDs adds the "attendee_tickets" edge to the Attendee entity by IDs.
+func (uuo *UserUpdateOne) AddAttendeeTicketIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.AddAttendeeTicketIDs(ids...)
+	return uuo
+}
+
+// AddAttendeeTickets adds the "attendee_tickets" edges to the Attendee entity.
+func (uuo *UserUpdateOne) AddAttendeeTickets(a ...*Attendee) *UserUpdateOne {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uuo.AddAttendeeTicketIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
+}
+
+// ClearEvents clears all "events" edges to the Event entity.
+func (uuo *UserUpdateOne) ClearEvents() *UserUpdateOne {
+	uuo.mutation.ClearEvents()
+	return uuo
+}
+
+// RemoveEventIDs removes the "events" edge to Event entities by IDs.
+func (uuo *UserUpdateOne) RemoveEventIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.RemoveEventIDs(ids...)
+	return uuo
+}
+
+// RemoveEvents removes "events" edges to Event entities.
+func (uuo *UserUpdateOne) RemoveEvents(e ...*Event) *UserUpdateOne {
+	ids := make([]int, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return uuo.RemoveEventIDs(ids...)
+}
+
+// ClearAttendeeTickets clears all "attendee_tickets" edges to the Attendee entity.
+func (uuo *UserUpdateOne) ClearAttendeeTickets() *UserUpdateOne {
+	uuo.mutation.ClearAttendeeTickets()
+	return uuo
+}
+
+// RemoveAttendeeTicketIDs removes the "attendee_tickets" edge to Attendee entities by IDs.
+func (uuo *UserUpdateOne) RemoveAttendeeTicketIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.RemoveAttendeeTicketIDs(ids...)
+	return uuo
+}
+
+// RemoveAttendeeTickets removes "attendee_tickets" edges to Attendee entities.
+func (uuo *UserUpdateOne) RemoveAttendeeTickets(a ...*Attendee) *UserUpdateOne {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uuo.RemoveAttendeeTicketIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -183,6 +475,7 @@ func (uuo *UserUpdateOne) Select(field string, fields ...string) *UserUpdateOne 
 
 // Save executes the query and returns the updated User entity.
 func (uuo *UserUpdateOne) Save(ctx context.Context) (*User, error) {
+	uuo.defaults()
 	return withHooks(ctx, uuo.sqlSave, uuo.mutation, uuo.hooks)
 }
 
@@ -205,6 +498,14 @@ func (uuo *UserUpdateOne) Exec(ctx context.Context) error {
 func (uuo *UserUpdateOne) ExecX(ctx context.Context) {
 	if err := uuo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (uuo *UserUpdateOne) defaults() {
+	if _, ok := uuo.mutation.UpdatedAt(); !ok {
+		v := user.UpdateDefaultUpdatedAt()
+		uuo.mutation.SetUpdatedAt(v)
 	}
 }
 
@@ -252,6 +553,102 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if value, ok := uuo.mutation.Bio(); ok {
 		_spec.SetField(user.FieldBio, field.TypeString, value)
+	}
+	if value, ok := uuo.mutation.CreatedAt(); ok {
+		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)
+	}
+	if value, ok := uuo.mutation.UpdatedAt(); ok {
+		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if uuo.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.EventsTable,
+			Columns: []string{user.EventsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedEventsIDs(); len(nodes) > 0 && !uuo.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.EventsTable,
+			Columns: []string{user.EventsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.EventsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.EventsTable,
+			Columns: []string{user.EventsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.AttendeeTicketsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AttendeeTicketsTable,
+			Columns: []string{user.AttendeeTicketsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(attendee.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedAttendeeTicketsIDs(); len(nodes) > 0 && !uuo.mutation.AttendeeTicketsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AttendeeTicketsTable,
+			Columns: []string{user.AttendeeTicketsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(attendee.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.AttendeeTicketsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AttendeeTicketsTable,
+			Columns: []string{user.AttendeeTicketsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(attendee.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &User{config: uuo.config}
 	_spec.Assign = _node.assignValues

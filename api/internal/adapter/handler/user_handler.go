@@ -4,9 +4,9 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/garguelles/archpass/internal/adapter/repository"
+	"github.com/garguelles/archpass/internal/domain/dto"
 	"github.com/labstack/echo/v4"
-	"github.com/pragma-collective/0xStarter-api/internal/adapter/repository"
-	"github.com/pragma-collective/0xStarter-api/internal/domain/dto"
 )
 
 func CreateUser(c echo.Context) error {

@@ -3,10 +3,10 @@ package repository
 import (
 	"context"
 
-	"github.com/pragma-collective/0xStarter-api/ent"
-	"github.com/pragma-collective/0xStarter-api/internal/adapter/database"
-	"github.com/pragma-collective/0xStarter-api/internal/domain/dto"
-	"github.com/pragma-collective/0xStarter-api/internal/domain/repository"
+	"github.com/garguelles/archpass/ent"
+	databasse "github.com/garguelles/archpass/internal/adapter/database"
+	"github.com/garguelles/archpass/internal/domain/dto"
+	"github.com/garguelles/archpass/internal/domain/repository"
 )
 
 type UserRepository struct {

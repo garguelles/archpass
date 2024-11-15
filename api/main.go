@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/pragma-collective/0xStarter-api/internal/adapter"
+	"github.com/garguelles/archpass/internal/adapter"
 )
 
 func main() {
