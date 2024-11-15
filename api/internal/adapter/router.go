@@ -18,7 +18,10 @@ func Router() *echo.Echo {
 	})
 
 	r.GET("/health", handler.Health)
-	r.POST("/user.create", handler.CreateUser)
+
+	// Auth handlers
+	r.GET("/nonce", handler.Nonce)
+	r.GET("/verify", handler.Verify)
 
 	return r
 }

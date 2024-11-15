@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/garguelles/archpass/ent"
+	"github.com/garguelles/archpass/ent/user"
 	databasse "github.com/garguelles/archpass/internal/adapter/database"
 	"github.com/garguelles/archpass/internal/domain/dto"
 	"github.com/garguelles/archpass/internal/domain/repository"
@@ -37,4 +38,17 @@ func (u *UserRepository) Create(input dto.CreateUserInput) (ent.User, error) {
 
 func (u *UserRepository) List() (ent.Users, error) {
 	return u.client.User.Query().All(*u.ctx)
+}
+
+func (u *UserRepository) FindByWalletAddress(walletAddress string) (ent.User, error) {
+	user, err := u.client.
+		User.Query().
+		Where(user.WalletAddress(walletAddress)).
+		Only(*u.ctx)
+
+	if err != nil {
+		return ent.User{}, err
+	}
+
+	return *user, nil
 }
