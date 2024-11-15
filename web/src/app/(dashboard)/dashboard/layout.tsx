@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { LayoutDashboard, CalendarDays, Users, Settings } from 'lucide-react';
+import { LayoutDashboard, Tickets, Users, Settings } from 'lucide-react';
 import dynamic from 'next/dynamic';
 
 import '@/app/global.css';
@@ -51,17 +51,18 @@ export default function DashboardLayout({
                     className="w-full justify-start"
                     asChild
                   >
-                    <Link href="/dashboard/events">
-                      <CalendarDays className="mr-2 h-4 w-4" />
-                      Events
+                    <Link href="/dashboard/slug/tickets">
+                      <Tickets className="mr-2 h-4 w-4" />
+                      Tickets
                     </Link>
                   </Button>
+
                   <Button
                     variant="ghost"
                     className="w-full justify-start"
                     asChild
                   >
-                    <Link href="/dashboard/attendees">
+                    <Link href="/dashboard/slug/attendees">
                       <Users className="mr-2 h-4 w-4" />
                       Attendees
                     </Link>
