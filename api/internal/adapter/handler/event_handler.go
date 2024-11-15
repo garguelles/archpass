@@ -38,7 +38,7 @@ func CreateEvent(c echo.Context) error {
 	return c.JSON(http.StatusCreated, dto.DashboardEvent{Id: event.ID,
 		Name: event.Name, Description: event.Description, Location: event.Location,
 		ImageUrl: event.ImageURL, EventSlug: event.EventSlug, CreatedAt: event.CreatedAt,
-		ModifiedAt: event.ModifiedAt, StartDate: event.StartDate, EndDate: event.EndDate,
+		ModifiedAt: event.ModifiedAt, Date: event.Date,
 	})
 }
 
@@ -78,13 +78,14 @@ func ListDashboardEvents(c echo.Context) error {
 
 	for _, event := range events {
 		eventDto := dto.SimpleDashboardEvent{
-			Id:         event.ID,
-			Name:       event.Name,
-			ImageUrl:   event.ImageURL,
-			EventSlug:  event.EventSlug,
-			Location:   event.Location,
-			StartDate:  event.StartDate,
-			EndDate:    event.EndDate,
+			Id:        event.ID,
+			Name:      event.Name,
+			ImageUrl:  event.ImageURL,
+			EventSlug: event.EventSlug,
+			Location:  event.Location,
+			// StartDate:  event.StartDate,
+			// EndDate:    event.EndDate,
+			Date:       event.Date,
 			CreatedAt:  event.CreatedAt,
 			ModifiedAt: event.ModifiedAt,
 		}
@@ -125,7 +126,51 @@ func GetDashboardEvent(c echo.Context) error {
 	return c.JSON(http.StatusCreated, dto.DashboardEvent{Id: event.ID,
 		Name: event.Name, Description: event.Description, Location: event.Location,
 		ImageUrl: event.ImageURL, EventSlug: event.EventSlug, CreatedAt: event.CreatedAt,
-		ModifiedAt: event.ModifiedAt, StartDate: event.StartDate, EndDate: event.EndDate,
+		ModifiedAt: event.ModifiedAt, Date: event.Date,
 	})
 
+}
+
+func GetEvent(c echo.Context) error {
+	ctx := context.Background()
+
+	slugParam := c.QueryParam("slug")
+	if len(slugParam) == 0 {
+		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{Message: "'slug' parameter is required."})
+	}
+
+	eventRepo := repository.NewEventRepository(&ctx)
+	event, err := eventRepo.GetBySlug(slugParam)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Message: err.Error()})
+	}
+
+	eventDto := dto.PublicEvent{
+		Name:     event.Name,
+		Location: event.Location,
+		ImageUrl: event.ImageURL,
+		// StartDate:       event.StartDate,
+		// EndDate:         event.EndDate,
+		Date:            event.Date,
+		EventSlug:       event.EventSlug,
+		ContractAddress: event.ContractAddress,
+		Organizer: dto.Organizer{
+			WalletAddress: event.Edges.User.WalletAddress,
+			Bio:           event.Edges.User.Bio,
+			DisplayName:   event.Edges.User.DisplayName,
+		},
+		Tickets: []dto.PublicTicket{},
+	}
+
+	for _, ticket := range event.Edges.Tickets {
+		eventDto.Tickets = append(eventDto.Tickets, dto.PublicTicket{
+			Name:            ticket.Name,
+			Description:     ticket.Description,
+			TicketSlug:      ticket.TicketSlug,
+			MintPrice:       ticket.MintPrice,
+			ContractAddress: ticket.ContractAddress,
+		})
+	}
+
+	return c.JSON(http.StatusOK, eventDto)
 }

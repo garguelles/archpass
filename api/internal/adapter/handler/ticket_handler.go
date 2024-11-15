@@ -82,3 +82,74 @@ func ListDashboardTickets(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, ticketDtos)
 }
+
+func GetEventTicket(c echo.Context) error {
+	ctx := context.Background()
+
+	eventSlug := c.QueryParam("eventSlug")
+	if len(eventSlug) == 0 {
+		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{Message: "'eventSlug' parameter is required."})
+	}
+
+	ticketSlug := c.QueryParam("ticketSlug")
+	if len(ticketSlug) == 0 {
+		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{Message: "'ticketSlug' parameter is required."})
+	}
+
+	ticketRepo := repository.NewTicketRepository(&ctx)
+	ticket, err := ticketRepo.GetBySlugAndEvent(eventSlug, ticketSlug)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{Message: err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, dto.SimplePublicTicket{
+		Name:        ticket.Name,
+		Description: ticket.Description,
+		TicketSlug:  ticket.TicketSlug,
+		MintPrice:   ticket.MintPrice,
+		EventSlug:   ticket.Edges.Event.EventSlug,
+	})
+}
+
+func GetAttendeeTickets(c echo.Context) error {
+	ctx := context.Background()
+
+	walletAddress := c.QueryParam("walletAddress")
+	if len(walletAddress) == 0 {
+		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{Message: "'walletAddress' parameter is required."})
+	}
+
+	// Todo: validate if wallet address
+
+	ticketRepo := repository.NewTicketRepository(&ctx)
+	attendees, err := ticketRepo.GetByAttendee(walletAddress)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{Message: err.Error()})
+	}
+
+	user := attendees[0].Edges.User
+	var tickets []dto.AttendeeSimpleTicket
+
+	for _, attendee := range attendees {
+		ticket := attendee.Edges.Ticket
+		event := ticket.Edges.Event
+
+		if ticket == nil || event == nil {
+			continue
+		}
+
+		tickets = append(tickets, dto.AttendeeSimpleTicket{
+			TicketSlug: ticket.TicketSlug,
+			EventName:  event.Name,
+		})
+	}
+
+	attendeeTicketDto := dto.AttendeeTicket{
+		DisplayName:   user.DisplayName,
+		Bio:           user.Bio,
+		WalletAddress: walletAddress,
+		Tickets:       tickets,
+	}
+
+	return c.JSON(http.StatusOK, attendeeTicketDto)
+}

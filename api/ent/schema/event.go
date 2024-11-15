@@ -22,8 +22,9 @@ func (Event) Fields() []ent.Field {
 		field.String("event_slug").
 			NotEmpty().
 			Unique(),
-		field.Time("start_date"),
-		field.Time("end_date"),
+		field.Time("start_date").Optional(),
+		field.Time("end_date").Optional(),
+		field.String("date").Optional(),
 		field.Text("location"),
 		field.String("image_url"),
 		field.Int("user_id"),
@@ -43,7 +44,7 @@ func (Event) Fields() []ent.Field {
 
 func (Event) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("users", User.Type).
+		edge.From("user", User.Type).
 			Ref("events").
 			Field("user_id").
 			Unique().

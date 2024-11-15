@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"database/sql/driver"
 	"fmt"
 	"math"
 
@@ -11,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/garguelles/archpass/ent/attendee"
 	"github.com/garguelles/archpass/ent/event"
 	"github.com/garguelles/archpass/ent/predicate"
 	"github.com/garguelles/archpass/ent/ticket"
@@ -19,11 +21,12 @@ import (
 // TicketQuery is the builder for querying Ticket entities.
 type TicketQuery struct {
 	config
-	ctx        *QueryContext
-	order      []ticket.OrderOption
-	inters     []Interceptor
-	predicates []predicate.Ticket
-	withEvents *EventQuery
+	ctx           *QueryContext
+	order         []ticket.OrderOption
+	inters        []Interceptor
+	predicates    []predicate.Ticket
+	withEvent     *EventQuery
+	withAttendees *AttendeeQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -60,8 +63,8 @@ func (tq *TicketQuery) Order(o ...ticket.OrderOption) *TicketQuery {
 	return tq
 }
 
-// QueryEvents chains the current query on the "events" edge.
-func (tq *TicketQuery) QueryEvents() *EventQuery {
+// QueryEvent chains the current query on the "event" edge.
+func (tq *TicketQuery) QueryEvent() *EventQuery {
 	query := (&EventClient{config: tq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := tq.prepareQuery(ctx); err != nil {
@@ -74,7 +77,29 @@ func (tq *TicketQuery) QueryEvents() *EventQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(ticket.Table, ticket.FieldID, selector),
 			sqlgraph.To(event.Table, event.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, ticket.EventsTable, ticket.EventsColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, ticket.EventTable, ticket.EventColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryAttendees chains the current query on the "attendees" edge.
+func (tq *TicketQuery) QueryAttendees() *AttendeeQuery {
+	query := (&AttendeeClient{config: tq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := tq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := tq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(ticket.Table, ticket.FieldID, selector),
+			sqlgraph.To(attendee.Table, attendee.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, ticket.AttendeesTable, ticket.AttendeesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
 		return fromU, nil
@@ -269,26 +294,38 @@ func (tq *TicketQuery) Clone() *TicketQuery {
 		return nil
 	}
 	return &TicketQuery{
-		config:     tq.config,
-		ctx:        tq.ctx.Clone(),
-		order:      append([]ticket.OrderOption{}, tq.order...),
-		inters:     append([]Interceptor{}, tq.inters...),
-		predicates: append([]predicate.Ticket{}, tq.predicates...),
-		withEvents: tq.withEvents.Clone(),
+		config:        tq.config,
+		ctx:           tq.ctx.Clone(),
+		order:         append([]ticket.OrderOption{}, tq.order...),
+		inters:        append([]Interceptor{}, tq.inters...),
+		predicates:    append([]predicate.Ticket{}, tq.predicates...),
+		withEvent:     tq.withEvent.Clone(),
+		withAttendees: tq.withAttendees.Clone(),
 		// clone intermediate query.
 		sql:  tq.sql.Clone(),
 		path: tq.path,
 	}
 }
 
-// WithEvents tells the query-builder to eager-load the nodes that are connected to
-// the "events" edge. The optional arguments are used to configure the query builder of the edge.
-func (tq *TicketQuery) WithEvents(opts ...func(*EventQuery)) *TicketQuery {
+// WithEvent tells the query-builder to eager-load the nodes that are connected to
+// the "event" edge. The optional arguments are used to configure the query builder of the edge.
+func (tq *TicketQuery) WithEvent(opts ...func(*EventQuery)) *TicketQuery {
 	query := (&EventClient{config: tq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	tq.withEvents = query
+	tq.withEvent = query
+	return tq
+}
+
+// WithAttendees tells the query-builder to eager-load the nodes that are connected to
+// the "attendees" edge. The optional arguments are used to configure the query builder of the edge.
+func (tq *TicketQuery) WithAttendees(opts ...func(*AttendeeQuery)) *TicketQuery {
+	query := (&AttendeeClient{config: tq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	tq.withAttendees = query
 	return tq
 }
 
@@ -370,8 +407,9 @@ func (tq *TicketQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Ticke
 	var (
 		nodes       = []*Ticket{}
 		_spec       = tq.querySpec()
-		loadedTypes = [1]bool{
-			tq.withEvents != nil,
+		loadedTypes = [2]bool{
+			tq.withEvent != nil,
+			tq.withAttendees != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -392,16 +430,22 @@ func (tq *TicketQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Ticke
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := tq.withEvents; query != nil {
-		if err := tq.loadEvents(ctx, query, nodes, nil,
-			func(n *Ticket, e *Event) { n.Edges.Events = e }); err != nil {
+	if query := tq.withEvent; query != nil {
+		if err := tq.loadEvent(ctx, query, nodes, nil,
+			func(n *Ticket, e *Event) { n.Edges.Event = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := tq.withAttendees; query != nil {
+		if err := tq.loadAttendees(ctx, query, nodes, nil,
+			func(n *Ticket, e *Attendee) { n.Edges.Attendees = e }); err != nil {
 			return nil, err
 		}
 	}
 	return nodes, nil
 }
 
-func (tq *TicketQuery) loadEvents(ctx context.Context, query *EventQuery, nodes []*Ticket, init func(*Ticket), assign func(*Ticket, *Event)) error {
+func (tq *TicketQuery) loadEvent(ctx context.Context, query *EventQuery, nodes []*Ticket, init func(*Ticket), assign func(*Ticket, *Event)) error {
 	ids := make([]int, 0, len(nodes))
 	nodeids := make(map[int][]*Ticket)
 	for i := range nodes {
@@ -427,6 +471,33 @@ func (tq *TicketQuery) loadEvents(ctx context.Context, query *EventQuery, nodes 
 		for i := range nodes {
 			assign(nodes[i], n)
 		}
+	}
+	return nil
+}
+func (tq *TicketQuery) loadAttendees(ctx context.Context, query *AttendeeQuery, nodes []*Ticket, init func(*Ticket), assign func(*Ticket, *Attendee)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*Ticket)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(attendee.FieldTicketID)
+	}
+	query.Where(predicate.Attendee(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(ticket.AttendeesColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.TicketID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "ticket_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
 	}
 	return nil
 }
@@ -456,7 +527,7 @@ func (tq *TicketQuery) querySpec() *sqlgraph.QuerySpec {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
 		}
-		if tq.withEvents != nil {
+		if tq.withEvent != nil {
 			_spec.Node.AddColumnOnce(ticket.FieldEventID)
 		}
 	}

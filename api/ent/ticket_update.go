@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/garguelles/archpass/ent/attendee"
 	"github.com/garguelles/archpass/ent/event"
 	"github.com/garguelles/archpass/ent/predicate"
 	"github.com/garguelles/archpass/ent/ticket"
@@ -200,15 +201,28 @@ func (tu *TicketUpdate) SetUpdatedAt(t time.Time) *TicketUpdate {
 	return tu
 }
 
-// SetEventsID sets the "events" edge to the Event entity by ID.
-func (tu *TicketUpdate) SetEventsID(id int) *TicketUpdate {
-	tu.mutation.SetEventsID(id)
+// SetEvent sets the "event" edge to the Event entity.
+func (tu *TicketUpdate) SetEvent(e *Event) *TicketUpdate {
+	return tu.SetEventID(e.ID)
+}
+
+// SetAttendeesID sets the "attendees" edge to the Attendee entity by ID.
+func (tu *TicketUpdate) SetAttendeesID(id int) *TicketUpdate {
+	tu.mutation.SetAttendeesID(id)
 	return tu
 }
 
-// SetEvents sets the "events" edge to the Event entity.
-func (tu *TicketUpdate) SetEvents(e *Event) *TicketUpdate {
-	return tu.SetEventsID(e.ID)
+// SetNillableAttendeesID sets the "attendees" edge to the Attendee entity by ID if the given value is not nil.
+func (tu *TicketUpdate) SetNillableAttendeesID(id *int) *TicketUpdate {
+	if id != nil {
+		tu = tu.SetAttendeesID(*id)
+	}
+	return tu
+}
+
+// SetAttendees sets the "attendees" edge to the Attendee entity.
+func (tu *TicketUpdate) SetAttendees(a *Attendee) *TicketUpdate {
+	return tu.SetAttendeesID(a.ID)
 }
 
 // Mutation returns the TicketMutation object of the builder.
@@ -216,9 +230,15 @@ func (tu *TicketUpdate) Mutation() *TicketMutation {
 	return tu.mutation
 }
 
-// ClearEvents clears the "events" edge to the Event entity.
-func (tu *TicketUpdate) ClearEvents() *TicketUpdate {
-	tu.mutation.ClearEvents()
+// ClearEvent clears the "event" edge to the Event entity.
+func (tu *TicketUpdate) ClearEvent() *TicketUpdate {
+	tu.mutation.ClearEvent()
+	return tu
+}
+
+// ClearAttendees clears the "attendees" edge to the Attendee entity.
+func (tu *TicketUpdate) ClearAttendees() *TicketUpdate {
+	tu.mutation.ClearAttendees()
 	return tu
 }
 
@@ -265,8 +285,8 @@ func (tu *TicketUpdate) check() error {
 			return &ValidationError{Name: "ticket_slug", err: fmt.Errorf(`ent: validator failed for field "Ticket.ticket_slug": %w`, err)}
 		}
 	}
-	if tu.mutation.EventsCleared() && len(tu.mutation.EventsIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "Ticket.events"`)
+	if tu.mutation.EventCleared() && len(tu.mutation.EventIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Ticket.event"`)
 	}
 	return nil
 }
@@ -325,12 +345,12 @@ func (tu *TicketUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := tu.mutation.UpdatedAt(); ok {
 		_spec.SetField(ticket.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if tu.mutation.EventsCleared() {
+	if tu.mutation.EventCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   ticket.EventsTable,
-			Columns: []string{ticket.EventsColumn},
+			Table:   ticket.EventTable,
+			Columns: []string{ticket.EventColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeInt),
@@ -338,15 +358,44 @@ func (tu *TicketUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tu.mutation.EventsIDs(); len(nodes) > 0 {
+	if nodes := tu.mutation.EventIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   ticket.EventsTable,
-			Columns: []string{ticket.EventsColumn},
+			Table:   ticket.EventTable,
+			Columns: []string{ticket.EventColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if tu.mutation.AttendeesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   ticket.AttendeesTable,
+			Columns: []string{ticket.AttendeesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(attendee.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tu.mutation.AttendeesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   ticket.AttendeesTable,
+			Columns: []string{ticket.AttendeesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(attendee.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -545,15 +594,28 @@ func (tuo *TicketUpdateOne) SetUpdatedAt(t time.Time) *TicketUpdateOne {
 	return tuo
 }
 
-// SetEventsID sets the "events" edge to the Event entity by ID.
-func (tuo *TicketUpdateOne) SetEventsID(id int) *TicketUpdateOne {
-	tuo.mutation.SetEventsID(id)
+// SetEvent sets the "event" edge to the Event entity.
+func (tuo *TicketUpdateOne) SetEvent(e *Event) *TicketUpdateOne {
+	return tuo.SetEventID(e.ID)
+}
+
+// SetAttendeesID sets the "attendees" edge to the Attendee entity by ID.
+func (tuo *TicketUpdateOne) SetAttendeesID(id int) *TicketUpdateOne {
+	tuo.mutation.SetAttendeesID(id)
 	return tuo
 }
 
-// SetEvents sets the "events" edge to the Event entity.
-func (tuo *TicketUpdateOne) SetEvents(e *Event) *TicketUpdateOne {
-	return tuo.SetEventsID(e.ID)
+// SetNillableAttendeesID sets the "attendees" edge to the Attendee entity by ID if the given value is not nil.
+func (tuo *TicketUpdateOne) SetNillableAttendeesID(id *int) *TicketUpdateOne {
+	if id != nil {
+		tuo = tuo.SetAttendeesID(*id)
+	}
+	return tuo
+}
+
+// SetAttendees sets the "attendees" edge to the Attendee entity.
+func (tuo *TicketUpdateOne) SetAttendees(a *Attendee) *TicketUpdateOne {
+	return tuo.SetAttendeesID(a.ID)
 }
 
 // Mutation returns the TicketMutation object of the builder.
@@ -561,9 +623,15 @@ func (tuo *TicketUpdateOne) Mutation() *TicketMutation {
 	return tuo.mutation
 }
 
-// ClearEvents clears the "events" edge to the Event entity.
-func (tuo *TicketUpdateOne) ClearEvents() *TicketUpdateOne {
-	tuo.mutation.ClearEvents()
+// ClearEvent clears the "event" edge to the Event entity.
+func (tuo *TicketUpdateOne) ClearEvent() *TicketUpdateOne {
+	tuo.mutation.ClearEvent()
+	return tuo
+}
+
+// ClearAttendees clears the "attendees" edge to the Attendee entity.
+func (tuo *TicketUpdateOne) ClearAttendees() *TicketUpdateOne {
+	tuo.mutation.ClearAttendees()
 	return tuo
 }
 
@@ -623,8 +691,8 @@ func (tuo *TicketUpdateOne) check() error {
 			return &ValidationError{Name: "ticket_slug", err: fmt.Errorf(`ent: validator failed for field "Ticket.ticket_slug": %w`, err)}
 		}
 	}
-	if tuo.mutation.EventsCleared() && len(tuo.mutation.EventsIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "Ticket.events"`)
+	if tuo.mutation.EventCleared() && len(tuo.mutation.EventIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Ticket.event"`)
 	}
 	return nil
 }
@@ -700,12 +768,12 @@ func (tuo *TicketUpdateOne) sqlSave(ctx context.Context) (_node *Ticket, err err
 	if value, ok := tuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(ticket.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if tuo.mutation.EventsCleared() {
+	if tuo.mutation.EventCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   ticket.EventsTable,
-			Columns: []string{ticket.EventsColumn},
+			Table:   ticket.EventTable,
+			Columns: []string{ticket.EventColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeInt),
@@ -713,15 +781,44 @@ func (tuo *TicketUpdateOne) sqlSave(ctx context.Context) (_node *Ticket, err err
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tuo.mutation.EventsIDs(); len(nodes) > 0 {
+	if nodes := tuo.mutation.EventIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   ticket.EventsTable,
-			Columns: []string{ticket.EventsColumn},
+			Table:   ticket.EventTable,
+			Columns: []string{ticket.EventColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if tuo.mutation.AttendeesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   ticket.AttendeesTable,
+			Columns: []string{ticket.AttendeesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(attendee.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tuo.mutation.AttendeesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   ticket.AttendeesTable,
+			Columns: []string{ticket.AttendeesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(attendee.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

@@ -14,6 +14,7 @@ import (
 	"github.com/garguelles/archpass/ent/attendee"
 	"github.com/garguelles/archpass/ent/event"
 	"github.com/garguelles/archpass/ent/predicate"
+	"github.com/garguelles/archpass/ent/ticket"
 	"github.com/garguelles/archpass/ent/user"
 )
 
@@ -24,8 +25,9 @@ type AttendeeQuery struct {
 	order      []attendee.OrderOption
 	inters     []Interceptor
 	predicates []predicate.Attendee
-	withEvents *EventQuery
-	withUsers  *UserQuery
+	withEvent  *EventQuery
+	withUser   *UserQuery
+	withTicket *TicketQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -62,8 +64,8 @@ func (aq *AttendeeQuery) Order(o ...attendee.OrderOption) *AttendeeQuery {
 	return aq
 }
 
-// QueryEvents chains the current query on the "events" edge.
-func (aq *AttendeeQuery) QueryEvents() *EventQuery {
+// QueryEvent chains the current query on the "event" edge.
+func (aq *AttendeeQuery) QueryEvent() *EventQuery {
 	query := (&EventClient{config: aq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := aq.prepareQuery(ctx); err != nil {
@@ -76,7 +78,7 @@ func (aq *AttendeeQuery) QueryEvents() *EventQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(attendee.Table, attendee.FieldID, selector),
 			sqlgraph.To(event.Table, event.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, attendee.EventsTable, attendee.EventsColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, attendee.EventTable, attendee.EventColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(aq.driver.Dialect(), step)
 		return fromU, nil
@@ -84,8 +86,8 @@ func (aq *AttendeeQuery) QueryEvents() *EventQuery {
 	return query
 }
 
-// QueryUsers chains the current query on the "users" edge.
-func (aq *AttendeeQuery) QueryUsers() *UserQuery {
+// QueryUser chains the current query on the "user" edge.
+func (aq *AttendeeQuery) QueryUser() *UserQuery {
 	query := (&UserClient{config: aq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := aq.prepareQuery(ctx); err != nil {
@@ -98,7 +100,29 @@ func (aq *AttendeeQuery) QueryUsers() *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(attendee.Table, attendee.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, attendee.UsersTable, attendee.UsersColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, attendee.UserTable, attendee.UserColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(aq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryTicket chains the current query on the "ticket" edge.
+func (aq *AttendeeQuery) QueryTicket() *TicketQuery {
+	query := (&TicketClient{config: aq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := aq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := aq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(attendee.Table, attendee.FieldID, selector),
+			sqlgraph.To(ticket.Table, ticket.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, attendee.TicketTable, attendee.TicketColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(aq.driver.Dialect(), step)
 		return fromU, nil
@@ -298,33 +322,45 @@ func (aq *AttendeeQuery) Clone() *AttendeeQuery {
 		order:      append([]attendee.OrderOption{}, aq.order...),
 		inters:     append([]Interceptor{}, aq.inters...),
 		predicates: append([]predicate.Attendee{}, aq.predicates...),
-		withEvents: aq.withEvents.Clone(),
-		withUsers:  aq.withUsers.Clone(),
+		withEvent:  aq.withEvent.Clone(),
+		withUser:   aq.withUser.Clone(),
+		withTicket: aq.withTicket.Clone(),
 		// clone intermediate query.
 		sql:  aq.sql.Clone(),
 		path: aq.path,
 	}
 }
 
-// WithEvents tells the query-builder to eager-load the nodes that are connected to
-// the "events" edge. The optional arguments are used to configure the query builder of the edge.
-func (aq *AttendeeQuery) WithEvents(opts ...func(*EventQuery)) *AttendeeQuery {
+// WithEvent tells the query-builder to eager-load the nodes that are connected to
+// the "event" edge. The optional arguments are used to configure the query builder of the edge.
+func (aq *AttendeeQuery) WithEvent(opts ...func(*EventQuery)) *AttendeeQuery {
 	query := (&EventClient{config: aq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	aq.withEvents = query
+	aq.withEvent = query
 	return aq
 }
 
-// WithUsers tells the query-builder to eager-load the nodes that are connected to
-// the "users" edge. The optional arguments are used to configure the query builder of the edge.
-func (aq *AttendeeQuery) WithUsers(opts ...func(*UserQuery)) *AttendeeQuery {
+// WithUser tells the query-builder to eager-load the nodes that are connected to
+// the "user" edge. The optional arguments are used to configure the query builder of the edge.
+func (aq *AttendeeQuery) WithUser(opts ...func(*UserQuery)) *AttendeeQuery {
 	query := (&UserClient{config: aq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	aq.withUsers = query
+	aq.withUser = query
+	return aq
+}
+
+// WithTicket tells the query-builder to eager-load the nodes that are connected to
+// the "ticket" edge. The optional arguments are used to configure the query builder of the edge.
+func (aq *AttendeeQuery) WithTicket(opts ...func(*TicketQuery)) *AttendeeQuery {
+	query := (&TicketClient{config: aq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	aq.withTicket = query
 	return aq
 }
 
@@ -406,9 +442,10 @@ func (aq *AttendeeQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Att
 	var (
 		nodes       = []*Attendee{}
 		_spec       = aq.querySpec()
-		loadedTypes = [2]bool{
-			aq.withEvents != nil,
-			aq.withUsers != nil,
+		loadedTypes = [3]bool{
+			aq.withEvent != nil,
+			aq.withUser != nil,
+			aq.withTicket != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -429,22 +466,28 @@ func (aq *AttendeeQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Att
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := aq.withEvents; query != nil {
-		if err := aq.loadEvents(ctx, query, nodes, nil,
-			func(n *Attendee, e *Event) { n.Edges.Events = e }); err != nil {
+	if query := aq.withEvent; query != nil {
+		if err := aq.loadEvent(ctx, query, nodes, nil,
+			func(n *Attendee, e *Event) { n.Edges.Event = e }); err != nil {
 			return nil, err
 		}
 	}
-	if query := aq.withUsers; query != nil {
-		if err := aq.loadUsers(ctx, query, nodes, nil,
-			func(n *Attendee, e *User) { n.Edges.Users = e }); err != nil {
+	if query := aq.withUser; query != nil {
+		if err := aq.loadUser(ctx, query, nodes, nil,
+			func(n *Attendee, e *User) { n.Edges.User = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := aq.withTicket; query != nil {
+		if err := aq.loadTicket(ctx, query, nodes, nil,
+			func(n *Attendee, e *Ticket) { n.Edges.Ticket = e }); err != nil {
 			return nil, err
 		}
 	}
 	return nodes, nil
 }
 
-func (aq *AttendeeQuery) loadEvents(ctx context.Context, query *EventQuery, nodes []*Attendee, init func(*Attendee), assign func(*Attendee, *Event)) error {
+func (aq *AttendeeQuery) loadEvent(ctx context.Context, query *EventQuery, nodes []*Attendee, init func(*Attendee), assign func(*Attendee, *Event)) error {
 	ids := make([]int, 0, len(nodes))
 	nodeids := make(map[int][]*Attendee)
 	for i := range nodes {
@@ -473,7 +516,7 @@ func (aq *AttendeeQuery) loadEvents(ctx context.Context, query *EventQuery, node
 	}
 	return nil
 }
-func (aq *AttendeeQuery) loadUsers(ctx context.Context, query *UserQuery, nodes []*Attendee, init func(*Attendee), assign func(*Attendee, *User)) error {
+func (aq *AttendeeQuery) loadUser(ctx context.Context, query *UserQuery, nodes []*Attendee, init func(*Attendee), assign func(*Attendee, *User)) error {
 	ids := make([]int, 0, len(nodes))
 	nodeids := make(map[int][]*Attendee)
 	for i := range nodes {
@@ -495,6 +538,35 @@ func (aq *AttendeeQuery) loadUsers(ctx context.Context, query *UserQuery, nodes 
 		nodes, ok := nodeids[n.ID]
 		if !ok {
 			return fmt.Errorf(`unexpected foreign-key "user_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (aq *AttendeeQuery) loadTicket(ctx context.Context, query *TicketQuery, nodes []*Attendee, init func(*Attendee), assign func(*Attendee, *Ticket)) error {
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*Attendee)
+	for i := range nodes {
+		fk := nodes[i].TicketID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(ticket.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "ticket_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -528,11 +600,14 @@ func (aq *AttendeeQuery) querySpec() *sqlgraph.QuerySpec {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
 		}
-		if aq.withEvents != nil {
+		if aq.withEvent != nil {
 			_spec.Node.AddColumnOnce(attendee.FieldEventID)
 		}
-		if aq.withUsers != nil {
+		if aq.withUser != nil {
 			_spec.Node.AddColumnOnce(attendee.FieldUserID)
+		}
+		if aq.withTicket != nil {
+			_spec.Node.AddColumnOnce(attendee.FieldTicketID)
 		}
 	}
 	if ps := aq.predicates; len(ps) > 0 {

@@ -55,9 +55,39 @@ func (ec *EventCreate) SetStartDate(t time.Time) *EventCreate {
 	return ec
 }
 
+// SetNillableStartDate sets the "start_date" field if the given value is not nil.
+func (ec *EventCreate) SetNillableStartDate(t *time.Time) *EventCreate {
+	if t != nil {
+		ec.SetStartDate(*t)
+	}
+	return ec
+}
+
 // SetEndDate sets the "end_date" field.
 func (ec *EventCreate) SetEndDate(t time.Time) *EventCreate {
 	ec.mutation.SetEndDate(t)
+	return ec
+}
+
+// SetNillableEndDate sets the "end_date" field if the given value is not nil.
+func (ec *EventCreate) SetNillableEndDate(t *time.Time) *EventCreate {
+	if t != nil {
+		ec.SetEndDate(*t)
+	}
+	return ec
+}
+
+// SetDate sets the "date" field.
+func (ec *EventCreate) SetDate(s string) *EventCreate {
+	ec.mutation.SetDate(s)
+	return ec
+}
+
+// SetNillableDate sets the "date" field if the given value is not nil.
+func (ec *EventCreate) SetNillableDate(s *string) *EventCreate {
+	if s != nil {
+		ec.SetDate(*s)
+	}
 	return ec
 }
 
@@ -149,15 +179,9 @@ func (ec *EventCreate) SetNillableModifiedAt(t *time.Time) *EventCreate {
 	return ec
 }
 
-// SetUsersID sets the "users" edge to the User entity by ID.
-func (ec *EventCreate) SetUsersID(id int) *EventCreate {
-	ec.mutation.SetUsersID(id)
-	return ec
-}
-
-// SetUsers sets the "users" edge to the User entity.
-func (ec *EventCreate) SetUsers(u *User) *EventCreate {
-	return ec.SetUsersID(u.ID)
+// SetUser sets the "user" edge to the User entity.
+func (ec *EventCreate) SetUser(u *User) *EventCreate {
+	return ec.SetUserID(u.ID)
 }
 
 // AddTicketIDs adds the "tickets" edge to the Ticket entity by IDs.
@@ -253,12 +277,6 @@ func (ec *EventCreate) check() error {
 			return &ValidationError{Name: "event_slug", err: fmt.Errorf(`ent: validator failed for field "Event.event_slug": %w`, err)}
 		}
 	}
-	if _, ok := ec.mutation.StartDate(); !ok {
-		return &ValidationError{Name: "start_date", err: errors.New(`ent: missing required field "Event.start_date"`)}
-	}
-	if _, ok := ec.mutation.EndDate(); !ok {
-		return &ValidationError{Name: "end_date", err: errors.New(`ent: missing required field "Event.end_date"`)}
-	}
 	if _, ok := ec.mutation.Location(); !ok {
 		return &ValidationError{Name: "location", err: errors.New(`ent: missing required field "Event.location"`)}
 	}
@@ -274,8 +292,8 @@ func (ec *EventCreate) check() error {
 	if _, ok := ec.mutation.ModifiedAt(); !ok {
 		return &ValidationError{Name: "modified_at", err: errors.New(`ent: missing required field "Event.modified_at"`)}
 	}
-	if len(ec.mutation.UsersIDs()) == 0 {
-		return &ValidationError{Name: "users", err: errors.New(`ent: missing required edge "Event.users"`)}
+	if len(ec.mutation.UserIDs()) == 0 {
+		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "Event.user"`)}
 	}
 	return nil
 }
@@ -323,6 +341,10 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 		_spec.SetField(event.FieldEndDate, field.TypeTime, value)
 		_node.EndDate = value
 	}
+	if value, ok := ec.mutation.Date(); ok {
+		_spec.SetField(event.FieldDate, field.TypeString, value)
+		_node.Date = value
+	}
 	if value, ok := ec.mutation.Location(); ok {
 		_spec.SetField(event.FieldLocation, field.TypeString, value)
 		_node.Location = value
@@ -351,12 +373,12 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 		_spec.SetField(event.FieldModifiedAt, field.TypeTime, value)
 		_node.ModifiedAt = value
 	}
-	if nodes := ec.mutation.UsersIDs(); len(nodes) > 0 {
+	if nodes := ec.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   event.UsersTable,
-			Columns: []string{event.UsersColumn},
+			Table:   event.UserTable,
+			Columns: []string{event.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),

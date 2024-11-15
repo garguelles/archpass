@@ -25,3 +25,31 @@ type SimpleDashboardTicket struct {
 	Id   int    `json:"id"`
 	Name string `json:"name"`
 }
+
+type PublicTicket struct {
+	Name            string `json:"name"`
+	Description     string `json:"description"`
+	TicketSlug      string `json:"ticketSlug"`
+	MintPrice       string `json:"mintPrice"`
+	ContractAddress string `json:"contractAddress"`
+}
+
+type SimplePublicTicket struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	TicketSlug  string `json:"ticketSlug"`
+	MintPrice   string `json:"mintPrice"`
+	EventSlug   string `json:"eventSlug"`
+}
+
+type AttendeeSimpleTicket struct {
+	TicketSlug string `json:"ticketSlug"`
+	EventName  string `json:"eventName"`
+}
+
+type AttendeeTicket struct {
+	DisplayName   string                 `json:"displayName"`
+	Bio           string                 `json:"bio"`
+	WalletAddress string                 `json:"walletAddress"`
+	Tickets       []AttendeeSimpleTicket `json:"tickets"`
+}

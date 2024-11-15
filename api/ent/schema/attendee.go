@@ -20,14 +20,19 @@ func (Attendee) Fields() []ent.Field {
 
 func (Attendee) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("events", Event.Type).
+		edge.From("event", Event.Type).
 			Ref("attendees").
 			Field("event_id").
 			Unique().
 			Required(),
-		edge.From("users", User.Type).
+		edge.From("user", User.Type).
 			Ref("attendee_tickets").
 			Field("user_id").
+			Unique().
+			Required(),
+		edge.From("ticket", Ticket.Type).
+			Ref("attendees").
+			Field("ticket_id").
 			Unique().
 			Required(),
 	}
