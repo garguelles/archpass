@@ -51,16 +51,6 @@ export default function DashboardLayout({
                     className="w-full justify-start"
                     asChild
                   >
-                    <Link href="/dashboard/events">
-                      <CalendarDays className="mr-2 h-4 w-4" />
-                      Events
-                    </Link>
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-start"
-                    asChild
-                  >
                     <Link href="/dashboard/attendees">
                       <Users className="mr-2 h-4 w-4" />
                       Attendees
