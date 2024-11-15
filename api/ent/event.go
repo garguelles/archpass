@@ -28,6 +28,8 @@ type Event struct {
 	StartDate time.Time `json:"start_date,omitempty"`
 	// EndDate holds the value of the "end_date" field.
 	EndDate time.Time `json:"end_date,omitempty"`
+	// Date holds the value of the "date" field.
+	Date string `json:"date,omitempty"`
 	// Location holds the value of the "location" field.
 	Location string `json:"location,omitempty"`
 	// ImageURL holds the value of the "image_url" field.
@@ -52,8 +54,8 @@ type Event struct {
 
 // EventEdges holds the relations/edges for other nodes in the graph.
 type EventEdges struct {
-	// Users holds the value of the users edge.
-	Users *User `json:"users,omitempty"`
+	// User holds the value of the user edge.
+	User *User `json:"user,omitempty"`
 	// Tickets holds the value of the tickets edge.
 	Tickets []*Ticket `json:"tickets,omitempty"`
 	// Attendees holds the value of the attendees edge.
@@ -63,15 +65,15 @@ type EventEdges struct {
 	loadedTypes [3]bool
 }
 
-// UsersOrErr returns the Users value or an error if the edge
+// UserOrErr returns the User value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e EventEdges) UsersOrErr() (*User, error) {
-	if e.Users != nil {
-		return e.Users, nil
+func (e EventEdges) UserOrErr() (*User, error) {
+	if e.User != nil {
+		return e.User, nil
 	} else if e.loadedTypes[0] {
 		return nil, &NotFoundError{label: user.Label}
 	}
-	return nil, &NotLoadedError{edge: "users"}
+	return nil, &NotLoadedError{edge: "user"}
 }
 
 // TicketsOrErr returns the Tickets value or an error if the edge
@@ -99,7 +101,7 @@ func (*Event) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case event.FieldID, event.FieldUserID:
 			values[i] = new(sql.NullInt64)
-		case event.FieldName, event.FieldDescription, event.FieldEventSlug, event.FieldLocation, event.FieldImageURL, event.FieldContractAddress, event.FieldTransactionHash, event.FieldBlockNumber:
+		case event.FieldName, event.FieldDescription, event.FieldEventSlug, event.FieldDate, event.FieldLocation, event.FieldImageURL, event.FieldContractAddress, event.FieldTransactionHash, event.FieldBlockNumber:
 			values[i] = new(sql.NullString)
 		case event.FieldStartDate, event.FieldEndDate, event.FieldCreatedAt, event.FieldModifiedAt:
 			values[i] = new(sql.NullTime)
@@ -153,6 +155,12 @@ func (e *Event) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field end_date", values[i])
 			} else if value.Valid {
 				e.EndDate = value.Time
+			}
+		case event.FieldDate:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field date", values[i])
+			} else if value.Valid {
+				e.Date = value.String
 			}
 		case event.FieldLocation:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -215,9 +223,9 @@ func (e *Event) Value(name string) (ent.Value, error) {
 	return e.selectValues.Get(name)
 }
 
-// QueryUsers queries the "users" edge of the Event entity.
-func (e *Event) QueryUsers() *UserQuery {
-	return NewEventClient(e.config).QueryUsers(e)
+// QueryUser queries the "user" edge of the Event entity.
+func (e *Event) QueryUser() *UserQuery {
+	return NewEventClient(e.config).QueryUser(e)
 }
 
 // QueryTickets queries the "tickets" edge of the Event entity.
@@ -267,6 +275,9 @@ func (e *Event) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("end_date=")
 	builder.WriteString(e.EndDate.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("date=")
+	builder.WriteString(e.Date)
 	builder.WriteString(", ")
 	builder.WriteString("location=")
 	builder.WriteString(e.Location)

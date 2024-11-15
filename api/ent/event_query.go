@@ -26,7 +26,7 @@ type EventQuery struct {
 	order         []event.OrderOption
 	inters        []Interceptor
 	predicates    []predicate.Event
-	withUsers     *UserQuery
+	withUser      *UserQuery
 	withTickets   *TicketQuery
 	withAttendees *AttendeeQuery
 	// intermediate query (i.e. traversal path).
@@ -65,8 +65,8 @@ func (eq *EventQuery) Order(o ...event.OrderOption) *EventQuery {
 	return eq
 }
 
-// QueryUsers chains the current query on the "users" edge.
-func (eq *EventQuery) QueryUsers() *UserQuery {
+// QueryUser chains the current query on the "user" edge.
+func (eq *EventQuery) QueryUser() *UserQuery {
 	query := (&UserClient{config: eq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := eq.prepareQuery(ctx); err != nil {
@@ -79,7 +79,7 @@ func (eq *EventQuery) QueryUsers() *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(event.Table, event.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, event.UsersTable, event.UsersColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, event.UserTable, event.UserColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(eq.driver.Dialect(), step)
 		return fromU, nil
@@ -323,7 +323,7 @@ func (eq *EventQuery) Clone() *EventQuery {
 		order:         append([]event.OrderOption{}, eq.order...),
 		inters:        append([]Interceptor{}, eq.inters...),
 		predicates:    append([]predicate.Event{}, eq.predicates...),
-		withUsers:     eq.withUsers.Clone(),
+		withUser:      eq.withUser.Clone(),
 		withTickets:   eq.withTickets.Clone(),
 		withAttendees: eq.withAttendees.Clone(),
 		// clone intermediate query.
@@ -332,14 +332,14 @@ func (eq *EventQuery) Clone() *EventQuery {
 	}
 }
 
-// WithUsers tells the query-builder to eager-load the nodes that are connected to
-// the "users" edge. The optional arguments are used to configure the query builder of the edge.
-func (eq *EventQuery) WithUsers(opts ...func(*UserQuery)) *EventQuery {
+// WithUser tells the query-builder to eager-load the nodes that are connected to
+// the "user" edge. The optional arguments are used to configure the query builder of the edge.
+func (eq *EventQuery) WithUser(opts ...func(*UserQuery)) *EventQuery {
 	query := (&UserClient{config: eq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	eq.withUsers = query
+	eq.withUser = query
 	return eq
 }
 
@@ -444,7 +444,7 @@ func (eq *EventQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Event,
 		nodes       = []*Event{}
 		_spec       = eq.querySpec()
 		loadedTypes = [3]bool{
-			eq.withUsers != nil,
+			eq.withUser != nil,
 			eq.withTickets != nil,
 			eq.withAttendees != nil,
 		}
@@ -467,9 +467,9 @@ func (eq *EventQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Event,
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := eq.withUsers; query != nil {
-		if err := eq.loadUsers(ctx, query, nodes, nil,
-			func(n *Event, e *User) { n.Edges.Users = e }); err != nil {
+	if query := eq.withUser; query != nil {
+		if err := eq.loadUser(ctx, query, nodes, nil,
+			func(n *Event, e *User) { n.Edges.User = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -490,7 +490,7 @@ func (eq *EventQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Event,
 	return nodes, nil
 }
 
-func (eq *EventQuery) loadUsers(ctx context.Context, query *UserQuery, nodes []*Event, init func(*Event), assign func(*Event, *User)) error {
+func (eq *EventQuery) loadUser(ctx context.Context, query *UserQuery, nodes []*Event, init func(*Event), assign func(*Event, *User)) error {
 	ids := make([]int, 0, len(nodes))
 	nodeids := make(map[int][]*Event)
 	for i := range nodes {
@@ -605,7 +605,7 @@ func (eq *EventQuery) querySpec() *sqlgraph.QuerySpec {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
 		}
-		if eq.withUsers != nil {
+		if eq.withUser != nil {
 			_spec.Node.AddColumnOnce(event.FieldUserID)
 		}
 	}

@@ -36,17 +36,26 @@ const (
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
 	FieldUpdatedAt = "updated_at"
-	// EdgeEvents holds the string denoting the events edge name in mutations.
-	EdgeEvents = "events"
+	// EdgeEvent holds the string denoting the event edge name in mutations.
+	EdgeEvent = "event"
+	// EdgeAttendees holds the string denoting the attendees edge name in mutations.
+	EdgeAttendees = "attendees"
 	// Table holds the table name of the ticket in the database.
 	Table = "tickets"
-	// EventsTable is the table that holds the events relation/edge.
-	EventsTable = "tickets"
-	// EventsInverseTable is the table name for the Event entity.
+	// EventTable is the table that holds the event relation/edge.
+	EventTable = "tickets"
+	// EventInverseTable is the table name for the Event entity.
 	// It exists in this package in order to avoid circular dependency with the "event" package.
-	EventsInverseTable = "events"
-	// EventsColumn is the table column denoting the events relation/edge.
-	EventsColumn = "event_id"
+	EventInverseTable = "events"
+	// EventColumn is the table column denoting the event relation/edge.
+	EventColumn = "event_id"
+	// AttendeesTable is the table that holds the attendees relation/edge.
+	AttendeesTable = "attendees"
+	// AttendeesInverseTable is the table name for the Attendee entity.
+	// It exists in this package in order to avoid circular dependency with the "attendee" package.
+	AttendeesInverseTable = "attendees"
+	// AttendeesColumn is the table column denoting the attendees relation/edge.
+	AttendeesColumn = "ticket_id"
 )
 
 // Columns holds all SQL columns for ticket fields.
@@ -149,16 +158,30 @@ func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
 }
 
-// ByEventsField orders the results by events field.
-func ByEventsField(field string, opts ...sql.OrderTermOption) OrderOption {
+// ByEventField orders the results by event field.
+func ByEventField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newEventsStep(), sql.OrderByField(field, opts...))
+		sqlgraph.OrderByNeighborTerms(s, newEventStep(), sql.OrderByField(field, opts...))
 	}
 }
-func newEventsStep() *sqlgraph.Step {
+
+// ByAttendeesField orders the results by attendees field.
+func ByAttendeesField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newAttendeesStep(), sql.OrderByField(field, opts...))
+	}
+}
+func newEventStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(EventsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2O, true, EventsTable, EventsColumn),
+		sqlgraph.To(EventInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, EventTable, EventColumn),
+	)
+}
+func newAttendeesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(AttendeesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, false, AttendeesTable, AttendeesColumn),
 	)
 }

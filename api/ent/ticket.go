@@ -9,6 +9,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/garguelles/archpass/ent/attendee"
 	"github.com/garguelles/archpass/ent/event"
 	"github.com/garguelles/archpass/ent/ticket"
 )
@@ -48,22 +49,35 @@ type Ticket struct {
 
 // TicketEdges holds the relations/edges for other nodes in the graph.
 type TicketEdges struct {
-	// Events holds the value of the events edge.
-	Events *Event `json:"events,omitempty"`
+	// Event holds the value of the event edge.
+	Event *Event `json:"event,omitempty"`
+	// Attendees holds the value of the attendees edge.
+	Attendees *Attendee `json:"attendees,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
-// EventsOrErr returns the Events value or an error if the edge
+// EventOrErr returns the Event value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e TicketEdges) EventsOrErr() (*Event, error) {
-	if e.Events != nil {
-		return e.Events, nil
+func (e TicketEdges) EventOrErr() (*Event, error) {
+	if e.Event != nil {
+		return e.Event, nil
 	} else if e.loadedTypes[0] {
 		return nil, &NotFoundError{label: event.Label}
 	}
-	return nil, &NotLoadedError{edge: "events"}
+	return nil, &NotLoadedError{edge: "event"}
+}
+
+// AttendeesOrErr returns the Attendees value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e TicketEdges) AttendeesOrErr() (*Attendee, error) {
+	if e.Attendees != nil {
+		return e.Attendees, nil
+	} else if e.loadedTypes[1] {
+		return nil, &NotFoundError{label: attendee.Label}
+	}
+	return nil, &NotLoadedError{edge: "attendees"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -177,9 +191,14 @@ func (t *Ticket) Value(name string) (ent.Value, error) {
 	return t.selectValues.Get(name)
 }
 
-// QueryEvents queries the "events" edge of the Ticket entity.
-func (t *Ticket) QueryEvents() *EventQuery {
-	return NewTicketClient(t.config).QueryEvents(t)
+// QueryEvent queries the "event" edge of the Ticket entity.
+func (t *Ticket) QueryEvent() *EventQuery {
+	return NewTicketClient(t.config).QueryEvent(t)
+}
+
+// QueryAttendees queries the "attendees" edge of the Ticket entity.
+func (t *Ticket) QueryAttendees() *AttendeeQuery {
+	return NewTicketClient(t.config).QueryAttendees(t)
 }
 
 // Update returns a builder for updating this Ticket.

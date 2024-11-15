@@ -40,10 +40,11 @@ func (Ticket) Fields() []ent.Field {
 // Edges of the Ticket
 func (Ticket) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("events", Event.Type).
+		edge.From("event", Event.Type).
 			Ref("tickets").
 			Field("event_id").
 			Unique().
 			Required(),
+		edge.To("attendees", Attendee.Type).Unique(),
 	}
 }

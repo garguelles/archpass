@@ -128,41 +128,21 @@ func TicketIDNotIn(vs ...int) predicate.Attendee {
 	return predicate.Attendee(sql.FieldNotIn(FieldTicketID, vs...))
 }
 
-// TicketIDGT applies the GT predicate on the "ticket_id" field.
-func TicketIDGT(v int) predicate.Attendee {
-	return predicate.Attendee(sql.FieldGT(FieldTicketID, v))
-}
-
-// TicketIDGTE applies the GTE predicate on the "ticket_id" field.
-func TicketIDGTE(v int) predicate.Attendee {
-	return predicate.Attendee(sql.FieldGTE(FieldTicketID, v))
-}
-
-// TicketIDLT applies the LT predicate on the "ticket_id" field.
-func TicketIDLT(v int) predicate.Attendee {
-	return predicate.Attendee(sql.FieldLT(FieldTicketID, v))
-}
-
-// TicketIDLTE applies the LTE predicate on the "ticket_id" field.
-func TicketIDLTE(v int) predicate.Attendee {
-	return predicate.Attendee(sql.FieldLTE(FieldTicketID, v))
-}
-
-// HasEvents applies the HasEdge predicate on the "events" edge.
-func HasEvents() predicate.Attendee {
+// HasEvent applies the HasEdge predicate on the "event" edge.
+func HasEvent() predicate.Attendee {
 	return predicate.Attendee(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, EventsTable, EventsColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, EventTable, EventColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasEventsWith applies the HasEdge predicate on the "events" edge with a given conditions (other predicates).
-func HasEventsWith(preds ...predicate.Event) predicate.Attendee {
+// HasEventWith applies the HasEdge predicate on the "event" edge with a given conditions (other predicates).
+func HasEventWith(preds ...predicate.Event) predicate.Attendee {
 	return predicate.Attendee(func(s *sql.Selector) {
-		step := newEventsStep()
+		step := newEventStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
@@ -171,21 +151,44 @@ func HasEventsWith(preds ...predicate.Event) predicate.Attendee {
 	})
 }
 
-// HasUsers applies the HasEdge predicate on the "users" edge.
-func HasUsers() predicate.Attendee {
+// HasUser applies the HasEdge predicate on the "user" edge.
+func HasUser() predicate.Attendee {
 	return predicate.Attendee(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, UsersTable, UsersColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasUsersWith applies the HasEdge predicate on the "users" edge with a given conditions (other predicates).
-func HasUsersWith(preds ...predicate.User) predicate.Attendee {
+// HasUserWith applies the HasEdge predicate on the "user" edge with a given conditions (other predicates).
+func HasUserWith(preds ...predicate.User) predicate.Attendee {
 	return predicate.Attendee(func(s *sql.Selector) {
-		step := newUsersStep()
+		step := newUserStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasTicket applies the HasEdge predicate on the "ticket" edge.
+func HasTicket() predicate.Attendee {
+	return predicate.Attendee(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, TicketTable, TicketColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasTicketWith applies the HasEdge predicate on the "ticket" edge with a given conditions (other predicates).
+func HasTicketWith(preds ...predicate.Ticket) predicate.Attendee {
+	return predicate.Attendee(func(s *sql.Selector) {
+		step := newTicketStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

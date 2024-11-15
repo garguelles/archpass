@@ -80,6 +80,11 @@ func EndDate(v time.Time) predicate.Event {
 	return predicate.Event(sql.FieldEQ(FieldEndDate, v))
 }
 
+// Date applies equality check predicate on the "date" field. It's identical to DateEQ.
+func Date(v string) predicate.Event {
+	return predicate.Event(sql.FieldEQ(FieldDate, v))
+}
+
 // Location applies equality check predicate on the "location" field. It's identical to LocationEQ.
 func Location(v string) predicate.Event {
 	return predicate.Event(sql.FieldEQ(FieldLocation, v))
@@ -365,6 +370,16 @@ func StartDateLTE(v time.Time) predicate.Event {
 	return predicate.Event(sql.FieldLTE(FieldStartDate, v))
 }
 
+// StartDateIsNil applies the IsNil predicate on the "start_date" field.
+func StartDateIsNil() predicate.Event {
+	return predicate.Event(sql.FieldIsNull(FieldStartDate))
+}
+
+// StartDateNotNil applies the NotNil predicate on the "start_date" field.
+func StartDateNotNil() predicate.Event {
+	return predicate.Event(sql.FieldNotNull(FieldStartDate))
+}
+
 // EndDateEQ applies the EQ predicate on the "end_date" field.
 func EndDateEQ(v time.Time) predicate.Event {
 	return predicate.Event(sql.FieldEQ(FieldEndDate, v))
@@ -403,6 +418,91 @@ func EndDateLT(v time.Time) predicate.Event {
 // EndDateLTE applies the LTE predicate on the "end_date" field.
 func EndDateLTE(v time.Time) predicate.Event {
 	return predicate.Event(sql.FieldLTE(FieldEndDate, v))
+}
+
+// EndDateIsNil applies the IsNil predicate on the "end_date" field.
+func EndDateIsNil() predicate.Event {
+	return predicate.Event(sql.FieldIsNull(FieldEndDate))
+}
+
+// EndDateNotNil applies the NotNil predicate on the "end_date" field.
+func EndDateNotNil() predicate.Event {
+	return predicate.Event(sql.FieldNotNull(FieldEndDate))
+}
+
+// DateEQ applies the EQ predicate on the "date" field.
+func DateEQ(v string) predicate.Event {
+	return predicate.Event(sql.FieldEQ(FieldDate, v))
+}
+
+// DateNEQ applies the NEQ predicate on the "date" field.
+func DateNEQ(v string) predicate.Event {
+	return predicate.Event(sql.FieldNEQ(FieldDate, v))
+}
+
+// DateIn applies the In predicate on the "date" field.
+func DateIn(vs ...string) predicate.Event {
+	return predicate.Event(sql.FieldIn(FieldDate, vs...))
+}
+
+// DateNotIn applies the NotIn predicate on the "date" field.
+func DateNotIn(vs ...string) predicate.Event {
+	return predicate.Event(sql.FieldNotIn(FieldDate, vs...))
+}
+
+// DateGT applies the GT predicate on the "date" field.
+func DateGT(v string) predicate.Event {
+	return predicate.Event(sql.FieldGT(FieldDate, v))
+}
+
+// DateGTE applies the GTE predicate on the "date" field.
+func DateGTE(v string) predicate.Event {
+	return predicate.Event(sql.FieldGTE(FieldDate, v))
+}
+
+// DateLT applies the LT predicate on the "date" field.
+func DateLT(v string) predicate.Event {
+	return predicate.Event(sql.FieldLT(FieldDate, v))
+}
+
+// DateLTE applies the LTE predicate on the "date" field.
+func DateLTE(v string) predicate.Event {
+	return predicate.Event(sql.FieldLTE(FieldDate, v))
+}
+
+// DateContains applies the Contains predicate on the "date" field.
+func DateContains(v string) predicate.Event {
+	return predicate.Event(sql.FieldContains(FieldDate, v))
+}
+
+// DateHasPrefix applies the HasPrefix predicate on the "date" field.
+func DateHasPrefix(v string) predicate.Event {
+	return predicate.Event(sql.FieldHasPrefix(FieldDate, v))
+}
+
+// DateHasSuffix applies the HasSuffix predicate on the "date" field.
+func DateHasSuffix(v string) predicate.Event {
+	return predicate.Event(sql.FieldHasSuffix(FieldDate, v))
+}
+
+// DateIsNil applies the IsNil predicate on the "date" field.
+func DateIsNil() predicate.Event {
+	return predicate.Event(sql.FieldIsNull(FieldDate))
+}
+
+// DateNotNil applies the NotNil predicate on the "date" field.
+func DateNotNil() predicate.Event {
+	return predicate.Event(sql.FieldNotNull(FieldDate))
+}
+
+// DateEqualFold applies the EqualFold predicate on the "date" field.
+func DateEqualFold(v string) predicate.Event {
+	return predicate.Event(sql.FieldEqualFold(FieldDate, v))
+}
+
+// DateContainsFold applies the ContainsFold predicate on the "date" field.
+func DateContainsFold(v string) predicate.Event {
+	return predicate.Event(sql.FieldContainsFold(FieldDate, v))
 }
 
 // LocationEQ applies the EQ predicate on the "location" field.
@@ -860,21 +960,21 @@ func ModifiedAtLTE(v time.Time) predicate.Event {
 	return predicate.Event(sql.FieldLTE(FieldModifiedAt, v))
 }
 
-// HasUsers applies the HasEdge predicate on the "users" edge.
-func HasUsers() predicate.Event {
+// HasUser applies the HasEdge predicate on the "user" edge.
+func HasUser() predicate.Event {
 	return predicate.Event(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, UsersTable, UsersColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasUsersWith applies the HasEdge predicate on the "users" edge with a given conditions (other predicates).
-func HasUsersWith(preds ...predicate.User) predicate.Event {
+// HasUserWith applies the HasEdge predicate on the "user" edge with a given conditions (other predicates).
+func HasUserWith(preds ...predicate.User) predicate.Event {
 	return predicate.Event(func(s *sql.Selector) {
-		step := newUsersStep()
+		step := newUserStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

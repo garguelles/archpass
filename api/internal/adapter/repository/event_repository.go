@@ -61,8 +61,9 @@ func (e *EventRepository) Create(input dto.CreateEventInput, userId int) (ent.Ev
 		Create().
 		SetName(input.Name).
 		SetEventSlug(slug).
-		SetStartDate(input.StartDate).
-		SetEndDate(input.EndDate).
+		SetDate(input.Date).
+		// SetStartDate(input.StartDate).
+		// SetEndDate(input.EndDate).
 		SetDescription(input.Description).
 		SetImageURL(*input.ImageUrl).
 		Save(*e.ctx)
@@ -98,6 +99,21 @@ func (e *EventRepository) GetByIdAndOrganizerId(eventId int, userId int) (ent.Ev
 			event.UserIDEQ(userId),
 		).
 		Only(*e.ctx)
+	if err != nil {
+		return ent.Event{}, err
+	}
+
+	return *event, nil
+}
+
+func (e *EventRepository) GetBySlug(eventSlug string) (ent.Event, error) {
+	event, err := e.client.Event.
+		Query().
+		Where(event.EventSlugEQ(eventSlug)).
+		WithTickets().
+		WithUser().
+		Only(*e.ctx)
+
 	if err != nil {
 		return ent.Event{}, err
 	}

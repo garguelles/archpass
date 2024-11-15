@@ -93,6 +93,12 @@ func (eu *EventUpdate) SetNillableStartDate(t *time.Time) *EventUpdate {
 	return eu
 }
 
+// ClearStartDate clears the value of the "start_date" field.
+func (eu *EventUpdate) ClearStartDate() *EventUpdate {
+	eu.mutation.ClearStartDate()
+	return eu
+}
+
 // SetEndDate sets the "end_date" field.
 func (eu *EventUpdate) SetEndDate(t time.Time) *EventUpdate {
 	eu.mutation.SetEndDate(t)
@@ -104,6 +110,32 @@ func (eu *EventUpdate) SetNillableEndDate(t *time.Time) *EventUpdate {
 	if t != nil {
 		eu.SetEndDate(*t)
 	}
+	return eu
+}
+
+// ClearEndDate clears the value of the "end_date" field.
+func (eu *EventUpdate) ClearEndDate() *EventUpdate {
+	eu.mutation.ClearEndDate()
+	return eu
+}
+
+// SetDate sets the "date" field.
+func (eu *EventUpdate) SetDate(s string) *EventUpdate {
+	eu.mutation.SetDate(s)
+	return eu
+}
+
+// SetNillableDate sets the "date" field if the given value is not nil.
+func (eu *EventUpdate) SetNillableDate(s *string) *EventUpdate {
+	if s != nil {
+		eu.SetDate(*s)
+	}
+	return eu
+}
+
+// ClearDate clears the value of the "date" field.
+func (eu *EventUpdate) ClearDate() *EventUpdate {
+	eu.mutation.ClearDate()
 	return eu
 }
 
@@ -229,15 +261,9 @@ func (eu *EventUpdate) SetModifiedAt(t time.Time) *EventUpdate {
 	return eu
 }
 
-// SetUsersID sets the "users" edge to the User entity by ID.
-func (eu *EventUpdate) SetUsersID(id int) *EventUpdate {
-	eu.mutation.SetUsersID(id)
-	return eu
-}
-
-// SetUsers sets the "users" edge to the User entity.
-func (eu *EventUpdate) SetUsers(u *User) *EventUpdate {
-	return eu.SetUsersID(u.ID)
+// SetUser sets the "user" edge to the User entity.
+func (eu *EventUpdate) SetUser(u *User) *EventUpdate {
+	return eu.SetUserID(u.ID)
 }
 
 // AddTicketIDs adds the "tickets" edge to the Ticket entity by IDs.
@@ -275,9 +301,9 @@ func (eu *EventUpdate) Mutation() *EventMutation {
 	return eu.mutation
 }
 
-// ClearUsers clears the "users" edge to the User entity.
-func (eu *EventUpdate) ClearUsers() *EventUpdate {
-	eu.mutation.ClearUsers()
+// ClearUser clears the "user" edge to the User entity.
+func (eu *EventUpdate) ClearUser() *EventUpdate {
+	eu.mutation.ClearUser()
 	return eu
 }
 
@@ -371,8 +397,8 @@ func (eu *EventUpdate) check() error {
 			return &ValidationError{Name: "event_slug", err: fmt.Errorf(`ent: validator failed for field "Event.event_slug": %w`, err)}
 		}
 	}
-	if eu.mutation.UsersCleared() && len(eu.mutation.UsersIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "Event.users"`)
+	if eu.mutation.UserCleared() && len(eu.mutation.UserIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Event.user"`)
 	}
 	return nil
 }
@@ -404,8 +430,20 @@ func (eu *EventUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := eu.mutation.StartDate(); ok {
 		_spec.SetField(event.FieldStartDate, field.TypeTime, value)
 	}
+	if eu.mutation.StartDateCleared() {
+		_spec.ClearField(event.FieldStartDate, field.TypeTime)
+	}
 	if value, ok := eu.mutation.EndDate(); ok {
 		_spec.SetField(event.FieldEndDate, field.TypeTime, value)
+	}
+	if eu.mutation.EndDateCleared() {
+		_spec.ClearField(event.FieldEndDate, field.TypeTime)
+	}
+	if value, ok := eu.mutation.Date(); ok {
+		_spec.SetField(event.FieldDate, field.TypeString, value)
+	}
+	if eu.mutation.DateCleared() {
+		_spec.ClearField(event.FieldDate, field.TypeString)
 	}
 	if value, ok := eu.mutation.Location(); ok {
 		_spec.SetField(event.FieldLocation, field.TypeString, value)
@@ -437,12 +475,12 @@ func (eu *EventUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := eu.mutation.ModifiedAt(); ok {
 		_spec.SetField(event.FieldModifiedAt, field.TypeTime, value)
 	}
-	if eu.mutation.UsersCleared() {
+	if eu.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   event.UsersTable,
-			Columns: []string{event.UsersColumn},
+			Table:   event.UserTable,
+			Columns: []string{event.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
@@ -450,12 +488,12 @@ func (eu *EventUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := eu.mutation.UsersIDs(); len(nodes) > 0 {
+	if nodes := eu.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   event.UsersTable,
-			Columns: []string{event.UsersColumn},
+			Table:   event.UserTable,
+			Columns: []string{event.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
@@ -638,6 +676,12 @@ func (euo *EventUpdateOne) SetNillableStartDate(t *time.Time) *EventUpdateOne {
 	return euo
 }
 
+// ClearStartDate clears the value of the "start_date" field.
+func (euo *EventUpdateOne) ClearStartDate() *EventUpdateOne {
+	euo.mutation.ClearStartDate()
+	return euo
+}
+
 // SetEndDate sets the "end_date" field.
 func (euo *EventUpdateOne) SetEndDate(t time.Time) *EventUpdateOne {
 	euo.mutation.SetEndDate(t)
@@ -649,6 +693,32 @@ func (euo *EventUpdateOne) SetNillableEndDate(t *time.Time) *EventUpdateOne {
 	if t != nil {
 		euo.SetEndDate(*t)
 	}
+	return euo
+}
+
+// ClearEndDate clears the value of the "end_date" field.
+func (euo *EventUpdateOne) ClearEndDate() *EventUpdateOne {
+	euo.mutation.ClearEndDate()
+	return euo
+}
+
+// SetDate sets the "date" field.
+func (euo *EventUpdateOne) SetDate(s string) *EventUpdateOne {
+	euo.mutation.SetDate(s)
+	return euo
+}
+
+// SetNillableDate sets the "date" field if the given value is not nil.
+func (euo *EventUpdateOne) SetNillableDate(s *string) *EventUpdateOne {
+	if s != nil {
+		euo.SetDate(*s)
+	}
+	return euo
+}
+
+// ClearDate clears the value of the "date" field.
+func (euo *EventUpdateOne) ClearDate() *EventUpdateOne {
+	euo.mutation.ClearDate()
 	return euo
 }
 
@@ -774,15 +844,9 @@ func (euo *EventUpdateOne) SetModifiedAt(t time.Time) *EventUpdateOne {
 	return euo
 }
 
-// SetUsersID sets the "users" edge to the User entity by ID.
-func (euo *EventUpdateOne) SetUsersID(id int) *EventUpdateOne {
-	euo.mutation.SetUsersID(id)
-	return euo
-}
-
-// SetUsers sets the "users" edge to the User entity.
-func (euo *EventUpdateOne) SetUsers(u *User) *EventUpdateOne {
-	return euo.SetUsersID(u.ID)
+// SetUser sets the "user" edge to the User entity.
+func (euo *EventUpdateOne) SetUser(u *User) *EventUpdateOne {
+	return euo.SetUserID(u.ID)
 }
 
 // AddTicketIDs adds the "tickets" edge to the Ticket entity by IDs.
@@ -820,9 +884,9 @@ func (euo *EventUpdateOne) Mutation() *EventMutation {
 	return euo.mutation
 }
 
-// ClearUsers clears the "users" edge to the User entity.
-func (euo *EventUpdateOne) ClearUsers() *EventUpdateOne {
-	euo.mutation.ClearUsers()
+// ClearUser clears the "user" edge to the User entity.
+func (euo *EventUpdateOne) ClearUser() *EventUpdateOne {
+	euo.mutation.ClearUser()
 	return euo
 }
 
@@ -929,8 +993,8 @@ func (euo *EventUpdateOne) check() error {
 			return &ValidationError{Name: "event_slug", err: fmt.Errorf(`ent: validator failed for field "Event.event_slug": %w`, err)}
 		}
 	}
-	if euo.mutation.UsersCleared() && len(euo.mutation.UsersIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "Event.users"`)
+	if euo.mutation.UserCleared() && len(euo.mutation.UserIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Event.user"`)
 	}
 	return nil
 }
@@ -979,8 +1043,20 @@ func (euo *EventUpdateOne) sqlSave(ctx context.Context) (_node *Event, err error
 	if value, ok := euo.mutation.StartDate(); ok {
 		_spec.SetField(event.FieldStartDate, field.TypeTime, value)
 	}
+	if euo.mutation.StartDateCleared() {
+		_spec.ClearField(event.FieldStartDate, field.TypeTime)
+	}
 	if value, ok := euo.mutation.EndDate(); ok {
 		_spec.SetField(event.FieldEndDate, field.TypeTime, value)
+	}
+	if euo.mutation.EndDateCleared() {
+		_spec.ClearField(event.FieldEndDate, field.TypeTime)
+	}
+	if value, ok := euo.mutation.Date(); ok {
+		_spec.SetField(event.FieldDate, field.TypeString, value)
+	}
+	if euo.mutation.DateCleared() {
+		_spec.ClearField(event.FieldDate, field.TypeString)
 	}
 	if value, ok := euo.mutation.Location(); ok {
 		_spec.SetField(event.FieldLocation, field.TypeString, value)
@@ -1012,12 +1088,12 @@ func (euo *EventUpdateOne) sqlSave(ctx context.Context) (_node *Event, err error
 	if value, ok := euo.mutation.ModifiedAt(); ok {
 		_spec.SetField(event.FieldModifiedAt, field.TypeTime, value)
 	}
-	if euo.mutation.UsersCleared() {
+	if euo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   event.UsersTable,
-			Columns: []string{event.UsersColumn},
+			Table:   event.UserTable,
+			Columns: []string{event.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
@@ -1025,12 +1101,12 @@ func (euo *EventUpdateOne) sqlSave(ctx context.Context) (_node *Event, err error
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := euo.mutation.UsersIDs(); len(nodes) > 0 {
+	if nodes := euo.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   event.UsersTable,
-			Columns: []string{event.UsersColumn},
+			Table:   event.UserTable,
+			Columns: []string{event.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),

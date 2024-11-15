@@ -51,6 +51,9 @@ func Router() *echo.Echo {
 	r.GET("/nonce", handler.Nonce)
 	r.GET("/verify", handler.Verify)
 
+	// Public event
+	r.GET("/event.get", handler.GetEvent)
+
 	// Private routes
 	p := r.Group("")
 	p.Use(echojwt.WithConfig(config))

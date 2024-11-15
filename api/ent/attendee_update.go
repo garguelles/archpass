@@ -13,6 +13,7 @@ import (
 	"github.com/garguelles/archpass/ent/attendee"
 	"github.com/garguelles/archpass/ent/event"
 	"github.com/garguelles/archpass/ent/predicate"
+	"github.com/garguelles/archpass/ent/ticket"
 	"github.com/garguelles/archpass/ent/user"
 )
 
@@ -59,7 +60,6 @@ func (au *AttendeeUpdate) SetNillableEventID(i *int) *AttendeeUpdate {
 
 // SetTicketID sets the "ticket_id" field.
 func (au *AttendeeUpdate) SetTicketID(i int) *AttendeeUpdate {
-	au.mutation.ResetTicketID()
 	au.mutation.SetTicketID(i)
 	return au
 }
@@ -72,32 +72,19 @@ func (au *AttendeeUpdate) SetNillableTicketID(i *int) *AttendeeUpdate {
 	return au
 }
 
-// AddTicketID adds i to the "ticket_id" field.
-func (au *AttendeeUpdate) AddTicketID(i int) *AttendeeUpdate {
-	au.mutation.AddTicketID(i)
-	return au
+// SetEvent sets the "event" edge to the Event entity.
+func (au *AttendeeUpdate) SetEvent(e *Event) *AttendeeUpdate {
+	return au.SetEventID(e.ID)
 }
 
-// SetEventsID sets the "events" edge to the Event entity by ID.
-func (au *AttendeeUpdate) SetEventsID(id int) *AttendeeUpdate {
-	au.mutation.SetEventsID(id)
-	return au
+// SetUser sets the "user" edge to the User entity.
+func (au *AttendeeUpdate) SetUser(u *User) *AttendeeUpdate {
+	return au.SetUserID(u.ID)
 }
 
-// SetEvents sets the "events" edge to the Event entity.
-func (au *AttendeeUpdate) SetEvents(e *Event) *AttendeeUpdate {
-	return au.SetEventsID(e.ID)
-}
-
-// SetUsersID sets the "users" edge to the User entity by ID.
-func (au *AttendeeUpdate) SetUsersID(id int) *AttendeeUpdate {
-	au.mutation.SetUsersID(id)
-	return au
-}
-
-// SetUsers sets the "users" edge to the User entity.
-func (au *AttendeeUpdate) SetUsers(u *User) *AttendeeUpdate {
-	return au.SetUsersID(u.ID)
+// SetTicket sets the "ticket" edge to the Ticket entity.
+func (au *AttendeeUpdate) SetTicket(t *Ticket) *AttendeeUpdate {
+	return au.SetTicketID(t.ID)
 }
 
 // Mutation returns the AttendeeMutation object of the builder.
@@ -105,15 +92,21 @@ func (au *AttendeeUpdate) Mutation() *AttendeeMutation {
 	return au.mutation
 }
 
-// ClearEvents clears the "events" edge to the Event entity.
-func (au *AttendeeUpdate) ClearEvents() *AttendeeUpdate {
-	au.mutation.ClearEvents()
+// ClearEvent clears the "event" edge to the Event entity.
+func (au *AttendeeUpdate) ClearEvent() *AttendeeUpdate {
+	au.mutation.ClearEvent()
 	return au
 }
 
-// ClearUsers clears the "users" edge to the User entity.
-func (au *AttendeeUpdate) ClearUsers() *AttendeeUpdate {
-	au.mutation.ClearUsers()
+// ClearUser clears the "user" edge to the User entity.
+func (au *AttendeeUpdate) ClearUser() *AttendeeUpdate {
+	au.mutation.ClearUser()
+	return au
+}
+
+// ClearTicket clears the "ticket" edge to the Ticket entity.
+func (au *AttendeeUpdate) ClearTicket() *AttendeeUpdate {
+	au.mutation.ClearTicket()
 	return au
 }
 
@@ -146,11 +139,14 @@ func (au *AttendeeUpdate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (au *AttendeeUpdate) check() error {
-	if au.mutation.EventsCleared() && len(au.mutation.EventsIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "Attendee.events"`)
+	if au.mutation.EventCleared() && len(au.mutation.EventIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Attendee.event"`)
 	}
-	if au.mutation.UsersCleared() && len(au.mutation.UsersIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "Attendee.users"`)
+	if au.mutation.UserCleared() && len(au.mutation.UserIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Attendee.user"`)
+	}
+	if au.mutation.TicketCleared() && len(au.mutation.TicketIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Attendee.ticket"`)
 	}
 	return nil
 }
@@ -167,18 +163,12 @@ func (au *AttendeeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := au.mutation.TicketID(); ok {
-		_spec.SetField(attendee.FieldTicketID, field.TypeInt, value)
-	}
-	if value, ok := au.mutation.AddedTicketID(); ok {
-		_spec.AddField(attendee.FieldTicketID, field.TypeInt, value)
-	}
-	if au.mutation.EventsCleared() {
+	if au.mutation.EventCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   attendee.EventsTable,
-			Columns: []string{attendee.EventsColumn},
+			Table:   attendee.EventTable,
+			Columns: []string{attendee.EventColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeInt),
@@ -186,12 +176,12 @@ func (au *AttendeeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := au.mutation.EventsIDs(); len(nodes) > 0 {
+	if nodes := au.mutation.EventIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   attendee.EventsTable,
-			Columns: []string{attendee.EventsColumn},
+			Table:   attendee.EventTable,
+			Columns: []string{attendee.EventColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeInt),
@@ -202,12 +192,12 @@ func (au *AttendeeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if au.mutation.UsersCleared() {
+	if au.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   attendee.UsersTable,
-			Columns: []string{attendee.UsersColumn},
+			Table:   attendee.UserTable,
+			Columns: []string{attendee.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
@@ -215,15 +205,44 @@ func (au *AttendeeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := au.mutation.UsersIDs(); len(nodes) > 0 {
+	if nodes := au.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   attendee.UsersTable,
-			Columns: []string{attendee.UsersColumn},
+			Table:   attendee.UserTable,
+			Columns: []string{attendee.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if au.mutation.TicketCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   attendee.TicketTable,
+			Columns: []string{attendee.TicketColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(ticket.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := au.mutation.TicketIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   attendee.TicketTable,
+			Columns: []string{attendee.TicketColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(ticket.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -281,7 +300,6 @@ func (auo *AttendeeUpdateOne) SetNillableEventID(i *int) *AttendeeUpdateOne {
 
 // SetTicketID sets the "ticket_id" field.
 func (auo *AttendeeUpdateOne) SetTicketID(i int) *AttendeeUpdateOne {
-	auo.mutation.ResetTicketID()
 	auo.mutation.SetTicketID(i)
 	return auo
 }
@@ -294,32 +312,19 @@ func (auo *AttendeeUpdateOne) SetNillableTicketID(i *int) *AttendeeUpdateOne {
 	return auo
 }
 
-// AddTicketID adds i to the "ticket_id" field.
-func (auo *AttendeeUpdateOne) AddTicketID(i int) *AttendeeUpdateOne {
-	auo.mutation.AddTicketID(i)
-	return auo
+// SetEvent sets the "event" edge to the Event entity.
+func (auo *AttendeeUpdateOne) SetEvent(e *Event) *AttendeeUpdateOne {
+	return auo.SetEventID(e.ID)
 }
 
-// SetEventsID sets the "events" edge to the Event entity by ID.
-func (auo *AttendeeUpdateOne) SetEventsID(id int) *AttendeeUpdateOne {
-	auo.mutation.SetEventsID(id)
-	return auo
+// SetUser sets the "user" edge to the User entity.
+func (auo *AttendeeUpdateOne) SetUser(u *User) *AttendeeUpdateOne {
+	return auo.SetUserID(u.ID)
 }
 
-// SetEvents sets the "events" edge to the Event entity.
-func (auo *AttendeeUpdateOne) SetEvents(e *Event) *AttendeeUpdateOne {
-	return auo.SetEventsID(e.ID)
-}
-
-// SetUsersID sets the "users" edge to the User entity by ID.
-func (auo *AttendeeUpdateOne) SetUsersID(id int) *AttendeeUpdateOne {
-	auo.mutation.SetUsersID(id)
-	return auo
-}
-
-// SetUsers sets the "users" edge to the User entity.
-func (auo *AttendeeUpdateOne) SetUsers(u *User) *AttendeeUpdateOne {
-	return auo.SetUsersID(u.ID)
+// SetTicket sets the "ticket" edge to the Ticket entity.
+func (auo *AttendeeUpdateOne) SetTicket(t *Ticket) *AttendeeUpdateOne {
+	return auo.SetTicketID(t.ID)
 }
 
 // Mutation returns the AttendeeMutation object of the builder.
@@ -327,15 +332,21 @@ func (auo *AttendeeUpdateOne) Mutation() *AttendeeMutation {
 	return auo.mutation
 }
 
-// ClearEvents clears the "events" edge to the Event entity.
-func (auo *AttendeeUpdateOne) ClearEvents() *AttendeeUpdateOne {
-	auo.mutation.ClearEvents()
+// ClearEvent clears the "event" edge to the Event entity.
+func (auo *AttendeeUpdateOne) ClearEvent() *AttendeeUpdateOne {
+	auo.mutation.ClearEvent()
 	return auo
 }
 
-// ClearUsers clears the "users" edge to the User entity.
-func (auo *AttendeeUpdateOne) ClearUsers() *AttendeeUpdateOne {
-	auo.mutation.ClearUsers()
+// ClearUser clears the "user" edge to the User entity.
+func (auo *AttendeeUpdateOne) ClearUser() *AttendeeUpdateOne {
+	auo.mutation.ClearUser()
+	return auo
+}
+
+// ClearTicket clears the "ticket" edge to the Ticket entity.
+func (auo *AttendeeUpdateOne) ClearTicket() *AttendeeUpdateOne {
+	auo.mutation.ClearTicket()
 	return auo
 }
 
@@ -381,11 +392,14 @@ func (auo *AttendeeUpdateOne) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (auo *AttendeeUpdateOne) check() error {
-	if auo.mutation.EventsCleared() && len(auo.mutation.EventsIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "Attendee.events"`)
+	if auo.mutation.EventCleared() && len(auo.mutation.EventIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Attendee.event"`)
 	}
-	if auo.mutation.UsersCleared() && len(auo.mutation.UsersIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "Attendee.users"`)
+	if auo.mutation.UserCleared() && len(auo.mutation.UserIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Attendee.user"`)
+	}
+	if auo.mutation.TicketCleared() && len(auo.mutation.TicketIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Attendee.ticket"`)
 	}
 	return nil
 }
@@ -419,18 +433,12 @@ func (auo *AttendeeUpdateOne) sqlSave(ctx context.Context) (_node *Attendee, err
 			}
 		}
 	}
-	if value, ok := auo.mutation.TicketID(); ok {
-		_spec.SetField(attendee.FieldTicketID, field.TypeInt, value)
-	}
-	if value, ok := auo.mutation.AddedTicketID(); ok {
-		_spec.AddField(attendee.FieldTicketID, field.TypeInt, value)
-	}
-	if auo.mutation.EventsCleared() {
+	if auo.mutation.EventCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   attendee.EventsTable,
-			Columns: []string{attendee.EventsColumn},
+			Table:   attendee.EventTable,
+			Columns: []string{attendee.EventColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeInt),
@@ -438,12 +446,12 @@ func (auo *AttendeeUpdateOne) sqlSave(ctx context.Context) (_node *Attendee, err
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := auo.mutation.EventsIDs(); len(nodes) > 0 {
+	if nodes := auo.mutation.EventIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   attendee.EventsTable,
-			Columns: []string{attendee.EventsColumn},
+			Table:   attendee.EventTable,
+			Columns: []string{attendee.EventColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeInt),
@@ -454,12 +462,12 @@ func (auo *AttendeeUpdateOne) sqlSave(ctx context.Context) (_node *Attendee, err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if auo.mutation.UsersCleared() {
+	if auo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   attendee.UsersTable,
-			Columns: []string{attendee.UsersColumn},
+			Table:   attendee.UserTable,
+			Columns: []string{attendee.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
@@ -467,15 +475,44 @@ func (auo *AttendeeUpdateOne) sqlSave(ctx context.Context) (_node *Attendee, err
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := auo.mutation.UsersIDs(); len(nodes) > 0 {
+	if nodes := auo.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   attendee.UsersTable,
-			Columns: []string{attendee.UsersColumn},
+			Table:   attendee.UserTable,
+			Columns: []string{attendee.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if auo.mutation.TicketCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   attendee.TicketTable,
+			Columns: []string{attendee.TicketColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(ticket.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := auo.mutation.TicketIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   attendee.TicketTable,
+			Columns: []string{attendee.TicketColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(ticket.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

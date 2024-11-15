@@ -11,8 +11,8 @@ var (
 	// AttendeesColumns holds the columns for the "attendees" table.
 	AttendeesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "ticket_id", Type: field.TypeInt},
 		{Name: "event_id", Type: field.TypeInt},
+		{Name: "ticket_id", Type: field.TypeInt, Unique: true},
 		{Name: "user_id", Type: field.TypeInt},
 	}
 	// AttendeesTable holds the schema information for the "attendees" table.
@@ -23,8 +23,14 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "attendees_events_attendees",
-				Columns:    []*schema.Column{AttendeesColumns[2]},
+				Columns:    []*schema.Column{AttendeesColumns[1]},
 				RefColumns: []*schema.Column{EventsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "attendees_tickets_attendees",
+				Columns:    []*schema.Column{AttendeesColumns[2]},
+				RefColumns: []*schema.Column{TicketsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
@@ -41,8 +47,9 @@ var (
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "event_slug", Type: field.TypeString, Unique: true},
-		{Name: "start_date", Type: field.TypeTime},
-		{Name: "end_date", Type: field.TypeTime},
+		{Name: "start_date", Type: field.TypeTime, Nullable: true},
+		{Name: "end_date", Type: field.TypeTime, Nullable: true},
+		{Name: "date", Type: field.TypeString, Nullable: true},
 		{Name: "location", Type: field.TypeString, Size: 2147483647},
 		{Name: "image_url", Type: field.TypeString},
 		{Name: "contract_address", Type: field.TypeString, Nullable: true},
@@ -60,7 +67,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "events_users_events",
-				Columns:    []*schema.Column{EventsColumns[13]},
+				Columns:    []*schema.Column{EventsColumns[14]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -100,6 +107,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "wallet_address", Type: field.TypeString, Unique: true},
 		{Name: "bio", Type: field.TypeString},
+		{Name: "display_name", Type: field.TypeString, Nullable: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 	}
@@ -120,7 +128,8 @@ var (
 
 func init() {
 	AttendeesTable.ForeignKeys[0].RefTable = EventsTable
-	AttendeesTable.ForeignKeys[1].RefTable = UsersTable
+	AttendeesTable.ForeignKeys[1].RefTable = TicketsTable
+	AttendeesTable.ForeignKeys[2].RefTable = UsersTable
 	EventsTable.ForeignKeys[0].RefTable = UsersTable
 	TicketsTable.ForeignKeys[0].RefTable = EventsTable
 }

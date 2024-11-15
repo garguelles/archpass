@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/garguelles/archpass/ent/attendee"
 	"github.com/garguelles/archpass/ent/event"
 	"github.com/garguelles/archpass/ent/ticket"
 )
@@ -127,15 +128,28 @@ func (tc *TicketCreate) SetNillableUpdatedAt(t *time.Time) *TicketCreate {
 	return tc
 }
 
-// SetEventsID sets the "events" edge to the Event entity by ID.
-func (tc *TicketCreate) SetEventsID(id int) *TicketCreate {
-	tc.mutation.SetEventsID(id)
+// SetEvent sets the "event" edge to the Event entity.
+func (tc *TicketCreate) SetEvent(e *Event) *TicketCreate {
+	return tc.SetEventID(e.ID)
+}
+
+// SetAttendeesID sets the "attendees" edge to the Attendee entity by ID.
+func (tc *TicketCreate) SetAttendeesID(id int) *TicketCreate {
+	tc.mutation.SetAttendeesID(id)
 	return tc
 }
 
-// SetEvents sets the "events" edge to the Event entity.
-func (tc *TicketCreate) SetEvents(e *Event) *TicketCreate {
-	return tc.SetEventsID(e.ID)
+// SetNillableAttendeesID sets the "attendees" edge to the Attendee entity by ID if the given value is not nil.
+func (tc *TicketCreate) SetNillableAttendeesID(id *int) *TicketCreate {
+	if id != nil {
+		tc = tc.SetAttendeesID(*id)
+	}
+	return tc
+}
+
+// SetAttendees sets the "attendees" edge to the Attendee entity.
+func (tc *TicketCreate) SetAttendees(a *Attendee) *TicketCreate {
+	return tc.SetAttendeesID(a.ID)
 }
 
 // Mutation returns the TicketMutation object of the builder.
@@ -214,8 +228,8 @@ func (tc *TicketCreate) check() error {
 	if _, ok := tc.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Ticket.updated_at"`)}
 	}
-	if len(tc.mutation.EventsIDs()) == 0 {
-		return &ValidationError{Name: "events", err: errors.New(`ent: missing required edge "Ticket.events"`)}
+	if len(tc.mutation.EventIDs()) == 0 {
+		return &ValidationError{Name: "event", err: errors.New(`ent: missing required edge "Ticket.event"`)}
 	}
 	return nil
 }
@@ -283,12 +297,12 @@ func (tc *TicketCreate) createSpec() (*Ticket, *sqlgraph.CreateSpec) {
 		_spec.SetField(ticket.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
-	if nodes := tc.mutation.EventsIDs(); len(nodes) > 0 {
+	if nodes := tc.mutation.EventIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   ticket.EventsTable,
-			Columns: []string{ticket.EventsColumn},
+			Table:   ticket.EventTable,
+			Columns: []string{ticket.EventColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeInt),
@@ -298,6 +312,22 @@ func (tc *TicketCreate) createSpec() (*Ticket, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.EventID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := tc.mutation.AttendeesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   ticket.AttendeesTable,
+			Columns: []string{ticket.AttendeesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(attendee.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

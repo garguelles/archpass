@@ -58,6 +58,26 @@ func (uu *UserUpdate) SetNillableBio(s *string) *UserUpdate {
 	return uu
 }
 
+// SetDisplayName sets the "display_name" field.
+func (uu *UserUpdate) SetDisplayName(s string) *UserUpdate {
+	uu.mutation.SetDisplayName(s)
+	return uu
+}
+
+// SetNillableDisplayName sets the "display_name" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableDisplayName(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetDisplayName(*s)
+	}
+	return uu
+}
+
+// ClearDisplayName clears the value of the "display_name" field.
+func (uu *UserUpdate) ClearDisplayName() *UserUpdate {
+	uu.mutation.ClearDisplayName()
+	return uu
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (uu *UserUpdate) SetCreatedAt(t time.Time) *UserUpdate {
 	uu.mutation.SetCreatedAt(t)
@@ -219,6 +239,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := uu.mutation.Bio(); ok {
 		_spec.SetField(user.FieldBio, field.TypeString, value)
 	}
+	if value, ok := uu.mutation.DisplayName(); ok {
+		_spec.SetField(user.FieldDisplayName, field.TypeString, value)
+	}
+	if uu.mutation.DisplayNameCleared() {
+		_spec.ClearField(user.FieldDisplayName, field.TypeString)
+	}
 	if value, ok := uu.mutation.CreatedAt(); ok {
 		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)
 	}
@@ -360,6 +386,26 @@ func (uuo *UserUpdateOne) SetNillableBio(s *string) *UserUpdateOne {
 	if s != nil {
 		uuo.SetBio(*s)
 	}
+	return uuo
+}
+
+// SetDisplayName sets the "display_name" field.
+func (uuo *UserUpdateOne) SetDisplayName(s string) *UserUpdateOne {
+	uuo.mutation.SetDisplayName(s)
+	return uuo
+}
+
+// SetNillableDisplayName sets the "display_name" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableDisplayName(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetDisplayName(*s)
+	}
+	return uuo
+}
+
+// ClearDisplayName clears the value of the "display_name" field.
+func (uuo *UserUpdateOne) ClearDisplayName() *UserUpdateOne {
+	uuo.mutation.ClearDisplayName()
 	return uuo
 }
 
@@ -553,6 +599,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if value, ok := uuo.mutation.Bio(); ok {
 		_spec.SetField(user.FieldBio, field.TypeString, value)
+	}
+	if value, ok := uuo.mutation.DisplayName(); ok {
+		_spec.SetField(user.FieldDisplayName, field.TypeString, value)
+	}
+	if uuo.mutation.DisplayNameCleared() {
+		_spec.ClearField(user.FieldDisplayName, field.TypeString)
 	}
 	if value, ok := uuo.mutation.CreatedAt(); ok {
 		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)

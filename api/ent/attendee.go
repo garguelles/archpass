@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/garguelles/archpass/ent/attendee"
 	"github.com/garguelles/archpass/ent/event"
+	"github.com/garguelles/archpass/ent/ticket"
 	"github.com/garguelles/archpass/ent/user"
 )
 
@@ -32,35 +33,48 @@ type Attendee struct {
 
 // AttendeeEdges holds the relations/edges for other nodes in the graph.
 type AttendeeEdges struct {
-	// Events holds the value of the events edge.
-	Events *Event `json:"events,omitempty"`
-	// Users holds the value of the users edge.
-	Users *User `json:"users,omitempty"`
+	// Event holds the value of the event edge.
+	Event *Event `json:"event,omitempty"`
+	// User holds the value of the user edge.
+	User *User `json:"user,omitempty"`
+	// Ticket holds the value of the ticket edge.
+	Ticket *Ticket `json:"ticket,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 }
 
-// EventsOrErr returns the Events value or an error if the edge
+// EventOrErr returns the Event value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e AttendeeEdges) EventsOrErr() (*Event, error) {
-	if e.Events != nil {
-		return e.Events, nil
+func (e AttendeeEdges) EventOrErr() (*Event, error) {
+	if e.Event != nil {
+		return e.Event, nil
 	} else if e.loadedTypes[0] {
 		return nil, &NotFoundError{label: event.Label}
 	}
-	return nil, &NotLoadedError{edge: "events"}
+	return nil, &NotLoadedError{edge: "event"}
 }
 
-// UsersOrErr returns the Users value or an error if the edge
+// UserOrErr returns the User value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e AttendeeEdges) UsersOrErr() (*User, error) {
-	if e.Users != nil {
-		return e.Users, nil
+func (e AttendeeEdges) UserOrErr() (*User, error) {
+	if e.User != nil {
+		return e.User, nil
 	} else if e.loadedTypes[1] {
 		return nil, &NotFoundError{label: user.Label}
 	}
-	return nil, &NotLoadedError{edge: "users"}
+	return nil, &NotLoadedError{edge: "user"}
+}
+
+// TicketOrErr returns the Ticket value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e AttendeeEdges) TicketOrErr() (*Ticket, error) {
+	if e.Ticket != nil {
+		return e.Ticket, nil
+	} else if e.loadedTypes[2] {
+		return nil, &NotFoundError{label: ticket.Label}
+	}
+	return nil, &NotLoadedError{edge: "ticket"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -122,14 +136,19 @@ func (a *Attendee) Value(name string) (ent.Value, error) {
 	return a.selectValues.Get(name)
 }
 
-// QueryEvents queries the "events" edge of the Attendee entity.
-func (a *Attendee) QueryEvents() *EventQuery {
-	return NewAttendeeClient(a.config).QueryEvents(a)
+// QueryEvent queries the "event" edge of the Attendee entity.
+func (a *Attendee) QueryEvent() *EventQuery {
+	return NewAttendeeClient(a.config).QueryEvent(a)
 }
 
-// QueryUsers queries the "users" edge of the Attendee entity.
-func (a *Attendee) QueryUsers() *UserQuery {
-	return NewAttendeeClient(a.config).QueryUsers(a)
+// QueryUser queries the "user" edge of the Attendee entity.
+func (a *Attendee) QueryUser() *UserQuery {
+	return NewAttendeeClient(a.config).QueryUser(a)
+}
+
+// QueryTicket queries the "ticket" edge of the Attendee entity.
+func (a *Attendee) QueryTicket() *TicketQuery {
+	return NewAttendeeClient(a.config).QueryTicket(a)
 }
 
 // Update returns a builder for updating this Attendee.
