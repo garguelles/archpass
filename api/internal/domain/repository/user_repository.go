@@ -8,4 +8,5 @@ import (
 type IUserRepository interface {
 	Create(input dto.CreateUserInput) (ent.User, error)
 	List() (ent.Users, error)
+	FindByWalletAddress(walletAddress string) (ent.User, error)
 }
