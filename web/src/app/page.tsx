@@ -1,52 +1,88 @@
-'use client';
-import Footer from 'src/components/Footer';
-import TransactionWrapper from 'src/components/TransactionWrapper';
-import WalletWrapper from 'src/components/WalletWrapper';
-import { ONCHAINKIT_LINK } from 'src/links';
-import OnchainkitSvg from 'src/svg/OnchainkitSvg';
-import { useAccount } from 'wagmi';
-import LoginButton from '../components/LoginButton';
-import SignupButton from '../components/SignupButton';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
 
-export default function Page() {
-  const { address } = useAccount();
-
+export default function Home() {
   return (
-    <div className="flex h-full w-96 max-w-full flex-col px-1 md:w-[1008px]">
-      <section className="mt-6 mb-6 flex w-full flex-col md:flex-row">
-        <div className="flex w-full flex-row items-center justify-between gap-2 md:gap-0">
-          <a
-            href={ONCHAINKIT_LINK}
-            title="onchainkit"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <OnchainkitSvg />
-          </a>
-          <div className="flex items-center gap-3">
-            <SignupButton />
-            {!address && <LoginButton />}
+    <div className="min-h-screen bg-background text-foreground">
+      <header className="container mx-auto py-6 px-4">
+        <nav className="flex justify-between items-center">
+          <h1 className="text-2xl font-bold">ArchPass</h1>
+          <div className="space-x-4">
+            <Link
+              href="/events"
+              className="hover:text-muted-foreground transition-colors"
+            >
+              Events
+            </Link>
+            <Link
+              href="/about"
+              className="hover:text-muted-foreground transition-colors"
+            >
+              About
+            </Link>
+            <Link
+              href="/contact"
+              className="hover:text-muted-foreground transition-colors"
+            >
+              Contact
+            </Link>
           </div>
-        </div>
-      </section>
-      <section className="templateSection flex w-full flex-col items-center justify-center gap-4 rounded-xl bg-gray-100 px-2 py-4 md:grow">
-        <div className="flex h-[450px] w-[450px] max-w-full items-center justify-center rounded-xl bg-[#030712]">
-          <div className="rounded-xl bg-[#F3F4F6] px-4 py-[11px]">
-            <p className="font-normal text-indigo-600 text-xl not-italic tracking-[-1.2px]">
-              npm install @coinbase/onchainkit
-            </p>
-          </div>
-        </div>
-        {address ? (
-          <TransactionWrapper address={address} />
-        ) : (
-          <WalletWrapper
-            className="w-[450px] max-w-full"
-            text="Sign in to transact"
-          />
-        )}
-      </section>
-      <Footer />
+        </nav>
+      </header>
+
+      <main className="container mx-auto px-4 py-12">
+        <section className="text-center mb-16">
+          <h2 className="text-4xl font-bold mb-4">
+            Decentralized Ticketing for the Web3 Era
+          </h2>
+          <p className="text-xl text-muted-foreground mb-8">
+            Secure, transparent, and efficient event ticketing powered by
+            blockchain technology.
+          </p>
+          <Button variant="outline" size="lg">
+            Get Started
+          </Button>
+        </section>
+
+        <section className="grid md:grid-cols-3 gap-8">
+          <Card className="bg-card/50 border-muted">
+            <CardHeader>
+              <CardTitle>Secure Transactions</CardTitle>
+              <CardDescription>
+                Blockchain-backed ticketing ensures tamper-proof and verifiable
+                transactions.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+          <Card className="bg-card/50 border-muted">
+            <CardHeader>
+              <CardTitle>Transparent Pricing</CardTitle>
+              <CardDescription>
+                Fair pricing with no hidden fees. All transactions are visible
+                on the blockchain.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+          <Card className="bg-card/50 border-muted">
+            <CardHeader>
+              <CardTitle>Easy Integration</CardTitle>
+              <CardDescription>
+                Seamlessly integrate with existing event management systems.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        </section>
+      </main>
+
+      <footer className="container mx-auto py-6 px-4 text-center text-muted-foreground">
+        <p>&copy; 2024 ArchPass. All rights reserved.</p>
+      </footer>
     </div>
   );
 }
