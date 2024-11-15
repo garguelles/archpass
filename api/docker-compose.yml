@@ -1,0 +1,32 @@
+services:
+  api:
+    build:
+      context: .
+      # Correct the path to your Dockerfile
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8000:8000"
+    # Important to bind/mount your codebase dir to /app dir for live reload
+    volumes:
+      - ./:/app
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: oxstarter_dev
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB'"]
+      interval: 5s
+      timeout: 60s
+      retries: 5
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

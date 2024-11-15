@@ -1,0 +1,16 @@
+FROM golang:1.23-alpine
+
+WORKDIR /app
+
+RUN apk --no-cache add curl
+
+# install atlas - db migrations
+RUN curl -sSf https://atlasgo.sh | sh
+
+# install air - dev server
+RUN go install github.com/air-verse/air@latest
+
+COPY go.mod go.sum ./
+RUN go mod download
+
+CMD ["air", "-c", ".air.toml"]
