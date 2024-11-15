@@ -8,6 +8,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { CalendarDays, MapPin, Users } from 'lucide-react';
+import { CreateEventModal } from './create-event-modal';
 
 // Mock data for events (in a real app, this would come from an API or database)
 const events = [
@@ -39,9 +40,7 @@ export default function DashboardPage() {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Event Dashboard</h1>
-        <Button asChild>
-          <Link href="/dashboard/events/create">Create Event</Link>
-        </Button>
+        <CreateEventModal />
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
