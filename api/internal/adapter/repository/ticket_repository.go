@@ -81,6 +81,7 @@ func (t *TicketRepository) Create(input dto.CreateTicketInput, userId int) (ent.
 		SetName(input.Name).
 		SetTicketSlug(slug).
 		SetDescription(input.Description).
+		SetContractAddress(input.ContractAddress).
 		SetEventID(input.EventId).
 		SetQuantity(input.Quantity).
 		SetMintPrice(input.MintPrice).
