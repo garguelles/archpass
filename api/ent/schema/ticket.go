@@ -25,6 +25,8 @@ func (Ticket) Fields() []ent.Field {
 		field.Int("event_id"),
 		field.String("ticket_hash").
 			Optional(),
+		field.String("image_url").
+			Optional(),
 		field.String("contract_address").
 			Optional(),
 		field.String("transaction_hash").

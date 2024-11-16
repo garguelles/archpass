@@ -15,4 +15,5 @@ export type TTicket = {
   name: string;
   mintPrice: string;
   quantity: number;
+  imageUrl: string;
 };

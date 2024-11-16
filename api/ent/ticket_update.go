@@ -141,6 +141,26 @@ func (tu *TicketUpdate) ClearTicketHash() *TicketUpdate {
 	return tu
 }
 
+// SetImageURL sets the "image_url" field.
+func (tu *TicketUpdate) SetImageURL(s string) *TicketUpdate {
+	tu.mutation.SetImageURL(s)
+	return tu
+}
+
+// SetNillableImageURL sets the "image_url" field if the given value is not nil.
+func (tu *TicketUpdate) SetNillableImageURL(s *string) *TicketUpdate {
+	if s != nil {
+		tu.SetImageURL(*s)
+	}
+	return tu
+}
+
+// ClearImageURL clears the value of the "image_url" field.
+func (tu *TicketUpdate) ClearImageURL() *TicketUpdate {
+	tu.mutation.ClearImageURL()
+	return tu
+}
+
 // SetContractAddress sets the "contract_address" field.
 func (tu *TicketUpdate) SetContractAddress(s string) *TicketUpdate {
 	tu.mutation.SetContractAddress(s)
@@ -346,6 +366,12 @@ func (tu *TicketUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if tu.mutation.TicketHashCleared() {
 		_spec.ClearField(ticket.FieldTicketHash, field.TypeString)
+	}
+	if value, ok := tu.mutation.ImageURL(); ok {
+		_spec.SetField(ticket.FieldImageURL, field.TypeString, value)
+	}
+	if tu.mutation.ImageURLCleared() {
+		_spec.ClearField(ticket.FieldImageURL, field.TypeString)
 	}
 	if value, ok := tu.mutation.ContractAddress(); ok {
 		_spec.SetField(ticket.FieldContractAddress, field.TypeString, value)
@@ -557,6 +583,26 @@ func (tuo *TicketUpdateOne) SetNillableTicketHash(s *string) *TicketUpdateOne {
 // ClearTicketHash clears the value of the "ticket_hash" field.
 func (tuo *TicketUpdateOne) ClearTicketHash() *TicketUpdateOne {
 	tuo.mutation.ClearTicketHash()
+	return tuo
+}
+
+// SetImageURL sets the "image_url" field.
+func (tuo *TicketUpdateOne) SetImageURL(s string) *TicketUpdateOne {
+	tuo.mutation.SetImageURL(s)
+	return tuo
+}
+
+// SetNillableImageURL sets the "image_url" field if the given value is not nil.
+func (tuo *TicketUpdateOne) SetNillableImageURL(s *string) *TicketUpdateOne {
+	if s != nil {
+		tuo.SetImageURL(*s)
+	}
+	return tuo
+}
+
+// ClearImageURL clears the value of the "image_url" field.
+func (tuo *TicketUpdateOne) ClearImageURL() *TicketUpdateOne {
+	tuo.mutation.ClearImageURL()
 	return tuo
 }
 
@@ -795,6 +841,12 @@ func (tuo *TicketUpdateOne) sqlSave(ctx context.Context) (_node *Ticket, err err
 	}
 	if tuo.mutation.TicketHashCleared() {
 		_spec.ClearField(ticket.FieldTicketHash, field.TypeString)
+	}
+	if value, ok := tuo.mutation.ImageURL(); ok {
+		_spec.SetField(ticket.FieldImageURL, field.TypeString, value)
+	}
+	if tuo.mutation.ImageURLCleared() {
+		_spec.ClearField(ticket.FieldImageURL, field.TypeString)
 	}
 	if value, ok := tuo.mutation.ContractAddress(); ok {
 		_spec.SetField(ticket.FieldContractAddress, field.TypeString, value)

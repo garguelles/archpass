@@ -25,6 +25,8 @@ import {
 } from '@coinbase/onchainkit/transaction';
 import { TEvent } from '@/types';
 import { useCreateTicketMutation } from '@/queries/create-ticket';
+import { useCreateTicketImageMutation } from '@/queries/create-ticket-image';
+import { useUpload } from "@/hooks/useUpload";
 
 type TicketFormData = {
   name: string;
@@ -45,6 +47,8 @@ export function CreateTicketModal({
   refetchTicketList,
 }: CreateTicketModalProps) {
   const { mutateAsync } = useCreateTicketMutation();
+  const { mutateAsync: createImage } = useCreateTicketImageMutation();
+  const { upload } = useUpload();
 
   const [open, setOpen] = useState(false);
   const [contracts, setContracts] = useState<ContractFunctionParameters[]>([]);
@@ -91,7 +95,7 @@ export function CreateTicketModal({
   }, []);
 
   const handleSuccess = useCallback(
-    (response: TransactionResponse) => {
+    async (response: TransactionResponse) => {
       const formValues = getValues();
       const ticketAddress = response.transactionReceipts?.[0].logs?.[0].address;
       const payload = {
@@ -100,7 +104,21 @@ export function CreateTicketModal({
         quantity: Number(formValues.quantity),
         mintPrice: formValues.mintPrice,
         contractAddress: ticketAddress,
+        imageUrl: '',
       };
+
+      const imageBlob = await createImage({
+        eventName: event.name,
+        eventLocation: event.location,
+        eventDate: event.date,
+        attendeeName: "[YOUR NAME]",
+        ticketName: payload.name.toUpperCase(),
+      });
+
+      const uploadResponse = await upload({
+        image: imageBlob as File,
+      })
+      payload.imageUrl = uploadResponse?.imageURI as string
 
       mutateAsync(payload).then(() => {
         setOpen(false);

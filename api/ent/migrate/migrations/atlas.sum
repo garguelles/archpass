@@ -1,4 +1,4 @@
-h1:aug1CvDY4g1J1EVZt2XzCWASi3RzgsoHaSdEiqBYhQ8=
+h1:p+wjicciIwLgY0lQ5B/LVKnREgLrMgqQhDgNpWoz/pU=
 20240901152416_initialize_user.sql h1:m69cHf9c8E7M5FEJd5F84MGN9M7fMxw6/bsXThEuPOw=
 20240901155140_add_bio_to_user.sql h1:d/29F2ril7lY5lCtKabSkKyBjOLAn/hwRX1c08ZTsVg=
 20241115154206_initial_fields.sql h1:8nmKnduxycOP/rG+/KikyAObyQleNqkJWthtUzouSaQ=
@@ -9,3 +9,4 @@ h1:aug1CvDY4g1J1EVZt2XzCWASi3RzgsoHaSdEiqBYhQ8=
 20241116120549_create_hashes.sql h1:mdmLvvGZq8APqJFZpf7M3m88fE8CZSrA+lunMm8mDII=
 20241116135536_create_transactions.sql h1:4JQ0pc6MLwJU/2v7v/hR8A8kIZYt7y5rrXcDMdbIhns=
 20241116140604_unique_indexes_for_transaction_and_attendee.sql h1:82hanMA73EGzLzWHCGgGpb+RcsiILJL8xQwB/UihqFM=
+20241116185106_add_image_url_to_ticket.sql h1:V/oWy/Rmv4G+KofDg4WkycV65k8OThRjjhGB34/+pZ0=

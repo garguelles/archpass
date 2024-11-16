@@ -2375,6 +2375,7 @@ type TicketMutation struct {
 	quantity         *int
 	addquantity      *int
 	ticket_hash      *string
+	image_url        *string
 	contract_address *string
 	transaction_hash *string
 	block_number     *string
@@ -2773,6 +2774,55 @@ func (m *TicketMutation) ResetTicketHash() {
 	delete(m.clearedFields, ticket.FieldTicketHash)
 }
 
+// SetImageURL sets the "image_url" field.
+func (m *TicketMutation) SetImageURL(s string) {
+	m.image_url = &s
+}
+
+// ImageURL returns the value of the "image_url" field in the mutation.
+func (m *TicketMutation) ImageURL() (r string, exists bool) {
+	v := m.image_url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldImageURL returns the old "image_url" field's value of the Ticket entity.
+// If the Ticket object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TicketMutation) OldImageURL(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldImageURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldImageURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldImageURL: %w", err)
+	}
+	return oldValue.ImageURL, nil
+}
+
+// ClearImageURL clears the value of the "image_url" field.
+func (m *TicketMutation) ClearImageURL() {
+	m.image_url = nil
+	m.clearedFields[ticket.FieldImageURL] = struct{}{}
+}
+
+// ImageURLCleared returns if the "image_url" field was cleared in this mutation.
+func (m *TicketMutation) ImageURLCleared() bool {
+	_, ok := m.clearedFields[ticket.FieldImageURL]
+	return ok
+}
+
+// ResetImageURL resets all changes to the "image_url" field.
+func (m *TicketMutation) ResetImageURL() {
+	m.image_url = nil
+	delete(m.clearedFields, ticket.FieldImageURL)
+}
+
 // SetContractAddress sets the "contract_address" field.
 func (m *TicketMutation) SetContractAddress(s string) {
 	m.contract_address = &s
@@ -3092,7 +3142,7 @@ func (m *TicketMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TicketMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 13)
 	if m.name != nil {
 		fields = append(fields, ticket.FieldName)
 	}
@@ -3113,6 +3163,9 @@ func (m *TicketMutation) Fields() []string {
 	}
 	if m.ticket_hash != nil {
 		fields = append(fields, ticket.FieldTicketHash)
+	}
+	if m.image_url != nil {
+		fields = append(fields, ticket.FieldImageURL)
 	}
 	if m.contract_address != nil {
 		fields = append(fields, ticket.FieldContractAddress)
@@ -3151,6 +3204,8 @@ func (m *TicketMutation) Field(name string) (ent.Value, bool) {
 		return m.EventID()
 	case ticket.FieldTicketHash:
 		return m.TicketHash()
+	case ticket.FieldImageURL:
+		return m.ImageURL()
 	case ticket.FieldContractAddress:
 		return m.ContractAddress()
 	case ticket.FieldTransactionHash:
@@ -3184,6 +3239,8 @@ func (m *TicketMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldEventID(ctx)
 	case ticket.FieldTicketHash:
 		return m.OldTicketHash(ctx)
+	case ticket.FieldImageURL:
+		return m.OldImageURL(ctx)
 	case ticket.FieldContractAddress:
 		return m.OldContractAddress(ctx)
 	case ticket.FieldTransactionHash:
@@ -3251,6 +3308,13 @@ func (m *TicketMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetTicketHash(v)
+		return nil
+	case ticket.FieldImageURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetImageURL(v)
 		return nil
 	case ticket.FieldContractAddress:
 		v, ok := value.(string)
@@ -3335,6 +3399,9 @@ func (m *TicketMutation) ClearedFields() []string {
 	if m.FieldCleared(ticket.FieldTicketHash) {
 		fields = append(fields, ticket.FieldTicketHash)
 	}
+	if m.FieldCleared(ticket.FieldImageURL) {
+		fields = append(fields, ticket.FieldImageURL)
+	}
 	if m.FieldCleared(ticket.FieldContractAddress) {
 		fields = append(fields, ticket.FieldContractAddress)
 	}
@@ -3360,6 +3427,9 @@ func (m *TicketMutation) ClearField(name string) error {
 	switch name {
 	case ticket.FieldTicketHash:
 		m.ClearTicketHash()
+		return nil
+	case ticket.FieldImageURL:
+		m.ClearImageURL()
 		return nil
 	case ticket.FieldContractAddress:
 		m.ClearContractAddress()
@@ -3398,6 +3468,9 @@ func (m *TicketMutation) ResetField(name string) error {
 		return nil
 	case ticket.FieldTicketHash:
 		m.ResetTicketHash()
+		return nil
+	case ticket.FieldImageURL:
+		m.ResetImageURL()
 		return nil
 	case ticket.FieldContractAddress:
 		m.ResetContractAddress()

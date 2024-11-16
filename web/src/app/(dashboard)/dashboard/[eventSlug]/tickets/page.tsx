@@ -10,17 +10,28 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Edit, Trash } from 'lucide-react';
+import { Edit, Trash, Eye } from 'lucide-react';
 import { CreateTicketModal } from './create-ticket-modal';
 import { useEventItemQuery } from '@/queries/event-item';
 import { useTicketListQuery } from '@/queries/ticket-list';
 import { TTicket } from '@/types';
+import { convertIpfsToHttps } from '@/lib/utils';
 
 export default function TicketsPage() {
   const params = useParams();
   const eventSlug = params.eventSlug as string;
   const { event } = useEventItemQuery(eventSlug);
   const { tickets, refetchTicketList } = useTicketListQuery(event?.id);
+
+  const handleViewTicket = (imageUrl: string) => {
+    if (!imageUrl) {
+      console.error('No image URL provided');
+      return;
+    }
+
+    const httpsUrl = convertIpfsToHttps(imageUrl);
+    window.open(httpsUrl, '_blank');
+  };
 
   return (
     <div className="space-y-4">
@@ -42,7 +53,7 @@ export default function TicketsPage() {
               <TableHead>Name</TableHead>
               <TableHead>Price</TableHead>
               <TableHead>Quantity</TableHead>
-              <TableHead>Sold</TableHead>
+              {/*<TableHead>Sold</TableHead>*/}
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -52,16 +63,16 @@ export default function TicketsPage() {
                 <TableCell>{ticket.name}</TableCell>
                 <TableCell>{ticket.mintPrice} ETH</TableCell>
                 <TableCell>{ticket.quantity}</TableCell>
-                <TableCell>{89}</TableCell>
+                {/*<TableCell>{89}</TableCell>*/}
                 <TableCell>
                   <div className="flex space-x-2">
-                    <Button variant="outline" size="icon">
-                      <Edit className="h-4 w-4" />
-                      <span className="sr-only">Edit</span>
-                    </Button>
-                    <Button variant="outline" size="icon">
-                      <Trash className="h-4 w-4" />
-                      <span className="sr-only">Delete</span>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => handleViewTicket(ticket.imageUrl)}
+                    >
+                      <Eye className="h-4 w-4" />
+                      <span className="sr-only">View Ticket</span>
                     </Button>
                   </div>
                 </TableCell>
