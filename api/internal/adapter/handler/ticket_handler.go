@@ -74,9 +74,10 @@ func ListDashboardTickets(c echo.Context) error {
 
 	for _, ticket := range tickets {
 		ticketDto := dto.SimpleDashboardTicket{
-			Id:       ticket.ID,
-			Name:     ticket.Name,
-			Quantity: ticket.Quantity,
+			Id:        ticket.ID,
+			Name:      ticket.Name,
+			Quantity:  ticket.Quantity,
+			MintPrice: ticket.MintPrice,
 		}
 		ticketDtos = append(ticketDtos, ticketDto)
 	}
