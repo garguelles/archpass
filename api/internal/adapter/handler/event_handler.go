@@ -108,17 +108,13 @@ func GetDashboardEvent(c echo.Context) error {
 		return c.JSON(http.StatusForbidden, dto.ErrorResponse{Message: "Unable to cast claims."})
 	}
 
-	idParam := c.QueryParam("id")
-	if idParam == "" {
+	slug := c.QueryParam("slug")
+	if slug == "" {
 		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{Message: "'id' parameter is required."})
-	}
-	id, err := strconv.Atoi(idParam)
-	if err != nil || id <= 0 {
-		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{Message: "'id' parameter is invalid"})
 	}
 
 	eventRepo := repository.NewEventRepository(&ctx)
-	event, err := eventRepo.GetByIdAndOrganizerId(id, claims.Id)
+	event, err := eventRepo.GetBySlugAndOrganizerId(slug, claims.Id)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Message: err.Error()})
 	}
