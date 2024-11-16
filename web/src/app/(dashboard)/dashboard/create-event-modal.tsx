@@ -17,6 +17,7 @@ import { Label } from '@/components/ui/label';
 import type { Address, ContractFunctionParameters } from 'viem';
 import {
   BASE_SEPOLIA_CHAIN_ID,
+  eventFactoryABI,
   mintABI,
   mintContractAddress,
 } from '@/constants';
@@ -29,6 +30,7 @@ import {
   TransactionStatusAction,
   TransactionStatusLabel,
 } from '@coinbase/onchainkit/transaction';
+import { AP_EVENT_FACTORY_CONTRACT_ADDRESS } from '@/config';
 
 type FormData = {
   eventName: string;
@@ -38,7 +40,7 @@ type FormData = {
   headerImage: string;
 };
 
-export function CreateEventModal({ address }: { address: Address }) {
+export function CreateEventModal() {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const {
@@ -46,15 +48,16 @@ export function CreateEventModal({ address }: { address: Address }) {
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>();
-
   const contracts = [
     {
-      address: mintContractAddress,
-      abi: mintABI,
-      functionName: 'mint',
-      args: [address],
+      address: AP_EVENT_FACTORY_CONTRACT_ADDRESS,
+      abi: eventFactoryABI,
+      functionName: 'createEvent',
+      args: ['0xtesthash'],
     },
   ] as unknown as ContractFunctionParameters[];
+
+  console.log('CONTRACTS', contracts);
 
   const onSubmit = (data: FormData) => {
     // In a real app, you would send this data to your backend
