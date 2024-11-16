@@ -25,7 +25,6 @@ export async function GET(request: NextRequest) {
   const principal = Signer.parse(process.env.W3_KEY ?? '');
   const store = new StoreMemory();
   const client = await create({ principal, store });
-  console.log(process.env.W3_KEY)
   const proof = await proofParse(process.env.W3_ADMIN_PROOF ?? '');
   await client.addSpace(proof);
 
@@ -41,7 +40,6 @@ export async function GET(request: NextRequest) {
   const delegation = await client.createDelegation(audience, abilities, {
     expiration,
   });
-
   const archive = await delegation.archive();
   return new Response(archive.ok, {
     headers: {
