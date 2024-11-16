@@ -49,7 +49,7 @@ func Router() *echo.Echo {
 
 	// Auth handlers
 	r.GET("/nonce", handler.Nonce)
-	r.GET("/verify", handler.Verify)
+	r.POST("/verify", handler.Verify)
 
 	// Public event
 	r.GET("/event.get", handler.GetEvent)

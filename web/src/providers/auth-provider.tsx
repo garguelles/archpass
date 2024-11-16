@@ -90,7 +90,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         uri: window.location.origin,
         version: '1',
         nonce,
-        chainId: DEFAULT_CHAIN_ID,
+        chainId: Number(DEFAULT_CHAIN_ID!),
       });
       return { message: message.prepareMessage(), nonce };
     },
