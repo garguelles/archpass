@@ -3,6 +3,8 @@ package handler
 import (
 	// "bytes"
 	"context"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+
 	// "encoding/hex"
 	"fmt"
 
@@ -47,6 +49,17 @@ func createMessageHash(message string) (common.Hash, error) {
 
 	// Hash the prefixed message
 	return crypto.Keccak256Hash([]byte(prefixedMessage)), nil
+}
+
+// SmartWallet is the interface for the ERC-4337 compatible smart wallet
+type SmartWallet interface {
+	IsValidSignature(opts *bind.CallOpts, hash [32]byte, signature []byte) ([4]byte, error)
+}
+
+type VerifyInput struct {
+	Message   string `json:"message"`
+	Signature string `json:"signature"`
+	Nonce     string `json:"nonce"`
 }
 
 func Nonce(c echo.Context) error {
