@@ -55,7 +55,7 @@ func Verify(c echo.Context) error {
 	var user ent.User
 	user, err = userRepo.FindByWalletAddress(walletAddress)
 	if ent.IsNotFound(err) {
-		user, err = userRepo.Create(dto.CreateUserInput{WalletAddress: walletAddress})
+		user, err = userRepo.Create(dto.CreateUserInput{WalletAddress: walletAddress, Bio: "Test Bio"})
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, dto.ErrorResponse{Message: err.Error()})
 		}

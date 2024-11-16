@@ -57,16 +57,19 @@ func (e *EventRepository) Create(input dto.CreateEventInput, userId int) (ent.Ev
 		return ent.Event{}, nil
 	}
 
+	fmt.Println(slug)
 	event, err := e.client.Event.
 		Create().
 		SetName(input.Name).
 		SetEventSlug(slug).
 		SetDate(input.Date).
 		SetContractAddress(input.ContractAddress).
+		SetLocation(input.Location).
+		SetUserID(userId).
 		// SetStartDate(input.StartDate).
 		// SetEndDate(input.EndDate).
 		SetDescription(input.Description).
-		SetImageURL(*input.ImageUrl).
+		SetImageURL("demo").
 		Save(*e.ctx)
 	if err != nil {
 		return ent.Event{}, err
