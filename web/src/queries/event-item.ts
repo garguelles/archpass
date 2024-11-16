@@ -8,7 +8,7 @@ export function useEventItemQuery(eventSlug: string) {
     queryFn: async () => {
       const api = createAuthenticatedClient();
       const { data: eventItem } = await api.get(`/admin/event.get`, {
-        params: { id: eventSlug },
+        params: { slug: eventSlug },
       });
 
       return eventItem;
