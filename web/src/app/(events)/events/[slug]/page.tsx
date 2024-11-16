@@ -29,6 +29,7 @@ import {
 import { BASE_SEPOLIA_CHAIN_ID, eventABI } from '@/constants';
 import { useCallback, useEffect, useState } from 'react';
 import { type Address, parseEther } from 'viem';
+import { AttestationsModal } from './attestations-modal';
 
 // This would typically come from a database or API
 const eventData = {
@@ -52,10 +53,45 @@ const eventData = {
   },
 };
 
+// Mock attestation data
+const mockAttestations = [
+  {
+    id: '1',
+    attester: '0x1234...5678',
+    reaction: '👍',
+    review: 'Great event! Learned a lot and met amazing people.',
+  },
+  {
+    id: '2',
+    attester: 'vitalik.eth',
+    reaction: '👍',
+    review: 'Impressive organization and valuable content.',
+  },
+  {
+    id: '3',
+    attester: '0xabcd...efgh',
+    reaction: '👎',
+    review: 'The venue was too small for the number of attendees.',
+  },
+  {
+    id: '4',
+    attester: 'ethereum.eth',
+    reaction: '👍',
+    review: 'Fantastic networking opportunities and insightful talks.',
+  },
+  {
+    id: '5',
+    attester: '0x9876...5432',
+    reaction: '👍',
+    review: 'Well-organized event with a diverse range of topics.',
+  },
+];
+
 export default function EventPage({ params }: { params: { slug: string } }) {
   const { event } = usePublicEventItemQuery(params.slug);
   const [selectedTicketContract, setSelectedTicketContract] =
     useState<string>('');
+  const [isAttestationsModalOpen, setIsAttestationsModalOpen] = useState(false);
 
   useEffect(() => {
     console.log('THE CONTRACT', selectedTicketContract);
@@ -139,13 +175,23 @@ export default function EventPage({ params }: { params: { slug: string } }) {
                   <p className="text-sm text-muted-foreground">
                     {event?.organizer?.description}
                   </p>
-                  <Link
+                  {/*<Link
                     href="#reviews"
                     className="text-sm text-primary flex items-center hover:underline"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setIsAttestationsModalOpen(true);
+                    }}
                   >
                     <StarIcon className="mr-1 h-4 w-4" />
                     {eventData.organizer.reviewCount} attestations
-                  </Link>
+                  </Link>*/}
+                  <button
+                    className="text-sm text-blue-500 hover:underline"
+                    onClick={() => setIsAttestationsModalOpen(true)}
+                  >
+                    {mockAttestations.length} attestations
+                  </button>
                 </div>
               </CardContent>
             </Card>
@@ -213,6 +259,13 @@ export default function EventPage({ params }: { params: { slug: string } }) {
           </Card>
         </div>
       </main>
+
+      <AttestationsModal
+        isOpen={isAttestationsModalOpen}
+        onClose={() => setIsAttestationsModalOpen(false)}
+        attestations={mockAttestations}
+        eventId={event?.id}
+      />
     </div>
   );
 }
