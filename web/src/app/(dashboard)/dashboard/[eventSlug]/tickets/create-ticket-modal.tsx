@@ -1,5 +1,4 @@
-import { useCallback, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -7,26 +6,27 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Plus } from 'lucide-react';
 import { AP_EVENT_FACTORY_CONTRACT_ADDRESS } from '@/config';
 import { BASE_SEPOLIA_CHAIN_ID, eventFactoryABI } from '@/constants';
-import { type ContractFunctionParameters, parseEther } from 'viem';
+import { useUpload } from '@/hooks/useUpload';
+import { useCreateTicketMutation } from '@/queries/create-ticket';
+import { useCreateTicketImageMutation } from '@/queries/create-ticket-image';
+import type { TEvent } from '@/types';
 import {
   Transaction,
   TransactionButton,
-  TransactionError,
-  TransactionResponse,
+  type TransactionError,
+  type TransactionResponse,
   TransactionStatus,
   TransactionStatusAction,
   TransactionStatusLabel,
 } from '@coinbase/onchainkit/transaction';
-import { TEvent } from '@/types';
-import { useCreateTicketMutation } from '@/queries/create-ticket';
-import { useCreateTicketImageMutation } from '@/queries/create-ticket-image';
-import { useUpload } from '@/hooks/useUpload';
+import { Plus } from 'lucide-react';
+import { useCallback, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { type ContractFunctionParameters, parseEther } from 'viem';
 
 type TicketFormData = {
   name: string;
@@ -131,7 +131,7 @@ export function CreateTicketModal({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+      <DialogTrigger asChild={true}>
         <Button>
           <Plus className="mr-2 h-4 w-4" /> Create Ticket
         </Button>

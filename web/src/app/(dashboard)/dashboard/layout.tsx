@@ -1,10 +1,6 @@
 'use client';
-
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { LayoutDashboard, Tickets, Users, Settings } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 
 import '@/app/global.css';
 import '@coinbase/onchainkit/styles.css';

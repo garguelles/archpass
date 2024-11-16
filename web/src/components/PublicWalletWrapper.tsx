@@ -15,16 +15,6 @@ import {
   WalletDropdownFundLink,
   WalletDropdownLink,
 } from '@coinbase/onchainkit/wallet';
-import { useAccount, useDisconnect } from 'wagmi';
-import {
-  AlertDialog,
-  AlertDialogHeader,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogTitle,
-} from './ui/alert-dialog';
-import { Button } from './ui/button';
-import { FilePen } from 'lucide-react';
 
 type WalletWrapperParams = {
   text?: string;

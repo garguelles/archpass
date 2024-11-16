@@ -1,8 +1,14 @@
 'use client';
 
-import { useState } from 'react';
-import { useParams } from 'next/navigation';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import {
   Table,
   TableBody,
@@ -11,15 +17,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Eye } from 'lucide-react';
+import { useParams } from 'next/navigation';
+import { useState } from 'react';
 
 // Mock data for attendees
 const attendeesData = [
@@ -102,7 +102,7 @@ export default function AttendeesPage() {
                 <TableCell>{attendee.purchaseDate}</TableCell>
                 <TableCell>
                   <Dialog>
-                    <DialogTrigger asChild>
+                    <DialogTrigger asChild={true}>
                       <Button
                         variant="outline"
                         size="icon"

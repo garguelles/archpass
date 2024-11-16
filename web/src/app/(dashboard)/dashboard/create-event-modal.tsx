@@ -1,5 +1,4 @@
-import { useCallback, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -7,23 +6,24 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import type { ContractFunctionParameters } from 'viem';
+import { Textarea } from '@/components/ui/textarea';
+import { AP_EVENT_FACTORY_CONTRACT_ADDRESS } from '@/config';
 import { BASE_SEPOLIA_CHAIN_ID, eventFactoryABI } from '@/constants';
+import { useCreateEventMutation } from '@/queries/create-event';
 import {
   Transaction,
   TransactionButton,
-  TransactionError,
-  TransactionResponse,
+  type TransactionError,
+  type TransactionResponse,
   TransactionStatus,
   TransactionStatusAction,
   TransactionStatusLabel,
 } from '@coinbase/onchainkit/transaction';
-import { AP_EVENT_FACTORY_CONTRACT_ADDRESS } from '@/config';
-import { useCreateEventMutation } from '@/queries/create-event';
+import { useCallback, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import type { ContractFunctionParameters } from 'viem';
 
 type FormData = {
   eventName: string;
@@ -82,7 +82,7 @@ export function CreateEventModal({ refetchEventList }: CreateEventModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+      <DialogTrigger asChild={true}>
         <Button>Create Event</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">

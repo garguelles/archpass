@@ -4,10 +4,9 @@ import { NEXT_PUBLIC_URL } from '../../config';
 import '../global.css';
 import '@coinbase/onchainkit/styles.css';
 import '@rainbow-me/rainbowkit/styles.css';
-import dynamic from 'next/dynamic';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 import LoginButton from '@/components/LoginButton';
+import dynamic from 'next/dynamic';
+import Link from 'next/link';
 
 const OnchainProviders = dynamic(
   () => import('@/components/OnchainProviders'),

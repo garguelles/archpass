@@ -17,4 +17,5 @@ export type TTicket = {
   quantity: number;
   imageUrl: string;
   contractAddress: string;
+  tokenId: number;
 };
