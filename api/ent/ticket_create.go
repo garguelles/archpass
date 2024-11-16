@@ -74,6 +74,20 @@ func (tc *TicketCreate) SetNillableTicketHash(s *string) *TicketCreate {
 	return tc
 }
 
+// SetImageURL sets the "image_url" field.
+func (tc *TicketCreate) SetImageURL(s string) *TicketCreate {
+	tc.mutation.SetImageURL(s)
+	return tc
+}
+
+// SetNillableImageURL sets the "image_url" field if the given value is not nil.
+func (tc *TicketCreate) SetNillableImageURL(s *string) *TicketCreate {
+	if s != nil {
+		tc.SetImageURL(*s)
+	}
+	return tc
+}
+
 // SetContractAddress sets the "contract_address" field.
 func (tc *TicketCreate) SetContractAddress(s string) *TicketCreate {
 	tc.mutation.SetContractAddress(s)
@@ -298,6 +312,10 @@ func (tc *TicketCreate) createSpec() (*Ticket, *sqlgraph.CreateSpec) {
 		_spec.SetField(ticket.FieldTicketHash, field.TypeString, value)
 		_node.TicketHash = value
 	}
+	if value, ok := tc.mutation.ImageURL(); ok {
+		_spec.SetField(ticket.FieldImageURL, field.TypeString, value)
+		_node.ImageURL = value
+	}
 	if value, ok := tc.mutation.ContractAddress(); ok {
 		_spec.SetField(ticket.FieldContractAddress, field.TypeString, value)
 		_node.ContractAddress = value
@@ -496,6 +514,24 @@ func (u *TicketUpsert) UpdateTicketHash() *TicketUpsert {
 // ClearTicketHash clears the value of the "ticket_hash" field.
 func (u *TicketUpsert) ClearTicketHash() *TicketUpsert {
 	u.SetNull(ticket.FieldTicketHash)
+	return u
+}
+
+// SetImageURL sets the "image_url" field.
+func (u *TicketUpsert) SetImageURL(v string) *TicketUpsert {
+	u.Set(ticket.FieldImageURL, v)
+	return u
+}
+
+// UpdateImageURL sets the "image_url" field to the value that was provided on create.
+func (u *TicketUpsert) UpdateImageURL() *TicketUpsert {
+	u.SetExcluded(ticket.FieldImageURL)
+	return u
+}
+
+// ClearImageURL clears the value of the "image_url" field.
+func (u *TicketUpsert) ClearImageURL() *TicketUpsert {
+	u.SetNull(ticket.FieldImageURL)
 	return u
 }
 
@@ -726,6 +762,27 @@ func (u *TicketUpsertOne) UpdateTicketHash() *TicketUpsertOne {
 func (u *TicketUpsertOne) ClearTicketHash() *TicketUpsertOne {
 	return u.Update(func(s *TicketUpsert) {
 		s.ClearTicketHash()
+	})
+}
+
+// SetImageURL sets the "image_url" field.
+func (u *TicketUpsertOne) SetImageURL(v string) *TicketUpsertOne {
+	return u.Update(func(s *TicketUpsert) {
+		s.SetImageURL(v)
+	})
+}
+
+// UpdateImageURL sets the "image_url" field to the value that was provided on create.
+func (u *TicketUpsertOne) UpdateImageURL() *TicketUpsertOne {
+	return u.Update(func(s *TicketUpsert) {
+		s.UpdateImageURL()
+	})
+}
+
+// ClearImageURL clears the value of the "image_url" field.
+func (u *TicketUpsertOne) ClearImageURL() *TicketUpsertOne {
+	return u.Update(func(s *TicketUpsert) {
+		s.ClearImageURL()
 	})
 }
 
@@ -1133,6 +1190,27 @@ func (u *TicketUpsertBulk) UpdateTicketHash() *TicketUpsertBulk {
 func (u *TicketUpsertBulk) ClearTicketHash() *TicketUpsertBulk {
 	return u.Update(func(s *TicketUpsert) {
 		s.ClearTicketHash()
+	})
+}
+
+// SetImageURL sets the "image_url" field.
+func (u *TicketUpsertBulk) SetImageURL(v string) *TicketUpsertBulk {
+	return u.Update(func(s *TicketUpsert) {
+		s.SetImageURL(v)
+	})
+}
+
+// UpdateImageURL sets the "image_url" field to the value that was provided on create.
+func (u *TicketUpsertBulk) UpdateImageURL() *TicketUpsertBulk {
+	return u.Update(func(s *TicketUpsert) {
+		s.UpdateImageURL()
+	})
+}
+
+// ClearImageURL clears the value of the "image_url" field.
+func (u *TicketUpsertBulk) ClearImageURL() *TicketUpsertBulk {
+	return u.Update(func(s *TicketUpsert) {
+		s.ClearImageURL()
 	})
 }
 

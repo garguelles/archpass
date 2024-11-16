@@ -78,6 +78,7 @@ func ListDashboardTickets(c echo.Context) error {
 			Name:      ticket.Name,
 			Quantity:  ticket.Quantity,
 			MintPrice: ticket.MintPrice,
+			ImageUrl:  ticket.ImageURL,
 		}
 		ticketDtos = append(ticketDtos, ticketDto)
 	}

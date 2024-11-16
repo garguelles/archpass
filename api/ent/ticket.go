@@ -33,6 +33,8 @@ type Ticket struct {
 	EventID int `json:"event_id,omitempty"`
 	// TicketHash holds the value of the "ticket_hash" field.
 	TicketHash string `json:"ticket_hash,omitempty"`
+	// ImageURL holds the value of the "image_url" field.
+	ImageURL string `json:"image_url,omitempty"`
 	// ContractAddress holds the value of the "contract_address" field.
 	ContractAddress string `json:"contract_address,omitempty"`
 	// TransactionHash holds the value of the "transaction_hash" field.
@@ -89,7 +91,7 @@ func (*Ticket) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case ticket.FieldID, ticket.FieldQuantity, ticket.FieldEventID:
 			values[i] = new(sql.NullInt64)
-		case ticket.FieldName, ticket.FieldDescription, ticket.FieldTicketSlug, ticket.FieldMintPrice, ticket.FieldTicketHash, ticket.FieldContractAddress, ticket.FieldTransactionHash, ticket.FieldBlockNumber:
+		case ticket.FieldName, ticket.FieldDescription, ticket.FieldTicketSlug, ticket.FieldMintPrice, ticket.FieldTicketHash, ticket.FieldImageURL, ticket.FieldContractAddress, ticket.FieldTransactionHash, ticket.FieldBlockNumber:
 			values[i] = new(sql.NullString)
 		case ticket.FieldCreatedAt, ticket.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -155,6 +157,12 @@ func (t *Ticket) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field ticket_hash", values[i])
 			} else if value.Valid {
 				t.TicketHash = value.String
+			}
+		case ticket.FieldImageURL:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field image_url", values[i])
+			} else if value.Valid {
+				t.ImageURL = value.String
 			}
 		case ticket.FieldContractAddress:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -252,6 +260,9 @@ func (t *Ticket) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("ticket_hash=")
 	builder.WriteString(t.TicketHash)
+	builder.WriteString(", ")
+	builder.WriteString("image_url=")
+	builder.WriteString(t.ImageURL)
 	builder.WriteString(", ")
 	builder.WriteString("contract_address=")
 	builder.WriteString(t.ContractAddress)

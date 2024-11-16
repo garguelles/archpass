@@ -28,6 +28,8 @@ const (
 	FieldEventID = "event_id"
 	// FieldTicketHash holds the string denoting the ticket_hash field in the database.
 	FieldTicketHash = "ticket_hash"
+	// FieldImageURL holds the string denoting the image_url field in the database.
+	FieldImageURL = "image_url"
 	// FieldContractAddress holds the string denoting the contract_address field in the database.
 	FieldContractAddress = "contract_address"
 	// FieldTransactionHash holds the string denoting the transaction_hash field in the database.
@@ -70,6 +72,7 @@ var Columns = []string{
 	FieldQuantity,
 	FieldEventID,
 	FieldTicketHash,
+	FieldImageURL,
 	FieldContractAddress,
 	FieldTransactionHash,
 	FieldBlockNumber,
@@ -139,6 +142,11 @@ func ByEventID(opts ...sql.OrderTermOption) OrderOption {
 // ByTicketHash orders the results by the ticket_hash field.
 func ByTicketHash(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTicketHash, opts...).ToFunc()
+}
+
+// ByImageURL orders the results by the image_url field.
+func ByImageURL(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldImageURL, opts...).ToFunc()
 }
 
 // ByContractAddress orders the results by the contract_address field.

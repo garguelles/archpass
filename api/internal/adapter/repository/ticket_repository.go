@@ -85,6 +85,7 @@ func (t *TicketRepository) Create(input dto.CreateTicketInput, userId int) (ent.
 		SetEventID(input.EventId).
 		SetQuantity(input.Quantity).
 		SetMintPrice(input.MintPrice).
+		SetImageURL(input.ImageUrl).
 		Save(*t.ctx)
 	if err != nil {
 		return ent.Ticket{}, err

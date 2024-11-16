@@ -62,7 +62,7 @@ const canvas = createCanvas(width, height);
 const context = canvas.getContext('2d');
 
 // Main function to generate the ticket
-function generateTicket({ eventName, eventLocation, eventDate, attendeeName }) {
+function generateTicket({ eventName, eventLocation, eventDate, attendeeName, ticketName }) {
   // Background setup
   context.fillStyle = '#FFFFFF';
   context.fillRect(0, 0, width, height);
@@ -82,7 +82,7 @@ function generateTicket({ eventName, eventLocation, eventDate, attendeeName }) {
   context.font = '400 26px "Space Grotesk"';
   context.fillStyle = '#0C1527';
   context.textAlign = 'center';
-  context.fillText('ATTENDEE', width / 2, headerHeight / 2 + 18);
+  context.fillText(ticketName, width / 2, headerHeight / 2 + 18);
 
   // Event Logo Section
   const logoBoxWidth = 300;

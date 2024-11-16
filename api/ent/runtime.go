@@ -49,11 +49,11 @@ func init() {
 	// ticket.TicketSlugValidator is a validator for the "ticket_slug" field. It is called by the builders before save.
 	ticket.TicketSlugValidator = ticketDescTicketSlug.Validators[0].(func(string) error)
 	// ticketDescCreatedAt is the schema descriptor for created_at field.
-	ticketDescCreatedAt := ticketFields[10].Descriptor()
+	ticketDescCreatedAt := ticketFields[11].Descriptor()
 	// ticket.DefaultCreatedAt holds the default value on creation for the created_at field.
 	ticket.DefaultCreatedAt = ticketDescCreatedAt.Default.(func() time.Time)
 	// ticketDescUpdatedAt is the schema descriptor for updated_at field.
-	ticketDescUpdatedAt := ticketFields[11].Descriptor()
+	ticketDescUpdatedAt := ticketFields[12].Descriptor()
 	// ticket.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	ticket.DefaultUpdatedAt = ticketDescUpdatedAt.Default.(func() time.Time)
 	// ticket.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.

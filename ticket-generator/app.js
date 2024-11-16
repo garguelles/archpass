@@ -6,14 +6,14 @@ const app = express();
 app.use(express.json());
 
 app.post('/generate-ticket', (req, res) => {
-    const { eventName, eventLocation, eventDate, attendeeName } = req.body;
+    const { eventName, eventLocation, eventDate, attendeeName, ticketName } = req.body;
 
-    if (!eventName || !eventLocation || !eventDate || !attendeeName) {
+    if (!eventName || !eventLocation || !eventDate || !attendeeName || !ticketName) {
         return res.status(400).json({ error: 'Missing required fields' });
     }
 
     try {
-        const imageBuffer = generateTicket({ eventName, eventLocation, eventDate, attendeeName });
+        const imageBuffer = generateTicket({ eventName, eventLocation, eventDate, attendeeName, ticketName });
         res.setHeader('Content-Type', 'image/png');
         res.send(imageBuffer);
     } catch (error) {
