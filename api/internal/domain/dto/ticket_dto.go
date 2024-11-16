@@ -23,8 +23,9 @@ type DashboardTicket struct {
 }
 
 type SimpleDashboardTicket struct {
-	Id   int    `json:"id"`
-	Name string `json:"name"`
+	Id       int    `json:"id"`
+	Name     string `json:"name"`
+	Quantity int    `json:"quantity"`
 }
 
 type PublicTicket struct {
