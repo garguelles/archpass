@@ -62,6 +62,7 @@ func (e *EventRepository) Create(input dto.CreateEventInput, userId int) (ent.Ev
 		SetName(input.Name).
 		SetEventSlug(slug).
 		SetDate(input.Date).
+		SetContractAddress(input.ContractAddress).
 		// SetStartDate(input.StartDate).
 		// SetEndDate(input.EndDate).
 		SetDescription(input.Description).
