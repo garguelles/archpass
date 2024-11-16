@@ -16,11 +16,12 @@ type CreateEventInput struct {
 }
 
 type DashboardEvent struct {
-	Id          int    `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Location    string `json:"location"`
-	ImageUrl    string `json:"imageUrl"`
+	Id              int    `json:"id"`
+	Name            string `json:"name"`
+	Description     string `json:"description"`
+	Location        string `json:"location"`
+	ImageUrl        string `json:"imageUrl"`
+	ContractAddress string `json:"contractAddress"`
 	// StartDate   time.Time `json:"startDate"`
 	// EndDate     time.Time `json:"endDate"`
 	Date       string    `json:"date"`
@@ -30,10 +31,11 @@ type DashboardEvent struct {
 }
 
 type SimpleDashboardEvent struct {
-	Id       int    `json:"id"`
-	Name     string `json:"name"`
-	Location string `json:"location"`
-	ImageUrl string `json:"imageUrl"`
+	Id              int    `json:"id"`
+	Name            string `json:"name"`
+	Location        string `json:"location"`
+	ImageUrl        string `json:"imageUrl"`
+	ContractAddress string `json:"contractAddress"`
 	// StartDate  time.Time `json:"startDate"`
 	// EndDate    time.Time `json:"endDate"`
 	Date       string    `json:"date"`
