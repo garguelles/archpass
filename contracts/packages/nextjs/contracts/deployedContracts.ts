@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   84532: {
     Event: {
-      address: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+      address: "0x1916214Cefba2D9E21d15DBF98D7E9400D2f13c8",
       abi: [
         {
           inputs: [],
@@ -328,7 +328,7 @@ const deployedContracts = {
       },
     },
     EventFactory: {
-      address: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+      address: "0xf37242390fA265401Bf59331a587Dc07872B2Ce3",
       abi: [
         {
           inputs: [
@@ -751,7 +751,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     Ticket: {
-      address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      address: "0x22477c0E832CAfF1850926016A233172442A0ed1",
       abi: [
         {
           inputs: [
