@@ -43,6 +43,7 @@ export function CreateEventModal({ refetchEventList }: CreateEventModalProps) {
     register,
     formState: { errors },
     getValues,
+    reset,
   } = useForm<FormData>();
   const { mutateAsync } = useCreateEventMutation();
   const contracts = [
@@ -72,6 +73,7 @@ export function CreateEventModal({ refetchEventList }: CreateEventModalProps) {
 
       mutateAsync(payload).then(() => {
         setOpen(false);
+        reset();
         refetchEventList();
       });
     },

@@ -1,4 +1,4 @@
-'https://place-hold.it/800x400';
+'use client';
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -15,6 +15,8 @@ import { CalendarIcon, MapPinIcon, StarIcon } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { usePublicEventItemQuery } from '@/queries/public-event-item';
+import { TTicket } from '@/types';
 
 // This would typically come from a database or API
 const eventData = {
@@ -38,16 +40,15 @@ const eventData = {
   },
 };
 
-export default function EventPage({ params }: { params: { eventId: string } }) {
-  // In a real app, you'd fetch the event data based on the eventId
-  // const event = await getEvent(params.eventId)
+export default function EventPage({ params }: { params: { slug: string } }) {
+  const { event } = usePublicEventItemQuery(params.slug);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
       <header className="relative h-[400px] w-full">
         <Image
           src={eventData.imageUrl}
-          alt={eventData.name}
+          alt={event?.name}
           fill
           style={{ objectFit: 'cover' }}
           priority
@@ -55,12 +56,12 @@ export default function EventPage({ params }: { params: { eventId: string } }) {
         <div className="absolute inset-0 bg-black/60 flex items-end">
           <div className="container mx-auto px-4 py-6">
             <h1 className="text-4xl font-bold text-white mb-2">
-              {eventData.name}
+              {event?.name}
             </h1>
             <div className="flex items-center text-white/80 space-x-4">
               <span className="flex items-center">
                 <CalendarIcon className="mr-2 h-5 w-5" />
-                {eventData.date}
+                {event?.date}
               </span>
               <span className="flex items-center">
                 <MapPinIcon className="mr-2 h-5 w-5" />
@@ -81,8 +82,8 @@ export default function EventPage({ params }: { params: { eventId: string } }) {
               <CardContent className="flex items-center space-x-4">
                 <Avatar className="h-16 w-16">
                   <AvatarImage
-                    src={eventData.organizer.avatarUrl}
-                    alt={eventData.organizer.name}
+                    src={event?.organizer?.avatarUrl}
+                    alt={event?.organizer?.name}
                   />
                   <AvatarFallback>
                     {eventData.organizer.name.slice(0, 2).toUpperCase()}
@@ -90,10 +91,10 @@ export default function EventPage({ params }: { params: { eventId: string } }) {
                 </Avatar>
                 <div className="space-y-1">
                   <h3 className="text-lg font-semibold">
-                    {eventData.organizer.name}
+                    {event?.organizer?.name || event?.organizer?.walletAddress}
                   </h3>
                   <p className="text-sm text-muted-foreground">
-                    {eventData.organizer.description}
+                    {event?.organizer?.description}
                   </p>
                   <Link
                     href="#reviews"
@@ -111,7 +112,7 @@ export default function EventPage({ params }: { params: { eventId: string } }) {
                 <CardTitle>About This Event</CardTitle>
               </CardHeader>
               <CardContent>
-                <p>{eventData.description}</p>
+                <p>{event?.description}</p>
               </CardContent>
             </Card>
           </div>
@@ -125,15 +126,18 @@ export default function EventPage({ params }: { params: { eventId: string } }) {
             </CardHeader>
             <CardContent>
               <RadioGroup defaultValue="general" className="space-y-4">
-                {eventData.tickets.map((ticket) => (
+                {event?.tickets.map((ticket: TTicket) => (
                   <div key={ticket.id} className="flex items-center space-x-2">
-                    <RadioGroupItem value={ticket.id} id={ticket.id} />
+                    <RadioGroupItem
+                      value={ticket?.contractAddress}
+                      id={ticket.contractAddress}
+                    />
                     <Label
-                      htmlFor={ticket.id}
+                      htmlFor={ticket.contractAddress}
                       className="flex justify-between w-full"
                     >
-                      <span>{ticket.name}</span>
-                      <span>{ticket.price}</span>
+                      <span>{ticket?.name}</span>
+                      <span>{ticket?.mintPrice} ETH</span>
                     </Label>
                   </div>
                 ))}
