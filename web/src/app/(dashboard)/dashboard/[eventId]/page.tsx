@@ -20,6 +20,7 @@ import {
   ArrowUpRight,
 } from 'lucide-react';
 import { EditEventModal } from './edit-event-modal';
+import { useEventItemQuery } from '@/queries/event-item';
 
 // Mock data (in a real app, this would come from an API or database)
 const initialEventData = {
@@ -42,7 +43,10 @@ const initialEventData = {
 export default function EventDashboard() {
   const [eventData, setEventData] = useState(initialEventData);
   const params = useParams();
-  const eventSlug = params.eventSlug as string;
+  const eventId = Number(params.eventId);
+  const { event } = useEventItemQuery(eventId);
+
+  console.log('THE EVENT', event);
 
   const handleEventUpdate = (updatedEvent: Partial<typeof eventData>) => {
     setEventData((prevData) => ({ ...prevData, ...updatedEvent }));
