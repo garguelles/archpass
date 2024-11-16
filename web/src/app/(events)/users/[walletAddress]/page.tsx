@@ -1,9 +1,12 @@
+'use client';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Twitter, Github, Linkedin } from 'lucide-react';
+import { NFTCard } from '@coinbase/onchainkit/nft';
+import { NFTTitle, NFTMedia } from '@coinbase/onchainkit/nft/view';
 
 // Mock data (in a real app, this would come from an API or database)
 const userData = {
@@ -97,18 +100,13 @@ export default function UserPage({
           <CardContent>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               {userData.tickets.map((ticket) => (
-                <Card key={ticket.id}>
-                  <CardContent className="p-4">
-                    <Image
-                      src={ticket.imageUrl}
-                      alt={ticket.name}
-                      width={300}
-                      height={300}
-                      className="rounded-lg mb-2"
-                    />
-                    <h3 className="font-semibold text-center">{ticket.name}</h3>
-                  </CardContent>
-                </Card>
+                <NFTCard
+                  contractAddress={'0xf8f546c998268d81a3ff4ea3358314cb430389f2'}
+                  tokenId="1"
+                >
+                  <NFTMedia />
+                  <NFTTitle />
+                </NFTCard>
               ))}
             </div>
           </CardContent>
