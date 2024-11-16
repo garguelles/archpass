@@ -37,6 +37,7 @@ type PublicTicket struct {
 	TicketSlug      string `json:"ticketSlug"`
 	MintPrice       string `json:"mintPrice"`
 	ContractAddress string `json:"contractAddress"`
+	ImageUrl        string `json:"imageUrl"`
 }
 
 type SimplePublicTicket struct {
@@ -48,8 +49,10 @@ type SimplePublicTicket struct {
 }
 
 type AttendeeSimpleTicket struct {
-	TicketSlug string `json:"ticketSlug"`
-	EventName  string `json:"eventName"`
+	TicketSlug      string `json:"ticketSlug"`
+	EventName       string `json:"eventName"`
+	ContractAddress string `json:"contractAddress"`
+	TokenId         int    `json:"tokenId"`
 }
 
 type AttendeeTicket struct {

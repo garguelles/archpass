@@ -11,7 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { CalendarIcon, MapPinIcon, StarIcon } from 'lucide-react';
+import { CalendarIcon, MapPinIcon, StarIcon, Ticket } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -29,6 +29,11 @@ import {
 import { BASE_SEPOLIA_CHAIN_ID, eventABI } from '@/constants';
 import { useCallback, useEffect, useState } from 'react';
 import { type Address, parseEther } from 'viem';
+import { useCreateTicketImageMutation } from '@/queries/create-ticket-image';
+import { useUpload } from "@/hooks/useUpload";
+import { getSlicedAddress } from "@/lib/utils"
+import {useAccount, useWriteContract} from "wagmi";
+import {DEFAULT_CHAIN_ID} from "@/config";
 
 // This would typically come from a database or API
 const eventData = {
@@ -53,9 +58,72 @@ const eventData = {
 };
 
 export default function EventPage({ params }: { params: { slug: string } }) {
+  const { address } = useAccount()
   const { event } = usePublicEventItemQuery(params.slug);
+  const { mutateAsync, isPending: isApiLoading } = useCreateTicketImageMutation();
+  const { upload, isLoading } = useUpload();
   const [selectedTicketContract, setSelectedTicketContract] =
     useState<string>('');
+  const {
+    data: hash,
+    writeContract,
+    error: contractError,
+    isPending,
+  } = useWriteContract();
+
+  const mintTicket = async () => {
+    if (!selectedTicketContract) {
+      return;
+    }
+
+    const ticket = event?.tickets.find(
+      (t: TTicket) => t.contractAddress === selectedTicketContract,
+    );
+
+    if (!ticket) {
+      return
+    }
+
+    const imageBlob = await mutateAsync({
+      eventName: event.name,
+      eventLocation: event.location,
+      eventDate: event.date,
+      attendeeName: `${getSlicedAddress(address)}`,
+      ticketName: ticket?.name?.toUpperCase(),
+    });
+
+    const uploadResponse = await upload({
+      image: imageBlob as File,
+      metadata: {
+        name: ticket?.name || '',
+        description: ticket?.description || '',
+        attributes: [{
+          trait_type: "eventName",
+          value: event.name,
+        }, {
+          trait_type: "eventLocation",
+          value: event.location,
+        }, {
+          trait_type: "eventDate",
+          value: event.date,
+        }],
+      },
+    });
+
+    if (!uploadResponse?.tokenURI) {
+      return
+    }
+
+    writeContract({
+      address: event?.contractAddress as Address,
+      abi: eventABI,
+      functionName: 'mintNFT',
+      args: [selectedTicketContract, uploadResponse?.tokenURI],
+      chainId: BASE_SEPOLIA_CHAIN_ID,
+      value: parseEther(ticket.mintPrice),
+    });
+
+  };
 
   useEffect(() => {
     console.log('THE CONTRACT', selectedTicketContract);
@@ -76,7 +144,37 @@ export default function EventPage({ params }: { params: { slug: string } }) {
     },
   ];
 
-  console.log('CONTRACTS', contracts);
+  // const t = async () => {
+  //   const ticket = event?.tickets.find(
+  //     (t: TTicket) => t.contractAddress === selectedTicketContract,
+  //   );
+  //
+  //   const imageBlob = await mutateAsync({
+  //     eventName: event.name,
+  //     eventLocation: event.location,
+  //     eventDate: event.date,
+  //     attendeeName: `[${getSlicedAddress(address)}]`,
+  //     ticketName: ticket?.name?.toUpperCase(),
+  //   });
+  //
+  //   const uploadResponse = await upload({
+  //     image: imageBlob as File,
+  //     metadata: {
+  //       name: ticket?.name || '',
+  //       description: ticket?.description || '',
+  //       attributes: [{
+  //         trait_type: "eventName",
+  //         value: event.name,
+  //       }, {
+  //         trait_type: "eventLocation",
+  //         value: event.location,
+  //       }, {
+  //         trait_type: "eventDate",
+  //         value: event.date,
+  //       }],
+  //     },
+  //   });
+  // }
 
   const handleError = useCallback((err: TransactionError) => {
     console.error('Transaction error:', err);
@@ -170,7 +268,6 @@ export default function EventPage({ params }: { params: { slug: string } }) {
             <CardContent>
               <RadioGroup
                 onValueChange={(value: string) => {
-                  console.log('VALUE', value);
                   value && setSelectedTicketContract(value);
                 }}
                 defaultValue="general"
@@ -194,21 +291,34 @@ export default function EventPage({ params }: { params: { slug: string } }) {
               </RadioGroup>
             </CardContent>
             <CardFooter>
-              <Transaction
-                contracts={contracts}
-                chainId={BASE_SEPOLIA_CHAIN_ID}
-                onError={handleError}
-                onSuccess={handleSuccess}
+              <Button
+                onClick={() => mintTicket()}
+                className="w-full"
+                disabled={isApiLoading || isLoading || isPending || !selectedTicketContract}
               >
-                <TransactionButton
-                  text="Mint ticket"
-                  className="mt-0 mr-auto ml-auto max-w-full text-[white]"
-                />
-                <TransactionStatus>
-                  <TransactionStatusLabel />
-                  <TransactionStatusAction />
-                </TransactionStatus>
-              </Transaction>
+                <Ticket className="mr-2 h-4 w-4" /> Mint Ticket
+              </Button>
+              {/*<Transaction*/}
+              {/*  contracts={contracts}*/}
+              {/*  chainId={BASE_SEPOLIA_CHAIN_ID}*/}
+              {/*  onError={handleError}*/}
+              {/*  onSuccess={handleSuccess}*/}
+              {/*  onStatus={async (status) => {*/}
+              {/*    console.log(status)*/}
+              {/*    if (status.statusName === "init") {*/}
+
+              {/*    }*/}
+              {/*  }}*/}
+              {/*>*/}
+              {/*  <TransactionButton*/}
+              {/*    text="Mint ticket"*/}
+              {/*    className="mt-0 mr-auto ml-auto max-w-full text-[white]"*/}
+              {/*  />*/}
+              {/*  <TransactionStatus>*/}
+              {/*    <TransactionStatusLabel />*/}
+              {/*    <TransactionStatusAction />*/}
+              {/*  </TransactionStatus>*/}
+              {/*</Transaction>*/}
             </CardFooter>
           </Card>
         </div>

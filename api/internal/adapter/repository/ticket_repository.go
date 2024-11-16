@@ -179,7 +179,7 @@ func (t *TicketRepository) GetByAttendee(walletAddress string) (ent.Attendees, e
 func (t *TicketRepository) GetByContractAddress(walletAddress string) (ent.Ticket, error) {
 	ticket, err := t.client.Ticket.
 		Query().
-		Where(ticket.ContractAddressEQ(walletAddress)).
+		Where(ticket.ContractAddressEqualFold(walletAddress)).
 		Only(*t.ctx)
 	if err != nil {
 		return ent.Ticket{}, err

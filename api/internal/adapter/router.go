@@ -53,6 +53,7 @@ func Router() *echo.Echo {
 
 	// Public event
 	r.GET("/event.get", handler.GetEvent)
+	r.GET("/attendeeTicket.get", handler.GetAttendeeTickets)
 
 	// Private routes
 	p := r.Group("")

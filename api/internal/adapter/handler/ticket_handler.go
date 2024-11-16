@@ -142,8 +142,10 @@ func GetAttendeeTickets(c echo.Context) error {
 		}
 
 		tickets = append(tickets, dto.AttendeeSimpleTicket{
-			TicketSlug: ticket.TicketSlug,
-			EventName:  event.Name,
+			TicketSlug:      ticket.TicketSlug,
+			EventName:       event.Name,
+			TokenId:         attendee.TokenID,
+			ContractAddress: ticket.ContractAddress,
 		})
 	}
 

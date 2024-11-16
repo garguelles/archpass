@@ -35,7 +35,6 @@ func startWalletIndexer() {
 	}
 
 	ctx := context.Background()
-	fmt.Println("Starting indexer")
 	client, err := ethclient.Dial(chainUrl)
 	if err != nil {
 		fmt.Println(err)
@@ -52,7 +51,7 @@ func startWalletIndexer() {
 		log.Fatal("Failed to convert LAST_POLLED_BLOCK to a big.Int")
 	}
 
-	ticker := time.NewTicker(3 * time.Second)
+	ticker := time.NewTicker(6 * time.Second)
 	defer ticker.Stop()
 
 	for {

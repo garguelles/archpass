@@ -43,7 +43,7 @@ func (u *UserRepository) List() (ent.Users, error) {
 func (u *UserRepository) FindByWalletAddress(walletAddress string) (ent.User, error) {
 	user, err := u.client.
 		User.Query().
-		Where(user.WalletAddress(walletAddress)).
+		Where(user.WalletAddressEqualFold(walletAddress)).
 		Only(*u.ctx)
 
 	if err != nil {

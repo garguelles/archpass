@@ -183,6 +183,7 @@ export function CreateTicketModal({
           <Transaction
             contracts={contracts}
             chainId={BASE_SEPOLIA_CHAIN_ID}
+            onStatus={}
             onError={handleError}
             onSuccess={handleSuccess}
           >

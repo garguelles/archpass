@@ -45,9 +45,10 @@ type SimpleDashboardEvent struct {
 }
 
 type PublicEvent struct {
-	Name     string `json:"name"`
-	Location string `json:"location"`
-	ImageUrl string `json:"imageUrl"`
+	Name        string `json:"name"`
+	Location    string `json:"location"`
+	ImageUrl    string `json:"imageUrl"`
+	Description string `json:"description"`
 	// StartDate       time.Time      `json:"startDate"`
 	// EndDate         time.Time      `json:"endDate"`
 	Date            string         `json:"date"`
