@@ -30,10 +30,10 @@ import { BASE_SEPOLIA_CHAIN_ID, eventABI } from '@/constants';
 import { useCallback, useEffect, useState } from 'react';
 import { type Address, parseEther } from 'viem';
 import { useCreateTicketImageMutation } from '@/queries/create-ticket-image';
-import { useUpload } from "@/hooks/useUpload";
-import { getSlicedAddress } from "@/lib/utils"
-import {useAccount, useWriteContract} from "wagmi";
-import {DEFAULT_CHAIN_ID} from "@/config";
+import { useUpload } from '@/hooks/useUpload';
+import { getSlicedAddress } from '@/lib/utils';
+import { useAccount, useWriteContract } from 'wagmi';
+import { DEFAULT_CHAIN_ID } from '@/config';
 
 // This would typically come from a database or API
 const eventData = {
@@ -58,9 +58,10 @@ const eventData = {
 };
 
 export default function EventPage({ params }: { params: { slug: string } }) {
-  const { address } = useAccount()
+  const { address } = useAccount();
   const { event } = usePublicEventItemQuery(params.slug);
-  const { mutateAsync, isPending: isApiLoading } = useCreateTicketImageMutation();
+  const { mutateAsync, isPending: isApiLoading } =
+    useCreateTicketImageMutation();
   const { upload, isLoading } = useUpload();
   const [selectedTicketContract, setSelectedTicketContract] =
     useState<string>('');
@@ -81,7 +82,7 @@ export default function EventPage({ params }: { params: { slug: string } }) {
     );
 
     if (!ticket) {
-      return
+      return;
     }
 
     const imageBlob = await mutateAsync({
@@ -97,32 +98,35 @@ export default function EventPage({ params }: { params: { slug: string } }) {
       metadata: {
         name: ticket?.name || '',
         description: ticket?.description || '',
-        attributes: [{
-          trait_type: "eventName",
-          value: event.name,
-        }, {
-          trait_type: "eventLocation",
-          value: event.location,
-        }, {
-          trait_type: "eventDate",
-          value: event.date,
-        }],
+        attributes: [
+          {
+            trait_type: 'eventName',
+            value: event.name,
+          },
+          {
+            trait_type: 'eventLocation',
+            value: event.location,
+          },
+          {
+            trait_type: 'eventDate',
+            value: event.date,
+          },
+        ],
       },
     });
 
     if (!uploadResponse?.tokenURI) {
-      return
+      return;
     }
 
     writeContract({
       address: event?.contractAddress as Address,
       abi: eventABI,
       functionName: 'mintNFT',
-      args: [selectedTicketContract, uploadResponse?.tokenURI],
+      args: [selectedTicketContract as Address, uploadResponse?.tokenURI],
       chainId: BASE_SEPOLIA_CHAIN_ID,
       value: parseEther(ticket.mintPrice),
     });
-
   };
 
   useEffect(() => {
@@ -294,7 +298,12 @@ export default function EventPage({ params }: { params: { slug: string } }) {
               <Button
                 onClick={() => mintTicket()}
                 className="w-full"
-                disabled={isApiLoading || isLoading || isPending || !selectedTicketContract}
+                disabled={
+                  isApiLoading ||
+                  isLoading ||
+                  isPending ||
+                  !selectedTicketContract
+                }
               >
                 <Ticket className="mr-2 h-4 w-4" /> Mint Ticket
               </Button>
