@@ -60,20 +60,6 @@ export function CreateEventModal() {
     },
   ] as unknown as ContractFunctionParameters[];
 
-  const onSubmit = (data: FormData) => {
-    // In a real app, you would send this data to your backend
-    console.log(data);
-
-    // Create a slug from the event name
-    const slug = data.eventName.toLowerCase().replace(/\s+/g, '-');
-
-    // Close the modal
-    setOpen(false);
-
-    // Redirect to the new event page
-    // router.push(`/dashboard/${slug}`);
-  };
-
   const handleError = useCallback((err: TransactionError) => {
     console.error('Transaction error:', err);
   }, []);
@@ -90,7 +76,7 @@ export function CreateEventModal() {
         contractAddress: eventAddress,
       };
 
-      mutateAsync(payload);
+      mutateAsync(payload).then(() => setOpen(false));
     },
     [getValues, mutateAsync],
   );
@@ -104,7 +90,7 @@ export function CreateEventModal() {
         <DialogHeader>
           <DialogTitle>Create New Event</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form className="space-y-4">
           <div>
             <Label htmlFor="eventName">Event Name</Label>
             <Input
