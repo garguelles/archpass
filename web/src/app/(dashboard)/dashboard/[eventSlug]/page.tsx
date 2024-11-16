@@ -43,7 +43,8 @@ const initialEventData = {
 export default function EventDashboard() {
   const [eventData, setEventData] = useState(initialEventData);
   const params = useParams();
-  const eventId = Number(params.eventId);
+  const eventId = params.eventSlug as string;
+  console.log('EVENTID', eventId);
   const { event } = useEventItemQuery(eventId);
 
   console.log('THE EVENT', event);

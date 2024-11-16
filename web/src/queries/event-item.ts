@@ -1,14 +1,14 @@
 import { createAuthenticatedClient } from '@/lib/client';
 import { useQuery } from '@tanstack/react-query';
 
-export function useEventItemQuery(eventId: number) {
+export function useEventItemQuery(eventSlug: string) {
   const { data, isLoading, isFetching, refetch } = useQuery({
     queryKey: ['userProjects'],
-    enabled: !!eventId,
+    enabled: !!eventSlug,
     queryFn: async () => {
       const api = createAuthenticatedClient();
       const { data: eventItem } = await api.get(`/admin/event.get`, {
-        params: { id: eventId },
+        params: { id: eventSlug },
       });
 
       return eventItem;
