@@ -44,10 +44,7 @@ export default function EventDashboard() {
   const [eventData, setEventData] = useState(initialEventData);
   const params = useParams();
   const eventId = params.eventSlug as string;
-  console.log('EVENTID', eventId);
   const { event } = useEventItemQuery(eventId);
-
-  console.log('THE EVENT', event);
 
   const handleEventUpdate = (updatedEvent: Partial<typeof eventData>) => {
     setEventData((prevData) => ({ ...prevData, ...updatedEvent }));

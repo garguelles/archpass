@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/table';
 import { Edit, Trash } from 'lucide-react';
 import { CreateTicketModal } from './create-ticket-modal';
+import { useEventItemQuery } from '@/queries/event-item';
 
 // Mock data for tickets
 const ticketsData = [
@@ -33,6 +34,7 @@ export default function TicketsPage() {
   const [tickets, setTickets] = useState<Ticket[]>(ticketsData);
   const params = useParams();
   const eventSlug = params.eventSlug as string;
+  const { event } = useEventItemQuery(eventSlug);
 
   const handleTicketCreated = (newTicket: Omit<Ticket, 'id' | 'sold'>) => {
     const ticketWithId: Ticket = {
@@ -47,7 +49,7 @@ export default function TicketsPage() {
     <div className="space-y-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Tickets for {eventSlug}</h1>
-        <CreateTicketModal onTicketCreated={handleTicketCreated} />
+        <CreateTicketModal eventContractAddress={event.contractAddress} />
       </div>
 
       <div className="bg-background rounded-lg border">
