@@ -52,18 +52,20 @@ export default function EventPage({ params }: { params: { slug: string } }) {
       <header className="relative h-[400px] w-full">
         <Image
           src={eventData.imageUrl}
-          alt={event.name}
+          alt={event?.name}
           fill
           style={{ objectFit: 'cover' }}
           priority
         />
         <div className="absolute inset-0 bg-black/60 flex items-end">
           <div className="container mx-auto px-4 py-6">
-            <h1 className="text-4xl font-bold text-white mb-2">{event.name}</h1>
+            <h1 className="text-4xl font-bold text-white mb-2">
+              {event?.name}
+            </h1>
             <div className="flex items-center text-white/80 space-x-4">
               <span className="flex items-center">
                 <CalendarIcon className="mr-2 h-5 w-5" />
-                {event.date}
+                {event?.date}
               </span>
               <span className="flex items-center">
                 <MapPinIcon className="mr-2 h-5 w-5" />
