@@ -36,7 +36,6 @@ func startIndexer() {
 	}
 
 	ctx := context.Background()
-	fmt.Println("Starting indexer")
 	client, err := ethclient.Dial(chainUrl)
 	if err != nil {
 		fmt.Println(err)
@@ -53,33 +52,58 @@ func startIndexer() {
 		log.Fatal("Failed to convert LAST_POLLED_BLOCK to a big.Int")
 	}
 
-	ticker := time.NewTicker(3 * time.Second)
+	ticker := time.NewTicker(5 * time.Second)
 	defer ticker.Stop()
+
+	const batchSize = 1000
 
 	for {
 		select {
 		case <-ticker.C:
 			fmt.Println("Indexing new blocks")
-			filterOpts := &bind.FilterOpts{Start: uint64(lastPolledBlock), End: nil, Context: ctx}
 
-			// Ticket minted
-			iterMint, err := factoryContract.FilterTicketMinted(filterOpts, nil, nil, nil)
+			// Get the latest block number
+			latestBlock, err := client.BlockNumber(ctx)
 			if err != nil {
-				fmt.Println("Error fetching logs ticket minted: ", err)
+				fmt.Println("Error fetching latest block number: ", err)
 				continue
 			}
 
-			for iterMint.Next() {
-				event := iterMint.Event
-				saveMint(ctx, event)
-			}
+			// Process in batches of up to `batchSize`
+			for start := lastPolledBlock; start < latestBlock; start += batchSize {
+				end := start + batchSize - 1
+				if end > latestBlock {
+					end = latestBlock
+				}
 
-			if iterMint.Error() != nil {
-				fmt.Println("Error during iteration: ", iterMint.Error())
-			}
+				filterOpts := &bind.FilterOpts{Start: start, End: &end, Context: ctx}
 
-			if iterMint.Event != nil {
-				lastPolledBlock = uint64(iterMint.Event.Raw.BlockNumber) + 1
+				// Fetch logs for the current batch
+				iterMint, err := factoryContract.FilterTicketMinted(filterOpts, nil, nil, nil)
+				if err != nil {
+					fmt.Println("Error fetching logs ticket minted: ", err)
+					continue
+				}
+
+				// Iterate through the events
+				for iterMint.Next() {
+					event := iterMint.Event
+					saveMint(ctx, event)
+				}
+
+				// Check for iteration errors
+				if iterMint.Error() != nil {
+					fmt.Println("Error during iteration: ", iterMint.Error())
+					continue
+				}
+
+				// Update `lastPolledBlock` after processing the current batch
+				if iterMint.Event != nil {
+					lastPolledBlock = uint64(iterMint.Event.Raw.BlockNumber) + 1
+				} else {
+					// If no events were found, move to the next batch
+					lastPolledBlock = end + 1
+				}
 			}
 		}
 	}
