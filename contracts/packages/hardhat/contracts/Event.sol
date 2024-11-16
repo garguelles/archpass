@@ -13,7 +13,6 @@ contract Event is Initializable, OwnableUpgradeable {
     address public factoryAddress; 
     mapping(address => address) public eventMinters;
 
-    // address -> ticket
     event TicketCreated(string ticketHash, address clone);
 
     function doesTicketExist(address ticketAddress) public view returns (bool) {
@@ -47,6 +46,11 @@ contract Event is Initializable, OwnableUpgradeable {
         eventTickets.push(clone);
         emit TicketCreated(ticketHash, clone);
         return clone;
+    }
+
+    function registerTicket(address ticketAddress) external {
+        require(msg.sender == factoryAddress, "Caller is not the factory");
+        eventTickets.push(ticketAddress);
     }
     
     function mintNFT(
