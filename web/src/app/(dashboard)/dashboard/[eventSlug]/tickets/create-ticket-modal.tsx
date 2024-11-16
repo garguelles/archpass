@@ -29,7 +29,7 @@ import { useCreateTicketMutation } from '@/queries/create-ticket';
 type TicketFormData = {
   name: string;
   price: number;
-  maxSupply: number;
+  quantity: number;
   mintPrice: string;
 };
 
@@ -60,8 +60,8 @@ export function CreateTicketModal({
     return [
       eventContractAddress,
       formValues.name,
-      formValues.maxSupply,
-      parseEther(formValues.mintPrice),
+      formValues.quantity,
+      formValues.mintPrice ? parseEther(formValues.mintPrice) : null,
       '0xtesthash',
     ];
   }, [getValues()]);
@@ -86,7 +86,7 @@ export function CreateTicketModal({
       const payload = {
         name: formValues.name,
         eventId: event.id,
-        quantity: formValues.maxSupply,
+        quantity: formValues.quantity,
         mintPrice: formValues.mintPrice,
         contractAddress: ticketAddress,
       };

@@ -49,7 +49,13 @@ export default function TicketsPage() {
     <div className="space-y-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Tickets for {eventSlug}</h1>
-        <CreateTicketModal eventContractAddress={event.contractAddress} />
+        {event ? (
+          <CreateTicketModal
+            eventContractAddress={event.contractAddress}
+            event={event}
+            refetchTicketList={() => {}}
+          />
+        ) : null}
       </div>
 
       <div className="bg-background rounded-lg border">
