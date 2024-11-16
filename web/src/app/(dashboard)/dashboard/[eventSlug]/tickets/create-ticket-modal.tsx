@@ -47,35 +47,44 @@ export function CreateTicketModal({
   const { mutateAsync } = useCreateTicketMutation();
 
   const [open, setOpen] = useState(false);
+  const [contracts, setContracts] = useState<ContractFunctionParameters[]>([]);
   const {
     register,
-    handleSubmit,
     formState: { errors },
     reset,
     getValues,
+    watch,
   } = useForm<TicketFormData>();
 
-  const createArgs = useCallback(() => {
-    const formValues = getValues();
-    return [
-      eventContractAddress,
-      formValues.name,
-      formValues.quantity,
-      formValues.mintPrice ? parseEther(formValues.mintPrice) : null,
-      '0xtesthash',
-    ];
-  }, [getValues]);
+  // Watch form values to update contracts state
+  watch((formData) => {
+    if (!formData) return;
 
-  const contracts = [
-    {
-      address: AP_EVENT_FACTORY_CONTRACT_ADDRESS,
-      abi: eventFactoryABI,
-      functionName: 'createTicket',
-      args: [...createArgs()],
-    },
-  ] as unknown as ContractFunctionParameters[];
+    try {
+      const mintPriceWei = formData.mintPrice
+        ? parseEther(formData.mintPrice)
+        : 0n;
 
-  console.log(createArgs());
+      const newContracts = [
+        {
+          address: AP_EVENT_FACTORY_CONTRACT_ADDRESS,
+          abi: eventFactoryABI,
+          functionName: 'createTicket',
+          args: [
+            eventContractAddress,
+            formData.name || '',
+            formData.quantity || 0,
+            mintPriceWei,
+            '0xtesthash',
+          ],
+        },
+      ] as ContractFunctionParameters[];
+
+      setContracts(newContracts);
+    } catch (error) {
+      console.error('Error updating contract parameters:', error);
+    }
+  });
 
   const handleError = useCallback((err: TransactionError) => {
     console.error('Transaction error:', err);
@@ -95,6 +104,7 @@ export function CreateTicketModal({
 
       mutateAsync(payload).then(() => {
         setOpen(false);
+        reset();
         refetchTicketList();
       });
     },

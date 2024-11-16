@@ -9,3 +9,10 @@ export type TEvent = {
   createdAt: Date;
   modifiedAt: Date;
 };
+
+export type TTicket = {
+  id: number;
+  name: string;
+  mintPrice: string;
+  quantity: number;
+};

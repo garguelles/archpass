@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import {
@@ -14,36 +13,14 @@ import {
 import { Edit, Trash } from 'lucide-react';
 import { CreateTicketModal } from './create-ticket-modal';
 import { useEventItemQuery } from '@/queries/event-item';
-
-// Mock data for tickets
-const ticketsData = [
-  { id: 1, name: 'General Admission', price: 50, quantity: 500, sold: 300 },
-  { id: 2, name: 'VIP', price: 150, quantity: 100, sold: 75 },
-  { id: 3, name: 'Early Bird', price: 35, quantity: 200, sold: 200 },
-];
-
-type Ticket = {
-  id: number;
-  name: string;
-  price: number;
-  quantity: number;
-  sold: number;
-};
+import { useTicketListQuery } from '@/queries/ticket-list';
+import { TTicket } from '@/types';
 
 export default function TicketsPage() {
-  const [tickets, setTickets] = useState<Ticket[]>(ticketsData);
   const params = useParams();
   const eventSlug = params.eventSlug as string;
   const { event } = useEventItemQuery(eventSlug);
-
-  const handleTicketCreated = (newTicket: Omit<Ticket, 'id' | 'sold'>) => {
-    const ticketWithId: Ticket = {
-      ...newTicket,
-      id: tickets.length + 1,
-      sold: 0,
-    };
-    setTickets([...tickets, ticketWithId]);
-  };
+  const { tickets, refetchTicketList } = useTicketListQuery(event?.id);
 
   return (
     <div className="space-y-4">
@@ -53,7 +30,7 @@ export default function TicketsPage() {
           <CreateTicketModal
             eventContractAddress={event.contractAddress}
             event={event}
-            refetchTicketList={() => {}}
+            refetchTicketList={refetchTicketList}
           />
         ) : null}
       </div>
@@ -70,12 +47,12 @@ export default function TicketsPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {tickets.map((ticket) => (
+            {tickets?.map((ticket: TTicket) => (
               <TableRow key={ticket.id}>
                 <TableCell>{ticket.name}</TableCell>
-                <TableCell>${ticket.price.toFixed(2)}</TableCell>
+                <TableCell>{ticket.mintPrice} ETH</TableCell>
                 <TableCell>{ticket.quantity}</TableCell>
-                <TableCell>{ticket.sold}</TableCell>
+                <TableCell>{89}</TableCell>
                 <TableCell>
                   <div className="flex space-x-2">
                     <Button variant="outline" size="icon">
@@ -95,7 +72,10 @@ export default function TicketsPage() {
       </div>
       <p className="text-sm text-muted-foreground">
         Total tickets:{' '}
-        {tickets.reduce((sum, ticket) => sum + ticket.quantity, 0)}
+        {tickets?.reduce(
+          (sum: number, ticket: TTicket) => sum + ticket.quantity,
+          0,
+        )}
       </p>
     </div>
   );
