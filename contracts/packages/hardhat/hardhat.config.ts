@@ -104,7 +104,7 @@ const config: HardhatUserConfig = {
 			accounts: [deployerPrivateKey],
 		},
 		baseSepolia: {
-			url: "https://api.developer.coinbase.com/rpc/v1/base-sepolia/OaygFcDgI9xCmmKdSdnQ5f4CJBtzdzqo",
+			url: process.env.BASE_SEPOLIA_RPC_URL,
 			accounts: [deployerPrivateKey],
 			verify: {
 				etherscan: {
