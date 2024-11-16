@@ -14,6 +14,21 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import type { Address, ContractFunctionParameters } from 'viem';
+import {
+  BASE_SEPOLIA_CHAIN_ID,
+  mintABI,
+  mintContractAddress,
+} from '@/constants';
+import {
+  Transaction,
+  TransactionButton,
+  TransactionError,
+  TransactionResponse,
+  TransactionStatus,
+  TransactionStatusAction,
+  TransactionStatusLabel,
+} from '@coinbase/onchainkit/transaction';
 
 type FormData = {
   eventName: string;
@@ -23,7 +38,7 @@ type FormData = {
   headerImage: string;
 };
 
-export function CreateEventModal() {
+export function CreateEventModal({ address }: { address: Address }) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const {
@@ -31,6 +46,15 @@ export function CreateEventModal() {
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>();
+
+  const contracts = [
+    {
+      address: mintContractAddress,
+      abi: mintABI,
+      functionName: 'mint',
+      args: [address],
+    },
+  ] as unknown as ContractFunctionParameters[];
 
   const onSubmit = (data: FormData) => {
     // In a real app, you would send this data to your backend
@@ -44,6 +68,14 @@ export function CreateEventModal() {
 
     // Redirect to the new event page
     // router.push(`/dashboard/${slug}`);
+  };
+
+  const handleError = (err: TransactionError) => {
+    console.error('Transaction error:', err);
+  };
+
+  const handleSuccess = (response: TransactionResponse) => {
+    console.log('Transaction successful', response);
   };
 
   return (
@@ -121,7 +153,21 @@ export function CreateEventModal() {
               </p>
             )}
           </div>
-          <Button type="submit">Create Event</Button>
+          <Transaction
+            contracts={contracts}
+            chainId={BASE_SEPOLIA_CHAIN_ID}
+            onError={handleError}
+            onSuccess={handleSuccess}
+          >
+            <TransactionButton
+              text="Create event"
+              className="mt-0 mr-auto ml-auto max-w-full text-[white]"
+            />
+            <TransactionStatus>
+              <TransactionStatusLabel />
+              <TransactionStatusAction />
+            </TransactionStatus>
+          </Transaction>
         </form>
       </DialogContent>
     </Dialog>
