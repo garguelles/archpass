@@ -78,11 +78,12 @@ func ListDashboardEvents(c echo.Context) error {
 
 	for _, event := range events {
 		eventDto := dto.SimpleDashboardEvent{
-			Id:        event.ID,
-			Name:      event.Name,
-			ImageUrl:  event.ImageURL,
-			EventSlug: event.EventSlug,
-			Location:  event.Location,
+			Id:              event.ID,
+			Name:            event.Name,
+			ImageUrl:        event.ImageURL,
+			EventSlug:       event.EventSlug,
+			Location:        event.Location,
+			ContractAddress: event.ContractAddress,
 			// StartDate:  event.StartDate,
 			// EndDate:    event.EndDate,
 			Date:       event.Date,
@@ -126,7 +127,7 @@ func GetDashboardEvent(c echo.Context) error {
 	return c.JSON(http.StatusCreated, dto.DashboardEvent{Id: event.ID,
 		Name: event.Name, Description: event.Description, Location: event.Location,
 		ImageUrl: event.ImageURL, EventSlug: event.EventSlug, CreatedAt: event.CreatedAt,
-		ModifiedAt: event.ModifiedAt, Date: event.Date,
+		ModifiedAt: event.ModifiedAt, Date: event.Date, ContractAddress: event.ContractAddress,
 	})
 
 }
