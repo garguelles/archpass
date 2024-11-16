@@ -8,6 +8,7 @@ import dynamic from 'next/dynamic';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import LoginButton from '@/components/LoginButton';
+import SignupButton from '@/components/SignupButton';
 
 const OnchainProviders = dynamic(
   () => import('@/components/OnchainProviders'),
@@ -43,33 +44,8 @@ export default function RootLayout({
               <nav className="flex justify-between items-center">
                 <h1 className="text-2xl font-bold">ArchPass</h1>
                 <div className="flex items-center space-x-4">
-                  <div className="hidden sm:flex space-x-4">
-                    <Link
-                      href="/events"
-                      className="hover:text-primary transition-colors"
-                    >
-                      Events
-                    </Link>
-                    <Link
-                      href="/about"
-                      className="hover:text-primary transition-colors"
-                    >
-                      About
-                    </Link>
-                    <Link
-                      href="/contact"
-                      className="hover:text-primary transition-colors"
-                    >
-                      Contact
-                    </Link>
-                  </div>
                   <LoginButton />
-                  {/*<Button variant="outline" asChild>
-                  <Link href="/login">Login</Link>
-                </Button>
-                  <Button asChild>
-                    <Link href="/signup">Sign up</Link>
-                  </Button>*/}
+                  <SignupButton />
                 </div>
               </nav>
             </header>
