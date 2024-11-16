@@ -1,0 +1,17 @@
+import axios from 'axios';
+import { NEXT_PUBLIC_API_BASE_URL } from '@/config';
+
+export const createAuthenticatedClient = () => {
+  const accessToken = window.localStorage.getItem('accessToken');
+  const authenticatedApi = axios.create({
+    baseURL: `${NEXT_PUBLIC_API_BASE_URL}`,
+    timeout: 60000,
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'applications/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  return authenticatedApi;
+};

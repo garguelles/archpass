@@ -47,6 +47,7 @@ export function CreateEventModal() {
     register,
     handleSubmit,
     formState: { errors },
+    getValues,
   } = useForm<FormData>();
   const contracts = [
     {
@@ -56,8 +57,6 @@ export function CreateEventModal() {
       args: ['0xtesthash'],
     },
   ] as unknown as ContractFunctionParameters[];
-
-  console.log('CONTRACTS', contracts);
 
   const onSubmit = (data: FormData) => {
     // In a real app, you would send this data to your backend
@@ -79,6 +78,7 @@ export function CreateEventModal() {
 
   const handleSuccess = (response: TransactionResponse) => {
     console.log('Transaction successful', response);
+    const eventAddress = response.transactionReceipts?.[0].logs?.[0].address;
   };
 
   return (
