@@ -95,11 +95,11 @@ func (e *EventRepository) ListByOrganizerId(limit int, offset int, userId int) (
 	return events, nil
 }
 
-func (e *EventRepository) GetByIdAndOrganizerId(eventId int, userId int) (ent.Event, error) {
+func (e *EventRepository) GetBySlugAndOrganizerId(slug string, userId int) (ent.Event, error) {
 	event, err := e.client.Event.
 		Query().
 		Where(
-			event.IDEQ(eventId),
+			event.EventSlugEQ(slug),
 			event.UserIDEQ(userId),
 		).
 		Only(*e.ctx)
