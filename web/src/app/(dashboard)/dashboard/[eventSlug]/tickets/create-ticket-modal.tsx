@@ -1,6 +1,4 @@
-'use client';
-
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   Dialog,
@@ -13,31 +11,105 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Plus } from 'lucide-react';
+import { AP_EVENT_FACTORY_CONTRACT_ADDRESS } from '@/config';
+import { BASE_SEPOLIA_CHAIN_ID, eventFactoryABI } from '@/constants';
+import { type ContractFunctionParameters, parseEther } from 'viem';
+import {
+  Transaction,
+  TransactionButton,
+  TransactionError,
+  TransactionResponse,
+  TransactionStatus,
+  TransactionStatusAction,
+  TransactionStatusLabel,
+} from '@coinbase/onchainkit/transaction';
+import { TEvent } from '@/types';
+import { useCreateTicketMutation } from '@/queries/create-ticket';
 
 type TicketFormData = {
   name: string;
   price: number;
   quantity: number;
+  mintPrice: string;
 };
 
 type CreateTicketModalProps = {
-  onTicketCreated: (ticket: TicketFormData) => void;
+  eventContractAddress: string;
+  event: TEvent;
+  refetchTicketList: () => void;
 };
 
-export function CreateTicketModal({ onTicketCreated }: CreateTicketModalProps) {
+export function CreateTicketModal({
+  eventContractAddress,
+  event,
+  refetchTicketList,
+}: CreateTicketModalProps) {
+  const { mutateAsync } = useCreateTicketMutation();
+
   const [open, setOpen] = useState(false);
+  const [contracts, setContracts] = useState<ContractFunctionParameters[]>([]);
   const {
     register,
-    handleSubmit,
     formState: { errors },
     reset,
+    getValues,
+    watch,
   } = useForm<TicketFormData>();
 
-  const onSubmit = (data: TicketFormData) => {
-    onTicketCreated(data);
-    setOpen(false);
-    reset();
-  };
+  // Watch form values to update contracts state
+  watch((formData) => {
+    if (!formData) return;
+
+    try {
+      const mintPriceWei = formData.mintPrice
+        ? parseEther(formData.mintPrice)
+        : 0n;
+
+      const newContracts = [
+        {
+          address: AP_EVENT_FACTORY_CONTRACT_ADDRESS,
+          abi: eventFactoryABI,
+          functionName: 'createTicket',
+          args: [
+            eventContractAddress,
+            formData.name || '',
+            formData.quantity || 0,
+            mintPriceWei,
+            '0xtesthash',
+          ],
+        },
+      ] as ContractFunctionParameters[];
+
+      setContracts(newContracts);
+    } catch (error) {
+      console.error('Error updating contract parameters:', error);
+    }
+  });
+
+  const handleError = useCallback((err: TransactionError) => {
+    console.error('Transaction error:', err);
+  }, []);
+
+  const handleSuccess = useCallback(
+    (response: TransactionResponse) => {
+      const formValues = getValues();
+      const ticketAddress = response.transactionReceipts?.[0].logs?.[0].address;
+      const payload = {
+        name: formValues.name,
+        eventId: event.id,
+        quantity: Number(formValues.quantity),
+        mintPrice: formValues.mintPrice,
+        contractAddress: ticketAddress,
+      };
+
+      mutateAsync(payload).then(() => {
+        setOpen(false);
+        reset();
+        refetchTicketList();
+      });
+    },
+    [getValues, mutateAsync],
+  );
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -50,7 +122,7 @@ export function CreateTicketModal({ onTicketCreated }: CreateTicketModalProps) {
         <DialogHeader>
           <DialogTitle>Create New Ticket</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form className="space-y-4">
           <div>
             <Label htmlFor="name">Ticket Name</Label>
             <Input
@@ -64,10 +136,10 @@ export function CreateTicketModal({ onTicketCreated }: CreateTicketModalProps) {
           <div>
             <Label htmlFor="price">Price</Label>
             <Input
-              id="price"
+              id="mintPrice"
               type="number"
               step="0.01"
-              {...register('price', {
+              {...register('mintPrice', {
                 required: 'Price is required',
                 min: { value: 0, message: 'Price must be 0 or greater' },
               })}
@@ -90,7 +162,21 @@ export function CreateTicketModal({ onTicketCreated }: CreateTicketModalProps) {
               <p className="text-sm text-red-500">{errors.quantity.message}</p>
             )}
           </div>
-          <Button type="submit">Create Ticket</Button>
+          <Transaction
+            contracts={contracts}
+            chainId={BASE_SEPOLIA_CHAIN_ID}
+            onError={handleError}
+            onSuccess={handleSuccess}
+          >
+            <TransactionButton
+              text="Create ticket"
+              className="mt-0 mr-auto ml-auto max-w-full text-[white]"
+            />
+            <TransactionStatus>
+              <TransactionStatusLabel />
+              <TransactionStatusAction />
+            </TransactionStatus>
+          </Transaction>
         </form>
       </DialogContent>
     </Dialog>

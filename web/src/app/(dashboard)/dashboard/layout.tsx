@@ -11,6 +11,7 @@ import '@coinbase/onchainkit/styles.css';
 import '@rainbow-me/rainbowkit/styles.css';
 import LoginButton from '@/components/LoginButton';
 import dynamic from 'next/dynamic';
+import { DashboardSidebar } from './[eventSlug]/sidebar';
 
 const OnchainProviders = dynamic(
   () => import('@/components/OnchainProviders'),
@@ -33,56 +34,7 @@ export default function DashboardLayout({
         <OnchainProviders>
           <div className="flex min-h-screen">
             {/* Sidebar */}
-            {showSidebar && (
-              <aside className="hidden md:flex flex-col w-64 bg-card text-card-foreground border-r min-h-screen">
-                <div className="p-4">
-                  <div className="text-2xl font-bold mb-6">ArchPass</div>
-                  <nav className="space-y-2">
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start"
-                      asChild
-                    >
-                      <Link href="/dashboard">
-                        <LayoutDashboard className="mr-2 h-4 w-4" />
-                        Dashboard
-                      </Link>
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start"
-                      asChild
-                    >
-                      <Link href="/dashboard/slug/tickets">
-                        <Tickets className="mr-2 h-4 w-4" />
-                        Tickets
-                      </Link>
-                    </Button>
-
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start"
-                      asChild
-                    >
-                      <Link href="/dashboard/slug/attendees">
-                        <Users className="mr-2 h-4 w-4" />
-                        Attendees
-                      </Link>
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start"
-                      asChild
-                    >
-                      <Link href="/dashboard/settings">
-                        <Settings className="mr-2 h-4 w-4" />
-                        Settings
-                      </Link>
-                    </Button>
-                  </nav>
-                </div>
-              </aside>
-            )}
+            {showSidebar && <DashboardSidebar />}
 
             {/* Main content */}
             <div className="flex-1">

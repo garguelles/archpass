@@ -1,7 +1,4 @@
-'use client';
-
 import { useCallback, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import {
   Dialog,
@@ -14,13 +11,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import type { Address, ContractFunctionParameters } from 'viem';
-import {
-  BASE_SEPOLIA_CHAIN_ID,
-  eventFactoryABI,
-  mintABI,
-  mintContractAddress,
-} from '@/constants';
+import type { ContractFunctionParameters } from 'viem';
+import { BASE_SEPOLIA_CHAIN_ID, eventFactoryABI } from '@/constants';
 import {
   Transaction,
   TransactionButton,
@@ -41,12 +33,14 @@ type FormData = {
   headerImage: string;
 };
 
-export function CreateEventModal() {
+type CreateEventModalProps = {
+  refetchEventList: () => void;
+};
+
+export function CreateEventModal({ refetchEventList }: CreateEventModalProps) {
   const [open, setOpen] = useState(false);
-  const router = useRouter();
   const {
     register,
-    handleSubmit,
     formState: { errors },
     getValues,
   } = useForm<FormData>();
@@ -76,7 +70,10 @@ export function CreateEventModal() {
         contractAddress: eventAddress,
       };
 
-      mutateAsync(payload).then(() => setOpen(false));
+      mutateAsync(payload).then(() => {
+        setOpen(false);
+        refetchEventList();
+      });
     },
     [getValues, mutateAsync],
   );
