@@ -43,6 +43,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     onDisconnect() {
       window.localStorage.removeItem('accessToken');
       setAccessToken(null);
+      router.push('/');
     },
   });
 
