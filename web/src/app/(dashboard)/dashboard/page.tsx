@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import {
   Card,
@@ -8,6 +10,7 @@ import {
 } from '@/components/ui/card';
 import { CalendarDays, MapPin, Users } from 'lucide-react';
 import { CreateEventModal } from './create-event-modal';
+import { useAccount } from 'wagmi';
 
 // Mock data for events (in a real app, this would come from an API or database)
 const events = [
@@ -38,11 +41,14 @@ const events = [
 ];
 
 export default function DashboardPage() {
+  const { address } = useAccount();
+
+  console.log('DASHBOARD USE', address);
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Event Dashboard</h1>
-        <CreateEventModal />
+        {address ? <CreateEventModal address={address} /> : null}
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

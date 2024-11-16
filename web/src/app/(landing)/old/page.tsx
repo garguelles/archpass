@@ -1,4 +1,5 @@
 'use client';
+
 import Footer from '@/components/Footer';
 import TransactionWrapper from '@/components/TransactionWrapper';
 import WalletWrapper from '@/components/WalletWrapper';

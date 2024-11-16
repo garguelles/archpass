@@ -9,9 +9,10 @@ type CreateEventInput struct {
 	Description string `json:"description"`
 	// StartDate   time.Time `json:"startDate"`
 	// EndDate     time.Time `json:"endDate"`
-	Date     string  `json:"date"`
-	Location string  `json:"location"`
-	ImageUrl *string `json:"imageUrl"`
+	Date            string  `json:"date"`
+	Location        string  `json:"location"`
+	ImageUrl        *string `json:"imageUrl"`
+	ContractAddress string  `json:"contractAddress"`
 }
 
 type DashboardEvent struct {

@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
 import { base } from 'viem/chains';
 import { WagmiProvider } from 'wagmi';
-import { NEXT_PUBLIC_CDP_API_KEY } from '../config';
+import { NEXT_PUBLIC_CDP_API_KEY, RPC_URL } from '../config';
 import { useWagmiConfig } from '../wagmi';
 import { AuthProvider } from '@/providers/auth-provider';
 
@@ -19,7 +19,11 @@ function OnchainProviders({ children }: Props) {
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
-        <OnchainKitProvider apiKey={NEXT_PUBLIC_CDP_API_KEY} chain={base}>
+        <OnchainKitProvider
+          apiKey={NEXT_PUBLIC_CDP_API_KEY}
+          rpcUrl={RPC_URL}
+          chain={base}
+        >
           <RainbowKitProvider modalSize="compact">
             <AuthProvider>{children}</AuthProvider>
           </RainbowKitProvider>

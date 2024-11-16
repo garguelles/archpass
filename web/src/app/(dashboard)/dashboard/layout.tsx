@@ -5,15 +5,15 @@ import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { LayoutDashboard, Tickets, Users, Settings } from 'lucide-react';
-import dynamic from 'next/dynamic';
 
 import '@/app/global.css';
 import '@coinbase/onchainkit/styles.css';
 import '@rainbow-me/rainbowkit/styles.css';
 import LoginButton from '@/components/LoginButton';
+import dynamic from 'next/dynamic';
 
 const OnchainProviders = dynamic(
-  () => import('src/components/OnchainProviders'),
+  () => import('@/components/OnchainProviders'),
   {
     ssr: false,
   },

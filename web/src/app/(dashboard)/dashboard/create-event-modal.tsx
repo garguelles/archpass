@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import {
@@ -14,6 +14,24 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import type { Address, ContractFunctionParameters } from 'viem';
+import {
+  BASE_SEPOLIA_CHAIN_ID,
+  eventFactoryABI,
+  mintABI,
+  mintContractAddress,
+} from '@/constants';
+import {
+  Transaction,
+  TransactionButton,
+  TransactionError,
+  TransactionResponse,
+  TransactionStatus,
+  TransactionStatusAction,
+  TransactionStatusLabel,
+} from '@coinbase/onchainkit/transaction';
+import { AP_EVENT_FACTORY_CONTRACT_ADDRESS } from '@/config';
+import { useCreateEventMutation } from '@/queries/create-event';
 
 type FormData = {
   eventName: string;
@@ -30,7 +48,17 @@ export function CreateEventModal() {
     register,
     handleSubmit,
     formState: { errors },
+    getValues,
   } = useForm<FormData>();
+  const { mutateAsync } = useCreateEventMutation();
+  const contracts = [
+    {
+      address: AP_EVENT_FACTORY_CONTRACT_ADDRESS,
+      abi: eventFactoryABI,
+      functionName: 'createEvent',
+      args: ['0xtesthash'],
+    },
+  ] as unknown as ContractFunctionParameters[];
 
   const onSubmit = (data: FormData) => {
     // In a real app, you would send this data to your backend
@@ -45,6 +73,27 @@ export function CreateEventModal() {
     // Redirect to the new event page
     // router.push(`/dashboard/${slug}`);
   };
+
+  const handleError = useCallback((err: TransactionError) => {
+    console.error('Transaction error:', err);
+  }, []);
+
+  const handleSuccess = useCallback(
+    (response: TransactionResponse) => {
+      const formValues = getValues();
+      const eventAddress = response.transactionReceipts?.[0].logs?.[0].address;
+      const payload = {
+        name: formValues.eventName,
+        description: formValues.description,
+        date: formValues.eventDate,
+        location: formValues.location,
+        contractAddress: eventAddress,
+      };
+
+      mutateAsync(payload);
+    },
+    [getValues, mutateAsync],
+  );
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -121,7 +170,21 @@ export function CreateEventModal() {
               </p>
             )}
           </div>
-          <Button type="submit">Create Event</Button>
+          <Transaction
+            contracts={contracts}
+            chainId={BASE_SEPOLIA_CHAIN_ID}
+            onError={handleError}
+            onSuccess={handleSuccess}
+          >
+            <TransactionButton
+              text="Create event"
+              className="mt-0 mr-auto ml-auto max-w-full text-[white]"
+            />
+            <TransactionStatus>
+              <TransactionStatusLabel />
+              <TransactionStatusAction />
+            </TransactionStatus>
+          </Transaction>
         </form>
       </DialogContent>
     </Dialog>
