@@ -1,4 +1,4 @@
-import {NEXT_PUBLIC_API_BASE_URL, NEXT_PUBLIC_IMAGE_API_BASE_URL} from '@/config';
+import { NEXT_PUBLIC_IMAGE_API_BASE_URL } from '@/config';
 import { createAuthenticatedClient } from '@/lib/client';
 import { useMutation } from '@tanstack/react-query';
 
@@ -10,8 +10,8 @@ export function useCreateTicketImageMutation() {
         `${NEXT_PUBLIC_IMAGE_API_BASE_URL}/generate-ticket`,
         ticket,
         {
-          responseType: "blob",
-        }
+          responseType: 'blob',
+        },
       );
 
       return data;

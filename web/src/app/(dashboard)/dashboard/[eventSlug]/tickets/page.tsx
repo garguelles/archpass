@@ -1,6 +1,5 @@
 'use client';
 
-import { useParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -10,12 +9,13 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Edit, Trash, Eye } from 'lucide-react';
-import { CreateTicketModal } from './create-ticket-modal';
+import { convertIpfsToHttps } from '@/lib/utils';
 import { useEventItemQuery } from '@/queries/event-item';
 import { useTicketListQuery } from '@/queries/ticket-list';
-import { TTicket } from '@/types';
-import { convertIpfsToHttps } from '@/lib/utils';
+import type { TTicket } from '@/types';
+import { Eye } from 'lucide-react';
+import { useParams } from 'next/navigation';
+import { CreateTicketModal } from './create-ticket-modal';
 
 export default function TicketsPage() {
   const params = useParams();

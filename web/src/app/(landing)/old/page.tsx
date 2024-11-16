@@ -1,13 +1,13 @@
 'use client';
 
 import Footer from '@/components/Footer';
+import LoginButton from '@/components/LoginButton';
+import SignupButton from '@/components/SignupButton';
 import TransactionWrapper from '@/components/TransactionWrapper';
 import WalletWrapper from '@/components/WalletWrapper';
 import { ONCHAINKIT_LINK } from '@/links';
 import OnchainkitSvg from '@/svg/OnchainkitSvg';
 import { useAccount } from 'wagmi';
-import LoginButton from '@/components/LoginButton';
-import SignupButton from '@/components/SignupButton';
 
 export default function Page() {
   const { address } = useAccount();

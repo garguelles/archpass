@@ -1,4 +1,5 @@
 'use client';
+import { AuthProvider } from '@/providers/auth-provider';
 import { OnchainKitProvider } from '@coinbase/onchainkit';
 import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -7,7 +8,6 @@ import { base } from 'viem/chains';
 import { WagmiProvider } from 'wagmi';
 import { NEXT_PUBLIC_CDP_API_KEY, RPC_URL } from '../config';
 import { useWagmiConfig } from '../wagmi';
-import { AuthProvider } from '@/providers/auth-provider';
 
 type Props = { children: ReactNode };
 

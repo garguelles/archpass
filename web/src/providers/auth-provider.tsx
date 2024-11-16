@@ -14,8 +14,8 @@ import { useAccountEffect } from 'wagmi';
 
 import { useSignMessage } from 'wagmi';
 
-import { NEXT_PUBLIC_API_BASE_URL, DEFAULT_CHAIN_ID } from '../config';
 import { useRouter } from 'next/navigation';
+import { DEFAULT_CHAIN_ID, NEXT_PUBLIC_API_BASE_URL } from '../config';
 
 export type TAuthContext = {
   login: (address: string) => void;

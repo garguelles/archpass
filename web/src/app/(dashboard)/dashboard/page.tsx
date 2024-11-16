@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import {
   Card,
   CardContent,
@@ -8,10 +7,11 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { CalendarDays, MapPin, Users } from 'lucide-react';
-import { CreateEventModal } from './create-event-modal';
 import { useEventListQuery } from '@/queries/event-list';
-import { TEvent } from '@/types';
+import type { TEvent } from '@/types';
+import { CalendarDays, MapPin, Users } from 'lucide-react';
+import Link from 'next/link';
+import { CreateEventModal } from './create-event-modal';
 
 export default function DashboardPage() {
   const { events, refetchEventList } = useEventListQuery();

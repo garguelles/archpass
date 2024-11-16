@@ -1,15 +1,13 @@
 'use client';
-
-import Image from 'next/image';
-import Link from 'next/link';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Twitter, Github, Linkedin } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { usePublicUserTicketListQuery } from '@/queries/public-user-ticket-list';
+import type { TTicket } from '@/types';
 import { NFTCard } from '@coinbase/onchainkit/nft';
 import { NFTMedia, NFTTitle } from '@coinbase/onchainkit/nft/view';
-import { TTicket } from '@/types';
+import { Github, Linkedin, Twitter } from 'lucide-react';
+import Link from 'next/link';
 import type { Address } from 'viem';
 
 // Mock data (in a real app, this would come from an API or database)
@@ -70,7 +68,7 @@ export default function UserPage({
               <p className="mb-4">{userData.bio}</p>
               <div className="flex justify-center sm:justify-start space-x-4">
                 {userData.socials.twitter && (
-                  <Button variant="ghost" size="icon" asChild>
+                  <Button variant="ghost" size="icon" asChild={true}>
                     <Link href={userData.socials.twitter}>
                       <Twitter className="h-5 w-5" />
                       <span className="sr-only">Twitter</span>
@@ -78,7 +76,7 @@ export default function UserPage({
                   </Button>
                 )}
                 {userData.socials.github && (
-                  <Button variant="ghost" size="icon" asChild>
+                  <Button variant="ghost" size="icon" asChild={true}>
                     <Link href={userData.socials.github}>
                       <Github className="h-5 w-5" />
                       <span className="sr-only">GitHub</span>
@@ -86,7 +84,7 @@ export default function UserPage({
                   </Button>
                 )}
                 {userData.socials.linkedin && (
-                  <Button variant="ghost" size="icon" asChild>
+                  <Button variant="ghost" size="icon" asChild={true}>
                     <Link href={userData.socials.linkedin}>
                       <Linkedin className="h-5 w-5" />
                       <span className="sr-only">LinkedIn</span>
@@ -107,7 +105,7 @@ export default function UserPage({
               {attendee?.tickets.map((ticket: TTicket) => (
                 <NFTCard
                   contractAddress={ticket.contractAddress as Address}
-                  tokenId={ticket.tokenId}
+                  tokenId={ticket.tokenId.toString()}
                 >
                   <NFTMedia />
                   <NFTTitle />

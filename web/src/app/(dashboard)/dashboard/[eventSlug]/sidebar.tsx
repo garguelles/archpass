@@ -14,26 +14,42 @@ export function DashboardSidebar() {
       <div className="p-4">
         <div className="text-2xl font-bold mb-6">ArchPass</div>
         <nav className="space-y-2">
-          <Button variant="ghost" className="w-full justify-start" asChild>
+          <Button
+            variant="ghost"
+            className="w-full justify-start"
+            asChild={true}
+          >
             <Link href="/dashboard">
               <LayoutDashboard className="mr-2 h-4 w-4" />
               Dashboard
             </Link>
           </Button>
-          <Button variant="ghost" className="w-full justify-start" asChild>
+          <Button
+            variant="ghost"
+            className="w-full justify-start"
+            asChild={true}
+          >
             <Link href={`/dashboard/${event?.eventSlug}/tickets`}>
               <Tickets className="mr-2 h-4 w-4" />
               Tickets
             </Link>
           </Button>
 
-          <Button variant="ghost" className="w-full justify-start" asChild>
+          <Button
+            variant="ghost"
+            className="w-full justify-start"
+            asChild={true}
+          >
             <Link href={`/dashboard/${event?.eventSlug}/attendees`}>
               <Users className="mr-2 h-4 w-4" />
               Attendees
             </Link>
           </Button>
-          <Button variant="ghost" className="w-full justify-start" asChild>
+          <Button
+            variant="ghost"
+            className="w-full justify-start"
+            asChild={true}
+          >
             <Link href={`/dashboard/${event?.eventSlug}/settings`}>
               <Settings className="mr-2 h-4 w-4" />
               Settings

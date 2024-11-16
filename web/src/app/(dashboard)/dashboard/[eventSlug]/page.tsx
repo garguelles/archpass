@@ -1,7 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import { useParams } from 'next/navigation';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -9,18 +8,19 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
+import { useEventItemQuery } from '@/queries/event-item';
 import {
+  ArrowUpRight,
   CalendarDays,
   DollarSign,
   MapPin,
-  Users,
   Ticket,
-  ArrowUpRight,
+  Users,
 } from 'lucide-react';
+import { useParams } from 'next/navigation';
+import { useState } from 'react';
 import { EditEventModal } from './edit-event-modal';
-import { useEventItemQuery } from '@/queries/event-item';
 
 // Mock data (in a real app, this would come from an API or database)
 const initialEventData = {

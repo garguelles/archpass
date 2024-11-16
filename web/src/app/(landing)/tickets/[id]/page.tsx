@@ -1,6 +1,6 @@
-import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CalendarIcon, MapPinIcon, UserIcon } from 'lucide-react';
+import Image from 'next/image';
 
 // Mock data (in a real app, this would come from an API or database)
 const ticketData = {
@@ -28,7 +28,7 @@ export default function TicketPage({
             <Image
               src={ticketData.imageUrl}
               alt={ticketData.eventName}
-              fill
+              fill={true}
               style={{ objectFit: 'cover' }}
               className="rounded-md"
             />

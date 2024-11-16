@@ -1,7 +1,6 @@
 'use client';
 
-import Image from 'next/image';
-import Link from 'next/link';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -11,29 +10,24 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { CalendarIcon, MapPinIcon, StarIcon, Ticket } from 'lucide-react';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { usePublicEventItemQuery } from '@/queries/public-event-item';
-import { TTicket } from '@/types';
-import {
-  Transaction,
-  TransactionButton,
-  TransactionError,
-  TransactionResponse,
-  TransactionStatus,
-  TransactionStatusAction,
-  TransactionStatusLabel,
-} from '@coinbase/onchainkit/transaction';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { BASE_SEPOLIA_CHAIN_ID, eventABI } from '@/constants';
-import { useCallback, useEffect, useState } from 'react';
-import { type Address, parseEther } from 'viem';
-import { useCreateTicketImageMutation } from '@/queries/create-ticket-image';
 import { useUpload } from '@/hooks/useUpload';
 import { getSlicedAddress } from '@/lib/utils';
+import { useCreateTicketImageMutation } from '@/queries/create-ticket-image';
+import { usePublicEventItemQuery } from '@/queries/public-event-item';
+import type { TTicket } from '@/types';
+import type {
+  TransactionError,
+  TransactionResponse,
+} from '@coinbase/onchainkit/transaction';
+import { CalendarIcon, MapPinIcon, StarIcon, Ticket } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useCallback, useEffect, useState } from 'react';
+import { type Address, parseEther } from 'viem';
 import { useAccount, useWriteContract } from 'wagmi';
-import { DEFAULT_CHAIN_ID } from '@/config';
 
 // This would typically come from a database or API
 const eventData = {
@@ -194,9 +188,9 @@ export default function EventPage({ params }: { params: { slug: string } }) {
         <Image
           src={eventData.imageUrl}
           alt={event?.name}
-          fill
+          fill={true}
           style={{ objectFit: 'cover' }}
-          priority
+          priority={true}
         />
         <div className="absolute inset-0 bg-black/60 flex items-end">
           <div className="container mx-auto px-4 py-6">
