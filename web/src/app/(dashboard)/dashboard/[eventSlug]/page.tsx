@@ -53,13 +53,13 @@ export default function EventDashboard() {
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">{event.name} Dashboard</h1>
+        <h1 className="text-3xl font-bold">{event?.name} Dashboard</h1>
         <EditEventModal
           event={{
-            name: event.name,
-            description: event.description,
-            location: event.location,
-            eventDate: event.date,
+            name: event?.name,
+            description: event?.description,
+            location: event?.location,
+            eventDate: event?.date,
             headerImage: 'demo',
           }}
           onEventUpdated={handleEventUpdate}

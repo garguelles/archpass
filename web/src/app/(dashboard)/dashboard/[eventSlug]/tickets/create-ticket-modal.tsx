@@ -26,7 +26,7 @@ import {
 import { TEvent } from '@/types';
 import { useCreateTicketMutation } from '@/queries/create-ticket';
 import { useCreateTicketImageMutation } from '@/queries/create-ticket-image';
-import { useUpload } from "@/hooks/useUpload";
+import { useUpload } from '@/hooks/useUpload';
 
 type TicketFormData = {
   name: string;
@@ -111,14 +111,14 @@ export function CreateTicketModal({
         eventName: event.name,
         eventLocation: event.location,
         eventDate: event.date,
-        attendeeName: "[YOUR NAME]",
+        attendeeName: '[YOUR NAME]',
         ticketName: payload.name.toUpperCase(),
       });
 
       const uploadResponse = await upload({
         image: imageBlob as File,
-      })
-      payload.imageUrl = uploadResponse?.imageURI as string
+      });
+      payload.imageUrl = uploadResponse?.imageURI as string;
 
       mutateAsync(payload).then(() => {
         setOpen(false);
@@ -183,7 +183,6 @@ export function CreateTicketModal({
           <Transaction
             contracts={contracts}
             chainId={BASE_SEPOLIA_CHAIN_ID}
-            onStatus={}
             onError={handleError}
             onSuccess={handleSuccess}
           >
