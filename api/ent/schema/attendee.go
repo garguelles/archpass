@@ -4,6 +4,8 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
+	"time"
 )
 
 type Attendee struct {
@@ -15,6 +17,18 @@ func (Attendee) Fields() []ent.Field {
 		field.Int("user_id"),
 		field.Int("event_id"),
 		field.Int("ticket_id"),
+		field.Int("token_id"),
+		field.String("transaction_hash"),
+		field.Int64("block_number"),
+		field.Time("created_at").
+			Default(time.Now),
+	}
+}
+
+func (Attendee) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("token_id", "ticket_id", "user_id").
+			Unique(),
 	}
 }
 

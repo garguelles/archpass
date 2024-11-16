@@ -5,6 +5,7 @@ package ent
 import (
 	"time"
 
+	"github.com/garguelles/archpass/ent/attendee"
 	"github.com/garguelles/archpass/ent/event"
 	"github.com/garguelles/archpass/ent/schema"
 	"github.com/garguelles/archpass/ent/ticket"
@@ -15,6 +16,12 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	attendeeFields := schema.Attendee{}.Fields()
+	_ = attendeeFields
+	// attendeeDescCreatedAt is the schema descriptor for created_at field.
+	attendeeDescCreatedAt := attendeeFields[6].Descriptor()
+	// attendee.DefaultCreatedAt holds the default value on creation for the created_at field.
+	attendee.DefaultCreatedAt = attendeeDescCreatedAt.Default.(func() time.Time)
 	eventFields := schema.Event{}.Fields()
 	_ = eventFields
 	// eventDescName is the schema descriptor for name field.
@@ -26,11 +33,11 @@ func init() {
 	// event.EventSlugValidator is a validator for the "event_slug" field. It is called by the builders before save.
 	event.EventSlugValidator = eventDescEventSlug.Validators[0].(func(string) error)
 	// eventDescCreatedAt is the schema descriptor for created_at field.
-	eventDescCreatedAt := eventFields[12].Descriptor()
+	eventDescCreatedAt := eventFields[13].Descriptor()
 	// event.DefaultCreatedAt holds the default value on creation for the created_at field.
 	event.DefaultCreatedAt = eventDescCreatedAt.Default.(func() time.Time)
 	// eventDescModifiedAt is the schema descriptor for modified_at field.
-	eventDescModifiedAt := eventFields[13].Descriptor()
+	eventDescModifiedAt := eventFields[14].Descriptor()
 	// event.DefaultModifiedAt holds the default value on creation for the modified_at field.
 	event.DefaultModifiedAt = eventDescModifiedAt.Default.(func() time.Time)
 	// event.UpdateDefaultModifiedAt holds the default value on update for the modified_at field.
@@ -42,11 +49,11 @@ func init() {
 	// ticket.TicketSlugValidator is a validator for the "ticket_slug" field. It is called by the builders before save.
 	ticket.TicketSlugValidator = ticketDescTicketSlug.Validators[0].(func(string) error)
 	// ticketDescCreatedAt is the schema descriptor for created_at field.
-	ticketDescCreatedAt := ticketFields[9].Descriptor()
+	ticketDescCreatedAt := ticketFields[10].Descriptor()
 	// ticket.DefaultCreatedAt holds the default value on creation for the created_at field.
 	ticket.DefaultCreatedAt = ticketDescCreatedAt.Default.(func() time.Time)
 	// ticketDescUpdatedAt is the schema descriptor for updated_at field.
-	ticketDescUpdatedAt := ticketFields[10].Descriptor()
+	ticketDescUpdatedAt := ticketFields[11].Descriptor()
 	// ticket.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	ticket.DefaultUpdatedAt = ticketDescUpdatedAt.Default.(func() time.Time)
 	// ticket.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.

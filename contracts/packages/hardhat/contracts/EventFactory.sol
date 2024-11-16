@@ -9,7 +9,7 @@ contract EventFactory {
     address public immutable ticketImplementation;
     address[] public deployedEvents;              
 
-    event EventCreated(string eventHash, address clone);
+    event EventCreated(string eventHash, address clone, address sender);
     event TicketMinted(
         uint256 indexed tokenId,
         address indexed ticketAddress,
@@ -17,7 +17,7 @@ contract EventFactory {
         uint256 blockNumber,
         address minter
     );
-    event TicketCreated(string ticketHash, address clone);
+    event TicketCreated(string ticketHash, address clone, address sender);
 
     struct AttendeeTicket {
         uint256 tokenId;
@@ -43,7 +43,7 @@ contract EventFactory {
         address eventClone = Clones.clone(eventImplementation);
         Event(eventClone).initialize(ticketImplementation, msg.sender, address(this));
         deployedEvents.push(eventClone);
-        emit EventCreated(eventHash, eventClone);
+        emit EventCreated(eventHash, eventClone, msg.sender);
         return eventClone;
     }
 
@@ -63,7 +63,7 @@ contract EventFactory {
 
         Event(eventAddress).registerTicket(ticketClone);
 
-        emit TicketCreated(ticketHash, ticketClone);
+        emit TicketCreated(ticketHash, ticketClone, msg.sender);
         return ticketClone;
     }
 

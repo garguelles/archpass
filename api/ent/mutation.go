@@ -15,6 +15,7 @@ import (
 	"github.com/garguelles/archpass/ent/event"
 	"github.com/garguelles/archpass/ent/predicate"
 	"github.com/garguelles/archpass/ent/ticket"
+	"github.com/garguelles/archpass/ent/transaction"
 	"github.com/garguelles/archpass/ent/user"
 )
 
@@ -27,28 +28,35 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
-	TypeAttendee = "Attendee"
-	TypeEvent    = "Event"
-	TypeTicket   = "Ticket"
-	TypeUser     = "User"
+	TypeAttendee    = "Attendee"
+	TypeEvent       = "Event"
+	TypeTicket      = "Ticket"
+	TypeTransaction = "Transaction"
+	TypeUser        = "User"
 )
 
 // AttendeeMutation represents an operation that mutates the Attendee nodes in the graph.
 type AttendeeMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int
-	clearedFields map[string]struct{}
-	event         *int
-	clearedevent  bool
-	user          *int
-	cleareduser   bool
-	ticket        *int
-	clearedticket bool
-	done          bool
-	oldValue      func(context.Context) (*Attendee, error)
-	predicates    []predicate.Attendee
+	op               Op
+	typ              string
+	id               *int
+	token_id         *int
+	addtoken_id      *int
+	transaction_hash *string
+	block_number     *int64
+	addblock_number  *int64
+	created_at       *time.Time
+	clearedFields    map[string]struct{}
+	event            *int
+	clearedevent     bool
+	user             *int
+	cleareduser      bool
+	ticket           *int
+	clearedticket    bool
+	done             bool
+	oldValue         func(context.Context) (*Attendee, error)
+	predicates       []predicate.Attendee
 }
 
 var _ ent.Mutation = (*AttendeeMutation)(nil)
@@ -257,6 +265,190 @@ func (m *AttendeeMutation) ResetTicketID() {
 	m.ticket = nil
 }
 
+// SetTokenID sets the "token_id" field.
+func (m *AttendeeMutation) SetTokenID(i int) {
+	m.token_id = &i
+	m.addtoken_id = nil
+}
+
+// TokenID returns the value of the "token_id" field in the mutation.
+func (m *AttendeeMutation) TokenID() (r int, exists bool) {
+	v := m.token_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTokenID returns the old "token_id" field's value of the Attendee entity.
+// If the Attendee object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AttendeeMutation) OldTokenID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTokenID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTokenID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTokenID: %w", err)
+	}
+	return oldValue.TokenID, nil
+}
+
+// AddTokenID adds i to the "token_id" field.
+func (m *AttendeeMutation) AddTokenID(i int) {
+	if m.addtoken_id != nil {
+		*m.addtoken_id += i
+	} else {
+		m.addtoken_id = &i
+	}
+}
+
+// AddedTokenID returns the value that was added to the "token_id" field in this mutation.
+func (m *AttendeeMutation) AddedTokenID() (r int, exists bool) {
+	v := m.addtoken_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetTokenID resets all changes to the "token_id" field.
+func (m *AttendeeMutation) ResetTokenID() {
+	m.token_id = nil
+	m.addtoken_id = nil
+}
+
+// SetTransactionHash sets the "transaction_hash" field.
+func (m *AttendeeMutation) SetTransactionHash(s string) {
+	m.transaction_hash = &s
+}
+
+// TransactionHash returns the value of the "transaction_hash" field in the mutation.
+func (m *AttendeeMutation) TransactionHash() (r string, exists bool) {
+	v := m.transaction_hash
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTransactionHash returns the old "transaction_hash" field's value of the Attendee entity.
+// If the Attendee object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AttendeeMutation) OldTransactionHash(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTransactionHash is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTransactionHash requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTransactionHash: %w", err)
+	}
+	return oldValue.TransactionHash, nil
+}
+
+// ResetTransactionHash resets all changes to the "transaction_hash" field.
+func (m *AttendeeMutation) ResetTransactionHash() {
+	m.transaction_hash = nil
+}
+
+// SetBlockNumber sets the "block_number" field.
+func (m *AttendeeMutation) SetBlockNumber(i int64) {
+	m.block_number = &i
+	m.addblock_number = nil
+}
+
+// BlockNumber returns the value of the "block_number" field in the mutation.
+func (m *AttendeeMutation) BlockNumber() (r int64, exists bool) {
+	v := m.block_number
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBlockNumber returns the old "block_number" field's value of the Attendee entity.
+// If the Attendee object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AttendeeMutation) OldBlockNumber(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBlockNumber is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBlockNumber requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBlockNumber: %w", err)
+	}
+	return oldValue.BlockNumber, nil
+}
+
+// AddBlockNumber adds i to the "block_number" field.
+func (m *AttendeeMutation) AddBlockNumber(i int64) {
+	if m.addblock_number != nil {
+		*m.addblock_number += i
+	} else {
+		m.addblock_number = &i
+	}
+}
+
+// AddedBlockNumber returns the value that was added to the "block_number" field in this mutation.
+func (m *AttendeeMutation) AddedBlockNumber() (r int64, exists bool) {
+	v := m.addblock_number
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetBlockNumber resets all changes to the "block_number" field.
+func (m *AttendeeMutation) ResetBlockNumber() {
+	m.block_number = nil
+	m.addblock_number = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *AttendeeMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *AttendeeMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the Attendee entity.
+// If the Attendee object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AttendeeMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *AttendeeMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
 // ClearEvent clears the "event" edge to the Event entity.
 func (m *AttendeeMutation) ClearEvent() {
 	m.clearedevent = true
@@ -372,7 +564,7 @@ func (m *AttendeeMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AttendeeMutation) Fields() []string {
-	fields := make([]string, 0, 3)
+	fields := make([]string, 0, 7)
 	if m.user != nil {
 		fields = append(fields, attendee.FieldUserID)
 	}
@@ -381,6 +573,18 @@ func (m *AttendeeMutation) Fields() []string {
 	}
 	if m.ticket != nil {
 		fields = append(fields, attendee.FieldTicketID)
+	}
+	if m.token_id != nil {
+		fields = append(fields, attendee.FieldTokenID)
+	}
+	if m.transaction_hash != nil {
+		fields = append(fields, attendee.FieldTransactionHash)
+	}
+	if m.block_number != nil {
+		fields = append(fields, attendee.FieldBlockNumber)
+	}
+	if m.created_at != nil {
+		fields = append(fields, attendee.FieldCreatedAt)
 	}
 	return fields
 }
@@ -396,6 +600,14 @@ func (m *AttendeeMutation) Field(name string) (ent.Value, bool) {
 		return m.EventID()
 	case attendee.FieldTicketID:
 		return m.TicketID()
+	case attendee.FieldTokenID:
+		return m.TokenID()
+	case attendee.FieldTransactionHash:
+		return m.TransactionHash()
+	case attendee.FieldBlockNumber:
+		return m.BlockNumber()
+	case attendee.FieldCreatedAt:
+		return m.CreatedAt()
 	}
 	return nil, false
 }
@@ -411,6 +623,14 @@ func (m *AttendeeMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldEventID(ctx)
 	case attendee.FieldTicketID:
 		return m.OldTicketID(ctx)
+	case attendee.FieldTokenID:
+		return m.OldTokenID(ctx)
+	case attendee.FieldTransactionHash:
+		return m.OldTransactionHash(ctx)
+	case attendee.FieldBlockNumber:
+		return m.OldBlockNumber(ctx)
+	case attendee.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown Attendee field %s", name)
 }
@@ -441,6 +661,34 @@ func (m *AttendeeMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetTicketID(v)
 		return nil
+	case attendee.FieldTokenID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTokenID(v)
+		return nil
+	case attendee.FieldTransactionHash:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTransactionHash(v)
+		return nil
+	case attendee.FieldBlockNumber:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBlockNumber(v)
+		return nil
+	case attendee.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Attendee field %s", name)
 }
@@ -449,6 +697,12 @@ func (m *AttendeeMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *AttendeeMutation) AddedFields() []string {
 	var fields []string
+	if m.addtoken_id != nil {
+		fields = append(fields, attendee.FieldTokenID)
+	}
+	if m.addblock_number != nil {
+		fields = append(fields, attendee.FieldBlockNumber)
+	}
 	return fields
 }
 
@@ -457,6 +711,10 @@ func (m *AttendeeMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *AttendeeMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
+	case attendee.FieldTokenID:
+		return m.AddedTokenID()
+	case attendee.FieldBlockNumber:
+		return m.AddedBlockNumber()
 	}
 	return nil, false
 }
@@ -466,6 +724,20 @@ func (m *AttendeeMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *AttendeeMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case attendee.FieldTokenID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTokenID(v)
+		return nil
+	case attendee.FieldBlockNumber:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddBlockNumber(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Attendee numeric field %s", name)
 }
@@ -501,6 +773,18 @@ func (m *AttendeeMutation) ResetField(name string) error {
 		return nil
 	case attendee.FieldTicketID:
 		m.ResetTicketID()
+		return nil
+	case attendee.FieldTokenID:
+		m.ResetTokenID()
+		return nil
+	case attendee.FieldTransactionHash:
+		m.ResetTransactionHash()
+		return nil
+	case attendee.FieldBlockNumber:
+		m.ResetBlockNumber()
+		return nil
+	case attendee.FieldCreatedAt:
+		m.ResetCreatedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown Attendee field %s", name)
@@ -630,6 +914,7 @@ type EventMutation struct {
 	date             *string
 	location         *string
 	image_url        *string
+	event_hash       *string
 	contract_address *string
 	transaction_hash *string
 	block_number     *string
@@ -1123,6 +1408,55 @@ func (m *EventMutation) ResetUserID() {
 	m.user = nil
 }
 
+// SetEventHash sets the "event_hash" field.
+func (m *EventMutation) SetEventHash(s string) {
+	m.event_hash = &s
+}
+
+// EventHash returns the value of the "event_hash" field in the mutation.
+func (m *EventMutation) EventHash() (r string, exists bool) {
+	v := m.event_hash
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEventHash returns the old "event_hash" field's value of the Event entity.
+// If the Event object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EventMutation) OldEventHash(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEventHash is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEventHash requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEventHash: %w", err)
+	}
+	return oldValue.EventHash, nil
+}
+
+// ClearEventHash clears the value of the "event_hash" field.
+func (m *EventMutation) ClearEventHash() {
+	m.event_hash = nil
+	m.clearedFields[event.FieldEventHash] = struct{}{}
+}
+
+// EventHashCleared returns if the "event_hash" field was cleared in this mutation.
+func (m *EventMutation) EventHashCleared() bool {
+	_, ok := m.clearedFields[event.FieldEventHash]
+	return ok
+}
+
+// ResetEventHash resets all changes to the "event_hash" field.
+func (m *EventMutation) ResetEventHash() {
+	m.event_hash = nil
+	delete(m.clearedFields, event.FieldEventHash)
+}
+
 // SetContractAddress sets the "contract_address" field.
 func (m *EventMutation) SetContractAddress(s string) {
 	m.contract_address = &s
@@ -1511,7 +1845,7 @@ func (m *EventMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *EventMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 15)
 	if m.name != nil {
 		fields = append(fields, event.FieldName)
 	}
@@ -1538,6 +1872,9 @@ func (m *EventMutation) Fields() []string {
 	}
 	if m.user != nil {
 		fields = append(fields, event.FieldUserID)
+	}
+	if m.event_hash != nil {
+		fields = append(fields, event.FieldEventHash)
 	}
 	if m.contract_address != nil {
 		fields = append(fields, event.FieldContractAddress)
@@ -1580,6 +1917,8 @@ func (m *EventMutation) Field(name string) (ent.Value, bool) {
 		return m.ImageURL()
 	case event.FieldUserID:
 		return m.UserID()
+	case event.FieldEventHash:
+		return m.EventHash()
 	case event.FieldContractAddress:
 		return m.ContractAddress()
 	case event.FieldTransactionHash:
@@ -1617,6 +1956,8 @@ func (m *EventMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldImageURL(ctx)
 	case event.FieldUserID:
 		return m.OldUserID(ctx)
+	case event.FieldEventHash:
+		return m.OldEventHash(ctx)
 	case event.FieldContractAddress:
 		return m.OldContractAddress(ctx)
 	case event.FieldTransactionHash:
@@ -1699,6 +2040,13 @@ func (m *EventMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUserID(v)
 		return nil
+	case event.FieldEventHash:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEventHash(v)
+		return nil
 	case event.FieldContractAddress:
 		v, ok := value.(string)
 		if !ok {
@@ -1779,6 +2127,9 @@ func (m *EventMutation) ClearedFields() []string {
 	if m.FieldCleared(event.FieldDate) {
 		fields = append(fields, event.FieldDate)
 	}
+	if m.FieldCleared(event.FieldEventHash) {
+		fields = append(fields, event.FieldEventHash)
+	}
 	if m.FieldCleared(event.FieldContractAddress) {
 		fields = append(fields, event.FieldContractAddress)
 	}
@@ -1813,6 +2164,9 @@ func (m *EventMutation) ClearField(name string) error {
 		return nil
 	case event.FieldDate:
 		m.ClearDate()
+		return nil
+	case event.FieldEventHash:
+		m.ClearEventHash()
 		return nil
 	case event.FieldContractAddress:
 		m.ClearContractAddress()
@@ -1857,6 +2211,9 @@ func (m *EventMutation) ResetField(name string) error {
 		return nil
 	case event.FieldUserID:
 		m.ResetUserID()
+		return nil
+	case event.FieldEventHash:
+		m.ResetEventHash()
 		return nil
 	case event.FieldContractAddress:
 		m.ResetContractAddress()
@@ -2017,6 +2374,7 @@ type TicketMutation struct {
 	mint_price       *string
 	quantity         *int
 	addquantity      *int
+	ticket_hash      *string
 	contract_address *string
 	transaction_hash *string
 	block_number     *string
@@ -2366,6 +2724,55 @@ func (m *TicketMutation) ResetEventID() {
 	m.event = nil
 }
 
+// SetTicketHash sets the "ticket_hash" field.
+func (m *TicketMutation) SetTicketHash(s string) {
+	m.ticket_hash = &s
+}
+
+// TicketHash returns the value of the "ticket_hash" field in the mutation.
+func (m *TicketMutation) TicketHash() (r string, exists bool) {
+	v := m.ticket_hash
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTicketHash returns the old "ticket_hash" field's value of the Ticket entity.
+// If the Ticket object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TicketMutation) OldTicketHash(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTicketHash is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTicketHash requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTicketHash: %w", err)
+	}
+	return oldValue.TicketHash, nil
+}
+
+// ClearTicketHash clears the value of the "ticket_hash" field.
+func (m *TicketMutation) ClearTicketHash() {
+	m.ticket_hash = nil
+	m.clearedFields[ticket.FieldTicketHash] = struct{}{}
+}
+
+// TicketHashCleared returns if the "ticket_hash" field was cleared in this mutation.
+func (m *TicketMutation) TicketHashCleared() bool {
+	_, ok := m.clearedFields[ticket.FieldTicketHash]
+	return ok
+}
+
+// ResetTicketHash resets all changes to the "ticket_hash" field.
+func (m *TicketMutation) ResetTicketHash() {
+	m.ticket_hash = nil
+	delete(m.clearedFields, ticket.FieldTicketHash)
+}
+
 // SetContractAddress sets the "contract_address" field.
 func (m *TicketMutation) SetContractAddress(s string) {
 	m.contract_address = &s
@@ -2685,7 +3092,7 @@ func (m *TicketMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TicketMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 12)
 	if m.name != nil {
 		fields = append(fields, ticket.FieldName)
 	}
@@ -2703,6 +3110,9 @@ func (m *TicketMutation) Fields() []string {
 	}
 	if m.event != nil {
 		fields = append(fields, ticket.FieldEventID)
+	}
+	if m.ticket_hash != nil {
+		fields = append(fields, ticket.FieldTicketHash)
 	}
 	if m.contract_address != nil {
 		fields = append(fields, ticket.FieldContractAddress)
@@ -2739,6 +3149,8 @@ func (m *TicketMutation) Field(name string) (ent.Value, bool) {
 		return m.Quantity()
 	case ticket.FieldEventID:
 		return m.EventID()
+	case ticket.FieldTicketHash:
+		return m.TicketHash()
 	case ticket.FieldContractAddress:
 		return m.ContractAddress()
 	case ticket.FieldTransactionHash:
@@ -2770,6 +3182,8 @@ func (m *TicketMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldQuantity(ctx)
 	case ticket.FieldEventID:
 		return m.OldEventID(ctx)
+	case ticket.FieldTicketHash:
+		return m.OldTicketHash(ctx)
 	case ticket.FieldContractAddress:
 		return m.OldContractAddress(ctx)
 	case ticket.FieldTransactionHash:
@@ -2830,6 +3244,13 @@ func (m *TicketMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetEventID(v)
+		return nil
+	case ticket.FieldTicketHash:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTicketHash(v)
 		return nil
 	case ticket.FieldContractAddress:
 		v, ok := value.(string)
@@ -2911,6 +3332,9 @@ func (m *TicketMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *TicketMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(ticket.FieldTicketHash) {
+		fields = append(fields, ticket.FieldTicketHash)
+	}
 	if m.FieldCleared(ticket.FieldContractAddress) {
 		fields = append(fields, ticket.FieldContractAddress)
 	}
@@ -2934,6 +3358,9 @@ func (m *TicketMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *TicketMutation) ClearField(name string) error {
 	switch name {
+	case ticket.FieldTicketHash:
+		m.ClearTicketHash()
+		return nil
 	case ticket.FieldContractAddress:
 		m.ClearContractAddress()
 		return nil
@@ -2968,6 +3395,9 @@ func (m *TicketMutation) ResetField(name string) error {
 		return nil
 	case ticket.FieldEventID:
 		m.ResetEventID()
+		return nil
+	case ticket.FieldTicketHash:
+		m.ResetTicketHash()
 		return nil
 	case ticket.FieldContractAddress:
 		m.ResetContractAddress()
@@ -3078,6 +3508,530 @@ func (m *TicketMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown Ticket edge %s", name)
+}
+
+// TransactionMutation represents an operation that mutates the Transaction nodes in the graph.
+type TransactionMutation struct {
+	config
+	op               Op
+	typ              string
+	id               *int
+	event_type       *string
+	wallet_address   *string
+	transaction_hash *string
+	block_number     *int64
+	addblock_number  *int64
+	clearedFields    map[string]struct{}
+	done             bool
+	oldValue         func(context.Context) (*Transaction, error)
+	predicates       []predicate.Transaction
+}
+
+var _ ent.Mutation = (*TransactionMutation)(nil)
+
+// transactionOption allows management of the mutation configuration using functional options.
+type transactionOption func(*TransactionMutation)
+
+// newTransactionMutation creates new mutation for the Transaction entity.
+func newTransactionMutation(c config, op Op, opts ...transactionOption) *TransactionMutation {
+	m := &TransactionMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeTransaction,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withTransactionID sets the ID field of the mutation.
+func withTransactionID(id int) transactionOption {
+	return func(m *TransactionMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Transaction
+		)
+		m.oldValue = func(ctx context.Context) (*Transaction, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Transaction.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withTransaction sets the old Transaction of the mutation.
+func withTransaction(node *Transaction) transactionOption {
+	return func(m *TransactionMutation) {
+		m.oldValue = func(context.Context) (*Transaction, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m TransactionMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m TransactionMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *TransactionMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *TransactionMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().Transaction.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetEventType sets the "event_type" field.
+func (m *TransactionMutation) SetEventType(s string) {
+	m.event_type = &s
+}
+
+// EventType returns the value of the "event_type" field in the mutation.
+func (m *TransactionMutation) EventType() (r string, exists bool) {
+	v := m.event_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEventType returns the old "event_type" field's value of the Transaction entity.
+// If the Transaction object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TransactionMutation) OldEventType(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEventType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEventType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEventType: %w", err)
+	}
+	return oldValue.EventType, nil
+}
+
+// ResetEventType resets all changes to the "event_type" field.
+func (m *TransactionMutation) ResetEventType() {
+	m.event_type = nil
+}
+
+// SetWalletAddress sets the "wallet_address" field.
+func (m *TransactionMutation) SetWalletAddress(s string) {
+	m.wallet_address = &s
+}
+
+// WalletAddress returns the value of the "wallet_address" field in the mutation.
+func (m *TransactionMutation) WalletAddress() (r string, exists bool) {
+	v := m.wallet_address
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldWalletAddress returns the old "wallet_address" field's value of the Transaction entity.
+// If the Transaction object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TransactionMutation) OldWalletAddress(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldWalletAddress is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldWalletAddress requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldWalletAddress: %w", err)
+	}
+	return oldValue.WalletAddress, nil
+}
+
+// ResetWalletAddress resets all changes to the "wallet_address" field.
+func (m *TransactionMutation) ResetWalletAddress() {
+	m.wallet_address = nil
+}
+
+// SetTransactionHash sets the "transaction_hash" field.
+func (m *TransactionMutation) SetTransactionHash(s string) {
+	m.transaction_hash = &s
+}
+
+// TransactionHash returns the value of the "transaction_hash" field in the mutation.
+func (m *TransactionMutation) TransactionHash() (r string, exists bool) {
+	v := m.transaction_hash
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTransactionHash returns the old "transaction_hash" field's value of the Transaction entity.
+// If the Transaction object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TransactionMutation) OldTransactionHash(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTransactionHash is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTransactionHash requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTransactionHash: %w", err)
+	}
+	return oldValue.TransactionHash, nil
+}
+
+// ResetTransactionHash resets all changes to the "transaction_hash" field.
+func (m *TransactionMutation) ResetTransactionHash() {
+	m.transaction_hash = nil
+}
+
+// SetBlockNumber sets the "block_number" field.
+func (m *TransactionMutation) SetBlockNumber(i int64) {
+	m.block_number = &i
+	m.addblock_number = nil
+}
+
+// BlockNumber returns the value of the "block_number" field in the mutation.
+func (m *TransactionMutation) BlockNumber() (r int64, exists bool) {
+	v := m.block_number
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBlockNumber returns the old "block_number" field's value of the Transaction entity.
+// If the Transaction object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TransactionMutation) OldBlockNumber(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBlockNumber is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBlockNumber requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBlockNumber: %w", err)
+	}
+	return oldValue.BlockNumber, nil
+}
+
+// AddBlockNumber adds i to the "block_number" field.
+func (m *TransactionMutation) AddBlockNumber(i int64) {
+	if m.addblock_number != nil {
+		*m.addblock_number += i
+	} else {
+		m.addblock_number = &i
+	}
+}
+
+// AddedBlockNumber returns the value that was added to the "block_number" field in this mutation.
+func (m *TransactionMutation) AddedBlockNumber() (r int64, exists bool) {
+	v := m.addblock_number
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetBlockNumber resets all changes to the "block_number" field.
+func (m *TransactionMutation) ResetBlockNumber() {
+	m.block_number = nil
+	m.addblock_number = nil
+}
+
+// Where appends a list predicates to the TransactionMutation builder.
+func (m *TransactionMutation) Where(ps ...predicate.Transaction) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the TransactionMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *TransactionMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Transaction, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *TransactionMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *TransactionMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (Transaction).
+func (m *TransactionMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *TransactionMutation) Fields() []string {
+	fields := make([]string, 0, 4)
+	if m.event_type != nil {
+		fields = append(fields, transaction.FieldEventType)
+	}
+	if m.wallet_address != nil {
+		fields = append(fields, transaction.FieldWalletAddress)
+	}
+	if m.transaction_hash != nil {
+		fields = append(fields, transaction.FieldTransactionHash)
+	}
+	if m.block_number != nil {
+		fields = append(fields, transaction.FieldBlockNumber)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *TransactionMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case transaction.FieldEventType:
+		return m.EventType()
+	case transaction.FieldWalletAddress:
+		return m.WalletAddress()
+	case transaction.FieldTransactionHash:
+		return m.TransactionHash()
+	case transaction.FieldBlockNumber:
+		return m.BlockNumber()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *TransactionMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case transaction.FieldEventType:
+		return m.OldEventType(ctx)
+	case transaction.FieldWalletAddress:
+		return m.OldWalletAddress(ctx)
+	case transaction.FieldTransactionHash:
+		return m.OldTransactionHash(ctx)
+	case transaction.FieldBlockNumber:
+		return m.OldBlockNumber(ctx)
+	}
+	return nil, fmt.Errorf("unknown Transaction field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *TransactionMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case transaction.FieldEventType:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEventType(v)
+		return nil
+	case transaction.FieldWalletAddress:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetWalletAddress(v)
+		return nil
+	case transaction.FieldTransactionHash:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTransactionHash(v)
+		return nil
+	case transaction.FieldBlockNumber:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBlockNumber(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Transaction field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *TransactionMutation) AddedFields() []string {
+	var fields []string
+	if m.addblock_number != nil {
+		fields = append(fields, transaction.FieldBlockNumber)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *TransactionMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case transaction.FieldBlockNumber:
+		return m.AddedBlockNumber()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *TransactionMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case transaction.FieldBlockNumber:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddBlockNumber(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Transaction numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *TransactionMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *TransactionMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *TransactionMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown Transaction nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *TransactionMutation) ResetField(name string) error {
+	switch name {
+	case transaction.FieldEventType:
+		m.ResetEventType()
+		return nil
+	case transaction.FieldWalletAddress:
+		m.ResetWalletAddress()
+		return nil
+	case transaction.FieldTransactionHash:
+		m.ResetTransactionHash()
+		return nil
+	case transaction.FieldBlockNumber:
+		m.ResetBlockNumber()
+		return nil
+	}
+	return fmt.Errorf("unknown Transaction field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *TransactionMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *TransactionMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *TransactionMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *TransactionMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *TransactionMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *TransactionMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *TransactionMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown Transaction unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *TransactionMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown Transaction edge %s", name)
 }
 
 // UserMutation represents an operation that mutates the User nodes in the graph.

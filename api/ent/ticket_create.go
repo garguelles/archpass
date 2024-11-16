@@ -60,6 +60,20 @@ func (tc *TicketCreate) SetEventID(i int) *TicketCreate {
 	return tc
 }
 
+// SetTicketHash sets the "ticket_hash" field.
+func (tc *TicketCreate) SetTicketHash(s string) *TicketCreate {
+	tc.mutation.SetTicketHash(s)
+	return tc
+}
+
+// SetNillableTicketHash sets the "ticket_hash" field if the given value is not nil.
+func (tc *TicketCreate) SetNillableTicketHash(s *string) *TicketCreate {
+	if s != nil {
+		tc.SetTicketHash(*s)
+	}
+	return tc
+}
+
 // SetContractAddress sets the "contract_address" field.
 func (tc *TicketCreate) SetContractAddress(s string) *TicketCreate {
 	tc.mutation.SetContractAddress(s)
@@ -280,6 +294,10 @@ func (tc *TicketCreate) createSpec() (*Ticket, *sqlgraph.CreateSpec) {
 		_spec.SetField(ticket.FieldQuantity, field.TypeInt, value)
 		_node.Quantity = value
 	}
+	if value, ok := tc.mutation.TicketHash(); ok {
+		_spec.SetField(ticket.FieldTicketHash, field.TypeString, value)
+		_node.TicketHash = value
+	}
 	if value, ok := tc.mutation.ContractAddress(); ok {
 		_spec.SetField(ticket.FieldContractAddress, field.TypeString, value)
 		_node.ContractAddress = value
@@ -460,6 +478,24 @@ func (u *TicketUpsert) SetEventID(v int) *TicketUpsert {
 // UpdateEventID sets the "event_id" field to the value that was provided on create.
 func (u *TicketUpsert) UpdateEventID() *TicketUpsert {
 	u.SetExcluded(ticket.FieldEventID)
+	return u
+}
+
+// SetTicketHash sets the "ticket_hash" field.
+func (u *TicketUpsert) SetTicketHash(v string) *TicketUpsert {
+	u.Set(ticket.FieldTicketHash, v)
+	return u
+}
+
+// UpdateTicketHash sets the "ticket_hash" field to the value that was provided on create.
+func (u *TicketUpsert) UpdateTicketHash() *TicketUpsert {
+	u.SetExcluded(ticket.FieldTicketHash)
+	return u
+}
+
+// ClearTicketHash clears the value of the "ticket_hash" field.
+func (u *TicketUpsert) ClearTicketHash() *TicketUpsert {
+	u.SetNull(ticket.FieldTicketHash)
 	return u
 }
 
@@ -669,6 +705,27 @@ func (u *TicketUpsertOne) SetEventID(v int) *TicketUpsertOne {
 func (u *TicketUpsertOne) UpdateEventID() *TicketUpsertOne {
 	return u.Update(func(s *TicketUpsert) {
 		s.UpdateEventID()
+	})
+}
+
+// SetTicketHash sets the "ticket_hash" field.
+func (u *TicketUpsertOne) SetTicketHash(v string) *TicketUpsertOne {
+	return u.Update(func(s *TicketUpsert) {
+		s.SetTicketHash(v)
+	})
+}
+
+// UpdateTicketHash sets the "ticket_hash" field to the value that was provided on create.
+func (u *TicketUpsertOne) UpdateTicketHash() *TicketUpsertOne {
+	return u.Update(func(s *TicketUpsert) {
+		s.UpdateTicketHash()
+	})
+}
+
+// ClearTicketHash clears the value of the "ticket_hash" field.
+func (u *TicketUpsertOne) ClearTicketHash() *TicketUpsertOne {
+	return u.Update(func(s *TicketUpsert) {
+		s.ClearTicketHash()
 	})
 }
 
@@ -1055,6 +1112,27 @@ func (u *TicketUpsertBulk) SetEventID(v int) *TicketUpsertBulk {
 func (u *TicketUpsertBulk) UpdateEventID() *TicketUpsertBulk {
 	return u.Update(func(s *TicketUpsert) {
 		s.UpdateEventID()
+	})
+}
+
+// SetTicketHash sets the "ticket_hash" field.
+func (u *TicketUpsertBulk) SetTicketHash(v string) *TicketUpsertBulk {
+	return u.Update(func(s *TicketUpsert) {
+		s.SetTicketHash(v)
+	})
+}
+
+// UpdateTicketHash sets the "ticket_hash" field to the value that was provided on create.
+func (u *TicketUpsertBulk) UpdateTicketHash() *TicketUpsertBulk {
+	return u.Update(func(s *TicketUpsert) {
+		s.UpdateTicketHash()
+	})
+}
+
+// ClearTicketHash clears the value of the "ticket_hash" field.
+func (u *TicketUpsertBulk) ClearTicketHash() *TicketUpsertBulk {
+	return u.Update(func(s *TicketUpsert) {
+		s.ClearTicketHash()
 	})
 }
 

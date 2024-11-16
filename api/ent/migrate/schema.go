@@ -11,6 +11,10 @@ var (
 	// AttendeesColumns holds the columns for the "attendees" table.
 	AttendeesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "token_id", Type: field.TypeInt},
+		{Name: "transaction_hash", Type: field.TypeString},
+		{Name: "block_number", Type: field.TypeInt64},
+		{Name: "created_at", Type: field.TypeTime},
 		{Name: "event_id", Type: field.TypeInt},
 		{Name: "ticket_id", Type: field.TypeInt, Unique: true},
 		{Name: "user_id", Type: field.TypeInt},
@@ -23,21 +27,28 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "attendees_events_attendees",
-				Columns:    []*schema.Column{AttendeesColumns[1]},
+				Columns:    []*schema.Column{AttendeesColumns[5]},
 				RefColumns: []*schema.Column{EventsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "attendees_tickets_attendees",
-				Columns:    []*schema.Column{AttendeesColumns[2]},
+				Columns:    []*schema.Column{AttendeesColumns[6]},
 				RefColumns: []*schema.Column{TicketsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "attendees_users_attendee_tickets",
-				Columns:    []*schema.Column{AttendeesColumns[3]},
+				Columns:    []*schema.Column{AttendeesColumns[7]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "attendee_token_id_ticket_id_user_id",
+				Unique:  true,
+				Columns: []*schema.Column{AttendeesColumns[1], AttendeesColumns[6], AttendeesColumns[7]},
 			},
 		},
 	}
@@ -52,6 +63,7 @@ var (
 		{Name: "date", Type: field.TypeString, Nullable: true},
 		{Name: "location", Type: field.TypeString, Size: 2147483647},
 		{Name: "image_url", Type: field.TypeString},
+		{Name: "event_hash", Type: field.TypeString, Nullable: true},
 		{Name: "contract_address", Type: field.TypeString, Nullable: true},
 		{Name: "transaction_hash", Type: field.TypeString, Nullable: true},
 		{Name: "block_number", Type: field.TypeString, Nullable: true},
@@ -67,7 +79,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "events_users_events",
-				Columns:    []*schema.Column{EventsColumns[14]},
+				Columns:    []*schema.Column{EventsColumns[15]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -81,6 +93,7 @@ var (
 		{Name: "ticket_slug", Type: field.TypeString, Unique: true},
 		{Name: "mint_price", Type: field.TypeString},
 		{Name: "quantity", Type: field.TypeInt},
+		{Name: "ticket_hash", Type: field.TypeString, Nullable: true},
 		{Name: "contract_address", Type: field.TypeString, Nullable: true},
 		{Name: "transaction_hash", Type: field.TypeString, Nullable: true},
 		{Name: "block_number", Type: field.TypeString, Nullable: true},
@@ -96,9 +109,30 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "tickets_events_tickets",
-				Columns:    []*schema.Column{TicketsColumns[11]},
+				Columns:    []*schema.Column{TicketsColumns[12]},
 				RefColumns: []*schema.Column{EventsColumns[0]},
 				OnDelete:   schema.NoAction,
+			},
+		},
+	}
+	// TransactionsColumns holds the columns for the "transactions" table.
+	TransactionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "event_type", Type: field.TypeString},
+		{Name: "wallet_address", Type: field.TypeString},
+		{Name: "transaction_hash", Type: field.TypeString},
+		{Name: "block_number", Type: field.TypeInt64},
+	}
+	// TransactionsTable holds the schema information for the "transactions" table.
+	TransactionsTable = &schema.Table{
+		Name:       "transactions",
+		Columns:    TransactionsColumns,
+		PrimaryKey: []*schema.Column{TransactionsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "transaction_event_type_wallet_address_transaction_hash",
+				Unique:  true,
+				Columns: []*schema.Column{TransactionsColumns[1], TransactionsColumns[2], TransactionsColumns[3]},
 			},
 		},
 	}
@@ -122,6 +156,7 @@ var (
 		AttendeesTable,
 		EventsTable,
 		TicketsTable,
+		TransactionsTable,
 		UsersTable,
 	}
 )

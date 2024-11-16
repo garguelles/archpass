@@ -10,4 +10,6 @@ type ITicketRepository interface {
 	ListByEventId(eventId int, userId int) (ent.Tickets, error)
 	GetBySlugAndEvent(eventSlug string, ticketSlug string) (ent.Ticket, error)
 	GetByAttendee(walletAddress string) (ent.Attendees, error)
+	GetByContractAddress(walletAddress string) (ent.Ticket, error)
+	GetByTicketHash(hash string) (ent.Ticket, error)
 }

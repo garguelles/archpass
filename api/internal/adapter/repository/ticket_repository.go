@@ -173,3 +173,28 @@ func (t *TicketRepository) GetByAttendee(walletAddress string) (ent.Attendees, e
 
 	return attendees, nil
 }
+
+func (t *TicketRepository) GetByContractAddress(walletAddress string) (ent.Ticket, error) {
+	ticket, err := t.client.Ticket.
+		Query().
+		Where(ticket.ContractAddressEQ(walletAddress)).
+		Only(*t.ctx)
+	if err != nil {
+		return ent.Ticket{}, err
+	}
+
+	return *ticket, nil
+}
+
+func (t *TicketRepository) GetByTicketHash(hash string) (ent.Ticket, error) {
+	ticket, err := t.client.Ticket.
+		Query().
+		Where(ticket.TicketHashEQ(hash)).
+		Only(*t.ctx)
+
+	if err != nil {
+		return ent.Ticket{}, err
+	}
+
+	return *ticket, nil
+}

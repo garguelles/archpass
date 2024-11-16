@@ -28,6 +28,8 @@ func (Event) Fields() []ent.Field {
 		field.Text("location"),
 		field.String("image_url"),
 		field.Int("user_id"),
+		field.String("event_hash").
+			Optional(),
 		field.String("contract_address").
 			Optional(),
 		field.String("transaction_hash").

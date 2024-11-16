@@ -10,4 +10,5 @@ type IEventRepository interface {
 	ListByOrganizerId(limit int, offset int, userId int) (ent.Events, error)
 	GetByIdAndOrganizerId(eventId int, userId int) (ent.Event, error)
 	GetBySlug(eventSlug string) (ent.Event, error)
+	GetByEventHash(hash string) (ent.Event, error)
 }

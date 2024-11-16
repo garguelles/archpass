@@ -124,3 +124,16 @@ func (e *EventRepository) GetBySlug(eventSlug string) (ent.Event, error) {
 
 	return *event, nil
 }
+
+func (e *EventRepository) GetByEventHash(hash string) (ent.Event, error) {
+	event, err := e.client.Event.
+		Query().
+		Where(event.EventHashEQ(hash)).
+		Only(*e.ctx)
+
+	if err != nil {
+		return ent.Event{}, err
+	}
+
+	return *event, nil
+}
