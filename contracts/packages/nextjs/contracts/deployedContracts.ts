@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   84532: {
     Event: {
-      address: "0x558020b8e4b8ea9EdC6D0393DBe14E59b7eF86c2",
+      address: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
       abi: [
         {
           inputs: [],
@@ -278,6 +278,19 @@ const deployedContracts = {
           type: "function",
         },
         {
+          inputs: [
+            {
+              internalType: "address",
+              name: "ticketAddress",
+              type: "address",
+            },
+          ],
+          name: "registerTicket",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
           inputs: [],
           name: "renounceOwnership",
           outputs: [],
@@ -315,7 +328,7 @@ const deployedContracts = {
       },
     },
     EventFactory: {
-      address: "0xe5988D31f72F1054dD12a7a16Dc565ea3050F4ee",
+      address: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
       abi: [
         {
           inputs: [
@@ -359,12 +372,37 @@ const deployedContracts = {
           inputs: [
             {
               indexed: false,
+              internalType: "string",
+              name: "eventHash",
+              type: "string",
+            },
+            {
+              indexed: false,
               internalType: "address",
               name: "clone",
               type: "address",
             },
           ],
           name: "EventCreated",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "string",
+              name: "ticketHash",
+              type: "string",
+            },
+            {
+              indexed: false,
+              internalType: "address",
+              name: "clone",
+              type: "address",
+            },
+          ],
+          name: "TicketCreated",
           type: "event",
         },
         {
@@ -468,8 +506,53 @@ const deployedContracts = {
           type: "function",
         },
         {
-          inputs: [],
+          inputs: [
+            {
+              internalType: "string",
+              name: "eventHash",
+              type: "string",
+            },
+          ],
           name: "createEvent",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "eventAddress",
+              type: "address",
+            },
+            {
+              internalType: "string",
+              name: "name",
+              type: "string",
+            },
+            {
+              internalType: "uint256",
+              name: "maxSupply",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "mintPrice",
+              type: "uint256",
+            },
+            {
+              internalType: "string",
+              name: "ticketHash",
+              type: "string",
+            },
+          ],
+          name: "createTicket",
           outputs: [
             {
               internalType: "address",
@@ -668,7 +751,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     Ticket: {
-      address: "0x22477c0E832CAfF1850926016A233172442A0ed1",
+      address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
       abi: [
         {
           inputs: [
