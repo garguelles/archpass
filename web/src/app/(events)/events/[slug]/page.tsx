@@ -41,11 +41,7 @@ const eventData = {
 };
 
 export default function EventPage({ params }: { params: { slug: string } }) {
-  // In a real app, you'd fetch the event data based on the eventId
-  // const event = await getEvent(params.eventId)
   const { event } = usePublicEventItemQuery(params.slug);
-
-  console.log('THE EVENT', event);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
