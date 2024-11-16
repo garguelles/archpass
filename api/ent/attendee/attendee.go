@@ -3,6 +3,8 @@
 package attendee
 
 import (
+	"time"
+
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 )
@@ -18,6 +20,14 @@ const (
 	FieldEventID = "event_id"
 	// FieldTicketID holds the string denoting the ticket_id field in the database.
 	FieldTicketID = "ticket_id"
+	// FieldTokenID holds the string denoting the token_id field in the database.
+	FieldTokenID = "token_id"
+	// FieldTransactionHash holds the string denoting the transaction_hash field in the database.
+	FieldTransactionHash = "transaction_hash"
+	// FieldBlockNumber holds the string denoting the block_number field in the database.
+	FieldBlockNumber = "block_number"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
 	// EdgeEvent holds the string denoting the event edge name in mutations.
 	EdgeEvent = "event"
 	// EdgeUser holds the string denoting the user edge name in mutations.
@@ -55,6 +65,10 @@ var Columns = []string{
 	FieldUserID,
 	FieldEventID,
 	FieldTicketID,
+	FieldTokenID,
+	FieldTransactionHash,
+	FieldBlockNumber,
+	FieldCreatedAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -66,6 +80,11 @@ func ValidColumn(column string) bool {
 	}
 	return false
 }
+
+var (
+	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
+	DefaultCreatedAt func() time.Time
+)
 
 // OrderOption defines the ordering options for the Attendee queries.
 type OrderOption func(*sql.Selector)
@@ -88,6 +107,26 @@ func ByEventID(opts ...sql.OrderTermOption) OrderOption {
 // ByTicketID orders the results by the ticket_id field.
 func ByTicketID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTicketID, opts...).ToFunc()
+}
+
+// ByTokenID orders the results by the token_id field.
+func ByTokenID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTokenID, opts...).ToFunc()
+}
+
+// ByTransactionHash orders the results by the transaction_hash field.
+func ByTransactionHash(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTransactionHash, opts...).ToFunc()
+}
+
+// ByBlockNumber orders the results by the block_number field.
+func ByBlockNumber(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldBlockNumber, opts...).ToFunc()
+}
+
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
 }
 
 // ByEventField orders the results by event field.

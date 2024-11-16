@@ -15,6 +15,7 @@ import (
 	"github.com/garguelles/archpass/ent/attendee"
 	"github.com/garguelles/archpass/ent/event"
 	"github.com/garguelles/archpass/ent/ticket"
+	"github.com/garguelles/archpass/ent/transaction"
 	"github.com/garguelles/archpass/ent/user"
 )
 
@@ -76,10 +77,11 @@ var (
 func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			attendee.Table: attendee.ValidColumn,
-			event.Table:    event.ValidColumn,
-			ticket.Table:   ticket.ValidColumn,
-			user.Table:     user.ValidColumn,
+			attendee.Table:    attendee.ValidColumn,
+			event.Table:       event.ValidColumn,
+			ticket.Table:      ticket.ValidColumn,
+			transaction.Table: transaction.ValidColumn,
+			user.Table:        user.ValidColumn,
 		})
 	})
 	return columnCheck(table, column)

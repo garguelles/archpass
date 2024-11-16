@@ -85,6 +85,11 @@ func EventID(v int) predicate.Ticket {
 	return predicate.Ticket(sql.FieldEQ(FieldEventID, v))
 }
 
+// TicketHash applies equality check predicate on the "ticket_hash" field. It's identical to TicketHashEQ.
+func TicketHash(v string) predicate.Ticket {
+	return predicate.Ticket(sql.FieldEQ(FieldTicketHash, v))
+}
+
 // ContractAddress applies equality check predicate on the "contract_address" field. It's identical to ContractAddressEQ.
 func ContractAddress(v string) predicate.Ticket {
 	return predicate.Ticket(sql.FieldEQ(FieldContractAddress, v))
@@ -428,6 +433,81 @@ func EventIDIn(vs ...int) predicate.Ticket {
 // EventIDNotIn applies the NotIn predicate on the "event_id" field.
 func EventIDNotIn(vs ...int) predicate.Ticket {
 	return predicate.Ticket(sql.FieldNotIn(FieldEventID, vs...))
+}
+
+// TicketHashEQ applies the EQ predicate on the "ticket_hash" field.
+func TicketHashEQ(v string) predicate.Ticket {
+	return predicate.Ticket(sql.FieldEQ(FieldTicketHash, v))
+}
+
+// TicketHashNEQ applies the NEQ predicate on the "ticket_hash" field.
+func TicketHashNEQ(v string) predicate.Ticket {
+	return predicate.Ticket(sql.FieldNEQ(FieldTicketHash, v))
+}
+
+// TicketHashIn applies the In predicate on the "ticket_hash" field.
+func TicketHashIn(vs ...string) predicate.Ticket {
+	return predicate.Ticket(sql.FieldIn(FieldTicketHash, vs...))
+}
+
+// TicketHashNotIn applies the NotIn predicate on the "ticket_hash" field.
+func TicketHashNotIn(vs ...string) predicate.Ticket {
+	return predicate.Ticket(sql.FieldNotIn(FieldTicketHash, vs...))
+}
+
+// TicketHashGT applies the GT predicate on the "ticket_hash" field.
+func TicketHashGT(v string) predicate.Ticket {
+	return predicate.Ticket(sql.FieldGT(FieldTicketHash, v))
+}
+
+// TicketHashGTE applies the GTE predicate on the "ticket_hash" field.
+func TicketHashGTE(v string) predicate.Ticket {
+	return predicate.Ticket(sql.FieldGTE(FieldTicketHash, v))
+}
+
+// TicketHashLT applies the LT predicate on the "ticket_hash" field.
+func TicketHashLT(v string) predicate.Ticket {
+	return predicate.Ticket(sql.FieldLT(FieldTicketHash, v))
+}
+
+// TicketHashLTE applies the LTE predicate on the "ticket_hash" field.
+func TicketHashLTE(v string) predicate.Ticket {
+	return predicate.Ticket(sql.FieldLTE(FieldTicketHash, v))
+}
+
+// TicketHashContains applies the Contains predicate on the "ticket_hash" field.
+func TicketHashContains(v string) predicate.Ticket {
+	return predicate.Ticket(sql.FieldContains(FieldTicketHash, v))
+}
+
+// TicketHashHasPrefix applies the HasPrefix predicate on the "ticket_hash" field.
+func TicketHashHasPrefix(v string) predicate.Ticket {
+	return predicate.Ticket(sql.FieldHasPrefix(FieldTicketHash, v))
+}
+
+// TicketHashHasSuffix applies the HasSuffix predicate on the "ticket_hash" field.
+func TicketHashHasSuffix(v string) predicate.Ticket {
+	return predicate.Ticket(sql.FieldHasSuffix(FieldTicketHash, v))
+}
+
+// TicketHashIsNil applies the IsNil predicate on the "ticket_hash" field.
+func TicketHashIsNil() predicate.Ticket {
+	return predicate.Ticket(sql.FieldIsNull(FieldTicketHash))
+}
+
+// TicketHashNotNil applies the NotNil predicate on the "ticket_hash" field.
+func TicketHashNotNil() predicate.Ticket {
+	return predicate.Ticket(sql.FieldNotNull(FieldTicketHash))
+}
+
+// TicketHashEqualFold applies the EqualFold predicate on the "ticket_hash" field.
+func TicketHashEqualFold(v string) predicate.Ticket {
+	return predicate.Ticket(sql.FieldEqualFold(FieldTicketHash, v))
+}
+
+// TicketHashContainsFold applies the ContainsFold predicate on the "ticket_hash" field.
+func TicketHashContainsFold(v string) predicate.Ticket {
+	return predicate.Ticket(sql.FieldContainsFold(FieldTicketHash, v))
 }
 
 // ContractAddressEQ applies the EQ predicate on the "contract_address" field.

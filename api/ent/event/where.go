@@ -100,6 +100,11 @@ func UserID(v int) predicate.Event {
 	return predicate.Event(sql.FieldEQ(FieldUserID, v))
 }
 
+// EventHash applies equality check predicate on the "event_hash" field. It's identical to EventHashEQ.
+func EventHash(v string) predicate.Event {
+	return predicate.Event(sql.FieldEQ(FieldEventHash, v))
+}
+
 // ContractAddress applies equality check predicate on the "contract_address" field. It's identical to ContractAddressEQ.
 func ContractAddress(v string) predicate.Event {
 	return predicate.Event(sql.FieldEQ(FieldContractAddress, v))
@@ -653,6 +658,81 @@ func UserIDIn(vs ...int) predicate.Event {
 // UserIDNotIn applies the NotIn predicate on the "user_id" field.
 func UserIDNotIn(vs ...int) predicate.Event {
 	return predicate.Event(sql.FieldNotIn(FieldUserID, vs...))
+}
+
+// EventHashEQ applies the EQ predicate on the "event_hash" field.
+func EventHashEQ(v string) predicate.Event {
+	return predicate.Event(sql.FieldEQ(FieldEventHash, v))
+}
+
+// EventHashNEQ applies the NEQ predicate on the "event_hash" field.
+func EventHashNEQ(v string) predicate.Event {
+	return predicate.Event(sql.FieldNEQ(FieldEventHash, v))
+}
+
+// EventHashIn applies the In predicate on the "event_hash" field.
+func EventHashIn(vs ...string) predicate.Event {
+	return predicate.Event(sql.FieldIn(FieldEventHash, vs...))
+}
+
+// EventHashNotIn applies the NotIn predicate on the "event_hash" field.
+func EventHashNotIn(vs ...string) predicate.Event {
+	return predicate.Event(sql.FieldNotIn(FieldEventHash, vs...))
+}
+
+// EventHashGT applies the GT predicate on the "event_hash" field.
+func EventHashGT(v string) predicate.Event {
+	return predicate.Event(sql.FieldGT(FieldEventHash, v))
+}
+
+// EventHashGTE applies the GTE predicate on the "event_hash" field.
+func EventHashGTE(v string) predicate.Event {
+	return predicate.Event(sql.FieldGTE(FieldEventHash, v))
+}
+
+// EventHashLT applies the LT predicate on the "event_hash" field.
+func EventHashLT(v string) predicate.Event {
+	return predicate.Event(sql.FieldLT(FieldEventHash, v))
+}
+
+// EventHashLTE applies the LTE predicate on the "event_hash" field.
+func EventHashLTE(v string) predicate.Event {
+	return predicate.Event(sql.FieldLTE(FieldEventHash, v))
+}
+
+// EventHashContains applies the Contains predicate on the "event_hash" field.
+func EventHashContains(v string) predicate.Event {
+	return predicate.Event(sql.FieldContains(FieldEventHash, v))
+}
+
+// EventHashHasPrefix applies the HasPrefix predicate on the "event_hash" field.
+func EventHashHasPrefix(v string) predicate.Event {
+	return predicate.Event(sql.FieldHasPrefix(FieldEventHash, v))
+}
+
+// EventHashHasSuffix applies the HasSuffix predicate on the "event_hash" field.
+func EventHashHasSuffix(v string) predicate.Event {
+	return predicate.Event(sql.FieldHasSuffix(FieldEventHash, v))
+}
+
+// EventHashIsNil applies the IsNil predicate on the "event_hash" field.
+func EventHashIsNil() predicate.Event {
+	return predicate.Event(sql.FieldIsNull(FieldEventHash))
+}
+
+// EventHashNotNil applies the NotNil predicate on the "event_hash" field.
+func EventHashNotNil() predicate.Event {
+	return predicate.Event(sql.FieldNotNull(FieldEventHash))
+}
+
+// EventHashEqualFold applies the EqualFold predicate on the "event_hash" field.
+func EventHashEqualFold(v string) predicate.Event {
+	return predicate.Event(sql.FieldEqualFold(FieldEventHash, v))
+}
+
+// EventHashContainsFold applies the ContainsFold predicate on the "event_hash" field.
+func EventHashContainsFold(v string) predicate.Event {
+	return predicate.Event(sql.FieldContainsFold(FieldEventHash, v))
 }
 
 // ContractAddressEQ applies the EQ predicate on the "contract_address" field.

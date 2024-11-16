@@ -36,6 +36,8 @@ type Event struct {
 	ImageURL string `json:"image_url,omitempty"`
 	// UserID holds the value of the "user_id" field.
 	UserID int `json:"user_id,omitempty"`
+	// EventHash holds the value of the "event_hash" field.
+	EventHash string `json:"event_hash,omitempty"`
 	// ContractAddress holds the value of the "contract_address" field.
 	ContractAddress string `json:"contract_address,omitempty"`
 	// TransactionHash holds the value of the "transaction_hash" field.
@@ -101,7 +103,7 @@ func (*Event) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case event.FieldID, event.FieldUserID:
 			values[i] = new(sql.NullInt64)
-		case event.FieldName, event.FieldDescription, event.FieldEventSlug, event.FieldDate, event.FieldLocation, event.FieldImageURL, event.FieldContractAddress, event.FieldTransactionHash, event.FieldBlockNumber:
+		case event.FieldName, event.FieldDescription, event.FieldEventSlug, event.FieldDate, event.FieldLocation, event.FieldImageURL, event.FieldEventHash, event.FieldContractAddress, event.FieldTransactionHash, event.FieldBlockNumber:
 			values[i] = new(sql.NullString)
 		case event.FieldStartDate, event.FieldEndDate, event.FieldCreatedAt, event.FieldModifiedAt:
 			values[i] = new(sql.NullTime)
@@ -179,6 +181,12 @@ func (e *Event) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field user_id", values[i])
 			} else if value.Valid {
 				e.UserID = int(value.Int64)
+			}
+		case event.FieldEventHash:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field event_hash", values[i])
+			} else if value.Valid {
+				e.EventHash = value.String
 			}
 		case event.FieldContractAddress:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -287,6 +295,9 @@ func (e *Event) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("user_id=")
 	builder.WriteString(fmt.Sprintf("%v", e.UserID))
+	builder.WriteString(", ")
+	builder.WriteString("event_hash=")
+	builder.WriteString(e.EventHash)
 	builder.WriteString(", ")
 	builder.WriteString("contract_address=")
 	builder.WriteString(e.ContractAddress)

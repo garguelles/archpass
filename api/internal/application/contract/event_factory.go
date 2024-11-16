@@ -38,7 +38,7 @@ type EventFactoryAttendeeTicket struct {
 
 // EventFactoryMetaData contains all meta data concerning the EventFactory contract.
 var EventFactoryMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_eventImplementation\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_ticketImplementation\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"FailedDeployment\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"balance\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"needed\",\"type\":\"uint256\"}],\"name\":\"InsufficientBalance\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"clone\",\"type\":\"address\"}],\"name\":\"EventCreated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"ticketAddress\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"eventAddress\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"blockNumber\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"minter\",\"type\":\"address\"}],\"name\":\"TicketMinted\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"attendeeToAllTickets\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"ticketAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"eventAddress\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"attendeeToTickets\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"createEvent\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"deployedEvents\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"eventImplementation\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"attendee\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"eventAddress\",\"type\":\"address\"}],\"name\":\"getAttendeeTicketsForEvent\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getDeployedEvents\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"getTicketOwner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"attendee\",\"type\":\"address\"}],\"name\":\"getTicketsOfAttendee\",\"outputs\":[{\"components\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"ticketAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"eventAddress\",\"type\":\"address\"}],\"internalType\":\"structEventFactory.AttendeeTicket[]\",\"name\":\"\",\"type\":\"tuple[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"ticketAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"eventAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"minter\",\"type\":\"address\"}],\"name\":\"recordMint\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"ticketImplementation\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"ticketToAttendee\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]",
+	ABI: "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_eventImplementation\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_ticketImplementation\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"FailedDeployment\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"balance\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"needed\",\"type\":\"uint256\"}],\"name\":\"InsufficientBalance\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"string\",\"name\":\"eventHash\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"clone\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"EventCreated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"string\",\"name\":\"ticketHash\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"clone\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"TicketCreated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"ticketAddress\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"eventAddress\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"blockNumber\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"minter\",\"type\":\"address\"}],\"name\":\"TicketMinted\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"attendeeToAllTickets\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"ticketAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"eventAddress\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"attendeeToTickets\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"eventHash\",\"type\":\"string\"}],\"name\":\"createEvent\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"eventAddress\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"maxSupply\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"mintPrice\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"ticketHash\",\"type\":\"string\"}],\"name\":\"createTicket\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"deployedEvents\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"eventImplementation\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"attendee\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"eventAddress\",\"type\":\"address\"}],\"name\":\"getAttendeeTicketsForEvent\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getDeployedEvents\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"getTicketOwner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"attendee\",\"type\":\"address\"}],\"name\":\"getTicketsOfAttendee\",\"outputs\":[{\"components\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"ticketAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"eventAddress\",\"type\":\"address\"}],\"internalType\":\"structEventFactory.AttendeeTicket[]\",\"name\":\"\",\"type\":\"tuple[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"ticketAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"eventAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"minter\",\"type\":\"address\"}],\"name\":\"recordMint\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"ticketImplementation\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"ticketToAttendee\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]",
 }
 
 // EventFactoryABI is the input ABI used to generate the binding from.
@@ -516,25 +516,46 @@ func (_EventFactory *EventFactoryCallerSession) TicketToAttendee(arg0 *big.Int) 
 	return _EventFactory.Contract.TicketToAttendee(&_EventFactory.CallOpts, arg0)
 }
 
-// CreateEvent is a paid mutator transaction binding the contract method 0xb33eb0a0.
+// CreateEvent is a paid mutator transaction binding the contract method 0x9bc2bc71.
 //
-// Solidity: function createEvent() returns(address)
-func (_EventFactory *EventFactoryTransactor) CreateEvent(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _EventFactory.contract.Transact(opts, "createEvent")
+// Solidity: function createEvent(string eventHash) returns(address)
+func (_EventFactory *EventFactoryTransactor) CreateEvent(opts *bind.TransactOpts, eventHash string) (*types.Transaction, error) {
+	return _EventFactory.contract.Transact(opts, "createEvent", eventHash)
 }
 
-// CreateEvent is a paid mutator transaction binding the contract method 0xb33eb0a0.
+// CreateEvent is a paid mutator transaction binding the contract method 0x9bc2bc71.
 //
-// Solidity: function createEvent() returns(address)
-func (_EventFactory *EventFactorySession) CreateEvent() (*types.Transaction, error) {
-	return _EventFactory.Contract.CreateEvent(&_EventFactory.TransactOpts)
+// Solidity: function createEvent(string eventHash) returns(address)
+func (_EventFactory *EventFactorySession) CreateEvent(eventHash string) (*types.Transaction, error) {
+	return _EventFactory.Contract.CreateEvent(&_EventFactory.TransactOpts, eventHash)
 }
 
-// CreateEvent is a paid mutator transaction binding the contract method 0xb33eb0a0.
+// CreateEvent is a paid mutator transaction binding the contract method 0x9bc2bc71.
 //
-// Solidity: function createEvent() returns(address)
-func (_EventFactory *EventFactoryTransactorSession) CreateEvent() (*types.Transaction, error) {
-	return _EventFactory.Contract.CreateEvent(&_EventFactory.TransactOpts)
+// Solidity: function createEvent(string eventHash) returns(address)
+func (_EventFactory *EventFactoryTransactorSession) CreateEvent(eventHash string) (*types.Transaction, error) {
+	return _EventFactory.Contract.CreateEvent(&_EventFactory.TransactOpts, eventHash)
+}
+
+// CreateTicket is a paid mutator transaction binding the contract method 0x12c359bb.
+//
+// Solidity: function createTicket(address eventAddress, string name, uint256 maxSupply, uint256 mintPrice, string ticketHash) returns(address)
+func (_EventFactory *EventFactoryTransactor) CreateTicket(opts *bind.TransactOpts, eventAddress common.Address, name string, maxSupply *big.Int, mintPrice *big.Int, ticketHash string) (*types.Transaction, error) {
+	return _EventFactory.contract.Transact(opts, "createTicket", eventAddress, name, maxSupply, mintPrice, ticketHash)
+}
+
+// CreateTicket is a paid mutator transaction binding the contract method 0x12c359bb.
+//
+// Solidity: function createTicket(address eventAddress, string name, uint256 maxSupply, uint256 mintPrice, string ticketHash) returns(address)
+func (_EventFactory *EventFactorySession) CreateTicket(eventAddress common.Address, name string, maxSupply *big.Int, mintPrice *big.Int, ticketHash string) (*types.Transaction, error) {
+	return _EventFactory.Contract.CreateTicket(&_EventFactory.TransactOpts, eventAddress, name, maxSupply, mintPrice, ticketHash)
+}
+
+// CreateTicket is a paid mutator transaction binding the contract method 0x12c359bb.
+//
+// Solidity: function createTicket(address eventAddress, string name, uint256 maxSupply, uint256 mintPrice, string ticketHash) returns(address)
+func (_EventFactory *EventFactoryTransactorSession) CreateTicket(eventAddress common.Address, name string, maxSupply *big.Int, mintPrice *big.Int, ticketHash string) (*types.Transaction, error) {
+	return _EventFactory.Contract.CreateTicket(&_EventFactory.TransactOpts, eventAddress, name, maxSupply, mintPrice, ticketHash)
 }
 
 // RecordMint is a paid mutator transaction binding the contract method 0x37715400.
@@ -627,13 +648,15 @@ func (it *EventFactoryEventCreatedIterator) Close() error {
 
 // EventFactoryEventCreated represents a EventCreated event raised by the EventFactory contract.
 type EventFactoryEventCreated struct {
-	Clone common.Address
-	Raw   types.Log // Blockchain specific contextual infos
+	EventHash string
+	Clone     common.Address
+	Sender    common.Address
+	Raw       types.Log // Blockchain specific contextual infos
 }
 
-// FilterEventCreated is a free log retrieval operation binding the contract event 0xfc8a4c0621b9788c4dbe57053a51ce2d22625a067d039f38004df2a07ca755a4.
+// FilterEventCreated is a free log retrieval operation binding the contract event 0x83de87bf204a6b6ef0a90d876d58169771736fe338aad2c42516db0a334802fa.
 //
-// Solidity: event EventCreated(address clone)
+// Solidity: event EventCreated(string eventHash, address clone, address sender)
 func (_EventFactory *EventFactoryFilterer) FilterEventCreated(opts *bind.FilterOpts) (*EventFactoryEventCreatedIterator, error) {
 
 	logs, sub, err := _EventFactory.contract.FilterLogs(opts, "EventCreated")
@@ -643,9 +666,9 @@ func (_EventFactory *EventFactoryFilterer) FilterEventCreated(opts *bind.FilterO
 	return &EventFactoryEventCreatedIterator{contract: _EventFactory.contract, event: "EventCreated", logs: logs, sub: sub}, nil
 }
 
-// WatchEventCreated is a free log subscription operation binding the contract event 0xfc8a4c0621b9788c4dbe57053a51ce2d22625a067d039f38004df2a07ca755a4.
+// WatchEventCreated is a free log subscription operation binding the contract event 0x83de87bf204a6b6ef0a90d876d58169771736fe338aad2c42516db0a334802fa.
 //
-// Solidity: event EventCreated(address clone)
+// Solidity: event EventCreated(string eventHash, address clone, address sender)
 func (_EventFactory *EventFactoryFilterer) WatchEventCreated(opts *bind.WatchOpts, sink chan<- *EventFactoryEventCreated) (event.Subscription, error) {
 
 	logs, sub, err := _EventFactory.contract.WatchLogs(opts, "EventCreated")
@@ -680,12 +703,148 @@ func (_EventFactory *EventFactoryFilterer) WatchEventCreated(opts *bind.WatchOpt
 	}), nil
 }
 
-// ParseEventCreated is a log parse operation binding the contract event 0xfc8a4c0621b9788c4dbe57053a51ce2d22625a067d039f38004df2a07ca755a4.
+// ParseEventCreated is a log parse operation binding the contract event 0x83de87bf204a6b6ef0a90d876d58169771736fe338aad2c42516db0a334802fa.
 //
-// Solidity: event EventCreated(address clone)
+// Solidity: event EventCreated(string eventHash, address clone, address sender)
 func (_EventFactory *EventFactoryFilterer) ParseEventCreated(log types.Log) (*EventFactoryEventCreated, error) {
 	event := new(EventFactoryEventCreated)
 	if err := _EventFactory.contract.UnpackLog(event, "EventCreated", log); err != nil {
+		return nil, err
+	}
+	event.Raw = log
+	return event, nil
+}
+
+// EventFactoryTicketCreatedIterator is returned from FilterTicketCreated and is used to iterate over the raw logs and unpacked data for TicketCreated events raised by the EventFactory contract.
+type EventFactoryTicketCreatedIterator struct {
+	Event *EventFactoryTicketCreated // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *EventFactoryTicketCreatedIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(EventFactoryTicketCreated)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(EventFactoryTicketCreated)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *EventFactoryTicketCreatedIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *EventFactoryTicketCreatedIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// EventFactoryTicketCreated represents a TicketCreated event raised by the EventFactory contract.
+type EventFactoryTicketCreated struct {
+	TicketHash string
+	Clone      common.Address
+	Sender     common.Address
+	Raw        types.Log // Blockchain specific contextual infos
+}
+
+// FilterTicketCreated is a free log retrieval operation binding the contract event 0x3bb616572b8688b40a323300eb4f02fb815b05c7fa7e3227991d403fce0eb184.
+//
+// Solidity: event TicketCreated(string ticketHash, address clone, address sender)
+func (_EventFactory *EventFactoryFilterer) FilterTicketCreated(opts *bind.FilterOpts) (*EventFactoryTicketCreatedIterator, error) {
+
+	logs, sub, err := _EventFactory.contract.FilterLogs(opts, "TicketCreated")
+	if err != nil {
+		return nil, err
+	}
+	return &EventFactoryTicketCreatedIterator{contract: _EventFactory.contract, event: "TicketCreated", logs: logs, sub: sub}, nil
+}
+
+// WatchTicketCreated is a free log subscription operation binding the contract event 0x3bb616572b8688b40a323300eb4f02fb815b05c7fa7e3227991d403fce0eb184.
+//
+// Solidity: event TicketCreated(string ticketHash, address clone, address sender)
+func (_EventFactory *EventFactoryFilterer) WatchTicketCreated(opts *bind.WatchOpts, sink chan<- *EventFactoryTicketCreated) (event.Subscription, error) {
+
+	logs, sub, err := _EventFactory.contract.WatchLogs(opts, "TicketCreated")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(EventFactoryTicketCreated)
+				if err := _EventFactory.contract.UnpackLog(event, "TicketCreated", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ParseTicketCreated is a log parse operation binding the contract event 0x3bb616572b8688b40a323300eb4f02fb815b05c7fa7e3227991d403fce0eb184.
+//
+// Solidity: event TicketCreated(string ticketHash, address clone, address sender)
+func (_EventFactory *EventFactoryFilterer) ParseTicketCreated(log types.Log) (*EventFactoryTicketCreated, error) {
+	event := new(EventFactoryTicketCreated)
+	if err := _EventFactory.contract.UnpackLog(event, "TicketCreated", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log

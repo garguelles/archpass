@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/garguelles/archpass/internal/adapter/repository"
+	"github.com/garguelles/archpass/internal/domain/dto"
 	"log"
 	"os"
 	"strconv"
@@ -63,104 +65,56 @@ func startIndexer() {
 			// Ticket minted
 			iterMint, err := factoryContract.FilterTicketMinted(filterOpts, nil, nil, nil)
 			if err != nil {
-				fmt.Println("Error fetching logs: ", err)
+				fmt.Println("Error fetching logs ticket minted: ", err)
 				continue
 			}
 
 			for iterMint.Next() {
 				event := iterMint.Event
-				// saveMint(ctx, event)
-				// updateProjectFundingGoal(ctx, event, client)
+				saveMint(ctx, event)
 			}
 
 			if iterMint.Error() != nil {
-				fmt.Println("Error during iteration: ", iter.Error())
+				fmt.Println("Error during iteration: ", iterMint.Error())
 			}
 
 			if iterMint.Event != nil {
 				lastPolledBlock = uint64(iterMint.Event.Raw.BlockNumber) + 1
 			}
-
-			// Event created
-			iterEventCreate, err := factoryContract.FilterEventCreated(filterOpts)
-			if err != nil {
-				fmt.Println("Error fetching logs: ", err)
-				continue
-			}
-
-			for iterEventCreate.Next() {
-				event := iterEventCreate.Event
-				// saveMint(ctx, event)
-				// updateProjectFundingGoal(ctx, event, client)
-			}
-
-			if iterEventCreate.Error() != nil {
-				fmt.Println("Error during iteration: ", iter.Error())
-			}
-
-			if iterEventCreate.Event != nil {
-				lastPolledBlock = uint64(iterMint.Event.Raw.BlockNumber) + 1
-			}
-
-			// Ticket created
-			iterTicketCreate, err := factoryContract.Filter
-
 		}
 	}
 }
 
-// func updateProjectFundingGoal(ctx context.Context, event *contract.ContractTierMinted, client *ethclient.Client) {
-// 	projectRepo := repository.NewProjectRepository(&ctx)
-// 	projectAddress := event.ProjectAddress
+func saveMint(ctx context.Context, event *contract.EventFactoryTicketMinted) {
+	userRepo := repository.NewUserRepository(&ctx)
+	ticketRepo := repository.NewTicketRepository(&ctx)
+	attendeeRepo := repository.NewAttendeeRepository(&ctx)
 
-// 	balance, err := client.BalanceAt(ctx, projectAddress, nil)
-// 	if err != nil {
-// 		fmt.Println("Unable to get balance for contract")
-// 		return
-// 	}
+	user, err := userRepo.FindByWalletAddress(event.Minter.Hex())
+	if err != nil {
+		fmt.Println("User not found")
+		return
+	}
 
-// 	ethValue := new(big.Float).Quo(new(big.Float).SetInt(balance), big.NewFloat(1e18))
-// 	ethStringValue := ethValue.Text('f', -1)
+	ticket, err := ticketRepo.GetByContractAddress(event.TicketAddress.Hex())
+	if err != nil {
+		fmt.Println("Ticket not found")
+		return
+	}
+	input := dto.CreateAttendeeInput{
+		BlockNumber:     int64(event.Raw.BlockNumber),
+		TicketId:        ticket.ID,
+		EventId:         ticket.EventID,
+		UserId:          user.ID,
+		TokenId:         int(event.TokenId.Int64()),
+		TransactionHash: event.Raw.TxHash.Hex(),
+	}
 
-// 	fmt.Printf("Balance in ETH: %s\n", ethStringValue)
+	id, err := attendeeRepo.Create(input)
+	if err != nil {
+		fmt.Println("Unable to save mint: ", err.Error())
+		return
+	}
 
-// 	projectId, err := projectRepo.UpdateCurrentFunding(projectAddress.Hex(), ethStringValue)
-// 	if err != nil {
-// 		fmt.Printf("Unable to update funding for project ID %d: %v\n", projectId, err.Error())
-// 		return
-// 	}
-// }
-
-// func saveMint(ctx context.Context, event *contract.ContractTierMinted) {
-// 	mintRepo := repository.NewMintRepository(&ctx)
-// 	tierRepo := repository.NewTierRepository(&ctx)
-// 	userRepo := repository.NewUserRepository(&ctx)
-
-// 	user, err := userRepo.FindByWalletAddress(event.Minter.Hex())
-// 	if err != nil {
-// 		fmt.Println("User not found")
-// 		return
-// 	}
-
-// 	fmt.Println(event.TierAddress.Hex())
-// 	tier, err := tierRepo.FindByContractAddress(event.TierAddress.Hex())
-// 	if err != nil {
-// 		fmt.Println("Tier not found")
-// 		return
-// 	}
-// 	input := dto.CreateMintInput{
-// 		BlockNumber:     int64(event.Raw.BlockNumber),
-// 		TierId:          tier.ID,
-// 		ProjectId:       tier.ProjectID,
-// 		TransactionHash: event.Raw.TxHash.Hex(),
-// 		TokenId:         int(event.TokenId.Int64()),
-// 		Message:         &event.Message,
-// 	}
-
-// 	id, err := mintRepo.Create(input, user.ID)
-// 	if err != nil {
-// 		fmt.Println("Unable to save mint: ", err.Error())
-// 	}
-
-// 	fmt.Println("Successfully created mint record: ", id)
-// }
+	fmt.Println("Successfully created attendee record: ", id)
+}

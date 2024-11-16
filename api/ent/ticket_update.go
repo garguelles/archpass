@@ -121,6 +121,26 @@ func (tu *TicketUpdate) SetNillableEventID(i *int) *TicketUpdate {
 	return tu
 }
 
+// SetTicketHash sets the "ticket_hash" field.
+func (tu *TicketUpdate) SetTicketHash(s string) *TicketUpdate {
+	tu.mutation.SetTicketHash(s)
+	return tu
+}
+
+// SetNillableTicketHash sets the "ticket_hash" field if the given value is not nil.
+func (tu *TicketUpdate) SetNillableTicketHash(s *string) *TicketUpdate {
+	if s != nil {
+		tu.SetTicketHash(*s)
+	}
+	return tu
+}
+
+// ClearTicketHash clears the value of the "ticket_hash" field.
+func (tu *TicketUpdate) ClearTicketHash() *TicketUpdate {
+	tu.mutation.ClearTicketHash()
+	return tu
+}
+
 // SetContractAddress sets the "contract_address" field.
 func (tu *TicketUpdate) SetContractAddress(s string) *TicketUpdate {
 	tu.mutation.SetContractAddress(s)
@@ -321,6 +341,12 @@ func (tu *TicketUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := tu.mutation.AddedQuantity(); ok {
 		_spec.AddField(ticket.FieldQuantity, field.TypeInt, value)
 	}
+	if value, ok := tu.mutation.TicketHash(); ok {
+		_spec.SetField(ticket.FieldTicketHash, field.TypeString, value)
+	}
+	if tu.mutation.TicketHashCleared() {
+		_spec.ClearField(ticket.FieldTicketHash, field.TypeString)
+	}
 	if value, ok := tu.mutation.ContractAddress(); ok {
 		_spec.SetField(ticket.FieldContractAddress, field.TypeString, value)
 	}
@@ -511,6 +537,26 @@ func (tuo *TicketUpdateOne) SetNillableEventID(i *int) *TicketUpdateOne {
 	if i != nil {
 		tuo.SetEventID(*i)
 	}
+	return tuo
+}
+
+// SetTicketHash sets the "ticket_hash" field.
+func (tuo *TicketUpdateOne) SetTicketHash(s string) *TicketUpdateOne {
+	tuo.mutation.SetTicketHash(s)
+	return tuo
+}
+
+// SetNillableTicketHash sets the "ticket_hash" field if the given value is not nil.
+func (tuo *TicketUpdateOne) SetNillableTicketHash(s *string) *TicketUpdateOne {
+	if s != nil {
+		tuo.SetTicketHash(*s)
+	}
+	return tuo
+}
+
+// ClearTicketHash clears the value of the "ticket_hash" field.
+func (tuo *TicketUpdateOne) ClearTicketHash() *TicketUpdateOne {
+	tuo.mutation.ClearTicketHash()
 	return tuo
 }
 
@@ -743,6 +789,12 @@ func (tuo *TicketUpdateOne) sqlSave(ctx context.Context) (_node *Ticket, err err
 	}
 	if value, ok := tuo.mutation.AddedQuantity(); ok {
 		_spec.AddField(ticket.FieldQuantity, field.TypeInt, value)
+	}
+	if value, ok := tuo.mutation.TicketHash(); ok {
+		_spec.SetField(ticket.FieldTicketHash, field.TypeString, value)
+	}
+	if tuo.mutation.TicketHashCleared() {
+		_spec.ClearField(ticket.FieldTicketHash, field.TypeString)
 	}
 	if value, ok := tuo.mutation.ContractAddress(); ok {
 		_spec.SetField(ticket.FieldContractAddress, field.TypeString, value)

@@ -111,6 +111,20 @@ func (ec *EventCreate) SetUserID(i int) *EventCreate {
 	return ec
 }
 
+// SetEventHash sets the "event_hash" field.
+func (ec *EventCreate) SetEventHash(s string) *EventCreate {
+	ec.mutation.SetEventHash(s)
+	return ec
+}
+
+// SetNillableEventHash sets the "event_hash" field if the given value is not nil.
+func (ec *EventCreate) SetNillableEventHash(s *string) *EventCreate {
+	if s != nil {
+		ec.SetEventHash(*s)
+	}
+	return ec
+}
+
 // SetContractAddress sets the "contract_address" field.
 func (ec *EventCreate) SetContractAddress(s string) *EventCreate {
 	ec.mutation.SetContractAddress(s)
@@ -355,6 +369,10 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 	if value, ok := ec.mutation.ImageURL(); ok {
 		_spec.SetField(event.FieldImageURL, field.TypeString, value)
 		_node.ImageURL = value
+	}
+	if value, ok := ec.mutation.EventHash(); ok {
+		_spec.SetField(event.FieldEventHash, field.TypeString, value)
+		_node.EventHash = value
 	}
 	if value, ok := ec.mutation.ContractAddress(); ok {
 		_spec.SetField(event.FieldContractAddress, field.TypeString, value)
@@ -606,6 +624,24 @@ func (u *EventUpsert) SetUserID(v int) *EventUpsert {
 // UpdateUserID sets the "user_id" field to the value that was provided on create.
 func (u *EventUpsert) UpdateUserID() *EventUpsert {
 	u.SetExcluded(event.FieldUserID)
+	return u
+}
+
+// SetEventHash sets the "event_hash" field.
+func (u *EventUpsert) SetEventHash(v string) *EventUpsert {
+	u.Set(event.FieldEventHash, v)
+	return u
+}
+
+// UpdateEventHash sets the "event_hash" field to the value that was provided on create.
+func (u *EventUpsert) UpdateEventHash() *EventUpsert {
+	u.SetExcluded(event.FieldEventHash)
+	return u
+}
+
+// ClearEventHash clears the value of the "event_hash" field.
+func (u *EventUpsert) ClearEventHash() *EventUpsert {
+	u.SetNull(event.FieldEventHash)
 	return u
 }
 
@@ -878,6 +914,27 @@ func (u *EventUpsertOne) SetUserID(v int) *EventUpsertOne {
 func (u *EventUpsertOne) UpdateUserID() *EventUpsertOne {
 	return u.Update(func(s *EventUpsert) {
 		s.UpdateUserID()
+	})
+}
+
+// SetEventHash sets the "event_hash" field.
+func (u *EventUpsertOne) SetEventHash(v string) *EventUpsertOne {
+	return u.Update(func(s *EventUpsert) {
+		s.SetEventHash(v)
+	})
+}
+
+// UpdateEventHash sets the "event_hash" field to the value that was provided on create.
+func (u *EventUpsertOne) UpdateEventHash() *EventUpsertOne {
+	return u.Update(func(s *EventUpsert) {
+		s.UpdateEventHash()
+	})
+}
+
+// ClearEventHash clears the value of the "event_hash" field.
+func (u *EventUpsertOne) ClearEventHash() *EventUpsertOne {
+	return u.Update(func(s *EventUpsert) {
+		s.ClearEventHash()
 	})
 }
 
@@ -1327,6 +1384,27 @@ func (u *EventUpsertBulk) SetUserID(v int) *EventUpsertBulk {
 func (u *EventUpsertBulk) UpdateUserID() *EventUpsertBulk {
 	return u.Update(func(s *EventUpsert) {
 		s.UpdateUserID()
+	})
+}
+
+// SetEventHash sets the "event_hash" field.
+func (u *EventUpsertBulk) SetEventHash(v string) *EventUpsertBulk {
+	return u.Update(func(s *EventUpsert) {
+		s.SetEventHash(v)
+	})
+}
+
+// UpdateEventHash sets the "event_hash" field to the value that was provided on create.
+func (u *EventUpsertBulk) UpdateEventHash() *EventUpsertBulk {
+	return u.Update(func(s *EventUpsert) {
+		s.UpdateEventHash()
+	})
+}
+
+// ClearEventHash clears the value of the "event_hash" field.
+func (u *EventUpsertBulk) ClearEventHash() *EventUpsertBulk {
+	return u.Update(func(s *EventUpsert) {
+		s.ClearEventHash()
 	})
 }
 

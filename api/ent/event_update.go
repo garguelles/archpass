@@ -181,6 +181,26 @@ func (eu *EventUpdate) SetNillableUserID(i *int) *EventUpdate {
 	return eu
 }
 
+// SetEventHash sets the "event_hash" field.
+func (eu *EventUpdate) SetEventHash(s string) *EventUpdate {
+	eu.mutation.SetEventHash(s)
+	return eu
+}
+
+// SetNillableEventHash sets the "event_hash" field if the given value is not nil.
+func (eu *EventUpdate) SetNillableEventHash(s *string) *EventUpdate {
+	if s != nil {
+		eu.SetEventHash(*s)
+	}
+	return eu
+}
+
+// ClearEventHash clears the value of the "event_hash" field.
+func (eu *EventUpdate) ClearEventHash() *EventUpdate {
+	eu.mutation.ClearEventHash()
+	return eu
+}
+
 // SetContractAddress sets the "contract_address" field.
 func (eu *EventUpdate) SetContractAddress(s string) *EventUpdate {
 	eu.mutation.SetContractAddress(s)
@@ -450,6 +470,12 @@ func (eu *EventUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := eu.mutation.ImageURL(); ok {
 		_spec.SetField(event.FieldImageURL, field.TypeString, value)
+	}
+	if value, ok := eu.mutation.EventHash(); ok {
+		_spec.SetField(event.FieldEventHash, field.TypeString, value)
+	}
+	if eu.mutation.EventHashCleared() {
+		_spec.ClearField(event.FieldEventHash, field.TypeString)
 	}
 	if value, ok := eu.mutation.ContractAddress(); ok {
 		_spec.SetField(event.FieldContractAddress, field.TypeString, value)
@@ -764,6 +790,26 @@ func (euo *EventUpdateOne) SetNillableUserID(i *int) *EventUpdateOne {
 	return euo
 }
 
+// SetEventHash sets the "event_hash" field.
+func (euo *EventUpdateOne) SetEventHash(s string) *EventUpdateOne {
+	euo.mutation.SetEventHash(s)
+	return euo
+}
+
+// SetNillableEventHash sets the "event_hash" field if the given value is not nil.
+func (euo *EventUpdateOne) SetNillableEventHash(s *string) *EventUpdateOne {
+	if s != nil {
+		euo.SetEventHash(*s)
+	}
+	return euo
+}
+
+// ClearEventHash clears the value of the "event_hash" field.
+func (euo *EventUpdateOne) ClearEventHash() *EventUpdateOne {
+	euo.mutation.ClearEventHash()
+	return euo
+}
+
 // SetContractAddress sets the "contract_address" field.
 func (euo *EventUpdateOne) SetContractAddress(s string) *EventUpdateOne {
 	euo.mutation.SetContractAddress(s)
@@ -1063,6 +1109,12 @@ func (euo *EventUpdateOne) sqlSave(ctx context.Context) (_node *Event, err error
 	}
 	if value, ok := euo.mutation.ImageURL(); ok {
 		_spec.SetField(event.FieldImageURL, field.TypeString, value)
+	}
+	if value, ok := euo.mutation.EventHash(); ok {
+		_spec.SetField(event.FieldEventHash, field.TypeString, value)
+	}
+	if euo.mutation.EventHashCleared() {
+		_spec.ClearField(event.FieldEventHash, field.TypeString)
 	}
 	if value, ok := euo.mutation.ContractAddress(); ok {
 		_spec.SetField(event.FieldContractAddress, field.TypeString, value)

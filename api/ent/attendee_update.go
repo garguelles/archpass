@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -68,6 +69,76 @@ func (au *AttendeeUpdate) SetTicketID(i int) *AttendeeUpdate {
 func (au *AttendeeUpdate) SetNillableTicketID(i *int) *AttendeeUpdate {
 	if i != nil {
 		au.SetTicketID(*i)
+	}
+	return au
+}
+
+// SetTokenID sets the "token_id" field.
+func (au *AttendeeUpdate) SetTokenID(i int) *AttendeeUpdate {
+	au.mutation.ResetTokenID()
+	au.mutation.SetTokenID(i)
+	return au
+}
+
+// SetNillableTokenID sets the "token_id" field if the given value is not nil.
+func (au *AttendeeUpdate) SetNillableTokenID(i *int) *AttendeeUpdate {
+	if i != nil {
+		au.SetTokenID(*i)
+	}
+	return au
+}
+
+// AddTokenID adds i to the "token_id" field.
+func (au *AttendeeUpdate) AddTokenID(i int) *AttendeeUpdate {
+	au.mutation.AddTokenID(i)
+	return au
+}
+
+// SetTransactionHash sets the "transaction_hash" field.
+func (au *AttendeeUpdate) SetTransactionHash(s string) *AttendeeUpdate {
+	au.mutation.SetTransactionHash(s)
+	return au
+}
+
+// SetNillableTransactionHash sets the "transaction_hash" field if the given value is not nil.
+func (au *AttendeeUpdate) SetNillableTransactionHash(s *string) *AttendeeUpdate {
+	if s != nil {
+		au.SetTransactionHash(*s)
+	}
+	return au
+}
+
+// SetBlockNumber sets the "block_number" field.
+func (au *AttendeeUpdate) SetBlockNumber(i int64) *AttendeeUpdate {
+	au.mutation.ResetBlockNumber()
+	au.mutation.SetBlockNumber(i)
+	return au
+}
+
+// SetNillableBlockNumber sets the "block_number" field if the given value is not nil.
+func (au *AttendeeUpdate) SetNillableBlockNumber(i *int64) *AttendeeUpdate {
+	if i != nil {
+		au.SetBlockNumber(*i)
+	}
+	return au
+}
+
+// AddBlockNumber adds i to the "block_number" field.
+func (au *AttendeeUpdate) AddBlockNumber(i int64) *AttendeeUpdate {
+	au.mutation.AddBlockNumber(i)
+	return au
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (au *AttendeeUpdate) SetCreatedAt(t time.Time) *AttendeeUpdate {
+	au.mutation.SetCreatedAt(t)
+	return au
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (au *AttendeeUpdate) SetNillableCreatedAt(t *time.Time) *AttendeeUpdate {
+	if t != nil {
+		au.SetCreatedAt(*t)
 	}
 	return au
 }
@@ -162,6 +233,24 @@ func (au *AttendeeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := au.mutation.TokenID(); ok {
+		_spec.SetField(attendee.FieldTokenID, field.TypeInt, value)
+	}
+	if value, ok := au.mutation.AddedTokenID(); ok {
+		_spec.AddField(attendee.FieldTokenID, field.TypeInt, value)
+	}
+	if value, ok := au.mutation.TransactionHash(); ok {
+		_spec.SetField(attendee.FieldTransactionHash, field.TypeString, value)
+	}
+	if value, ok := au.mutation.BlockNumber(); ok {
+		_spec.SetField(attendee.FieldBlockNumber, field.TypeInt64, value)
+	}
+	if value, ok := au.mutation.AddedBlockNumber(); ok {
+		_spec.AddField(attendee.FieldBlockNumber, field.TypeInt64, value)
+	}
+	if value, ok := au.mutation.CreatedAt(); ok {
+		_spec.SetField(attendee.FieldCreatedAt, field.TypeTime, value)
 	}
 	if au.mutation.EventCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -312,6 +401,76 @@ func (auo *AttendeeUpdateOne) SetNillableTicketID(i *int) *AttendeeUpdateOne {
 	return auo
 }
 
+// SetTokenID sets the "token_id" field.
+func (auo *AttendeeUpdateOne) SetTokenID(i int) *AttendeeUpdateOne {
+	auo.mutation.ResetTokenID()
+	auo.mutation.SetTokenID(i)
+	return auo
+}
+
+// SetNillableTokenID sets the "token_id" field if the given value is not nil.
+func (auo *AttendeeUpdateOne) SetNillableTokenID(i *int) *AttendeeUpdateOne {
+	if i != nil {
+		auo.SetTokenID(*i)
+	}
+	return auo
+}
+
+// AddTokenID adds i to the "token_id" field.
+func (auo *AttendeeUpdateOne) AddTokenID(i int) *AttendeeUpdateOne {
+	auo.mutation.AddTokenID(i)
+	return auo
+}
+
+// SetTransactionHash sets the "transaction_hash" field.
+func (auo *AttendeeUpdateOne) SetTransactionHash(s string) *AttendeeUpdateOne {
+	auo.mutation.SetTransactionHash(s)
+	return auo
+}
+
+// SetNillableTransactionHash sets the "transaction_hash" field if the given value is not nil.
+func (auo *AttendeeUpdateOne) SetNillableTransactionHash(s *string) *AttendeeUpdateOne {
+	if s != nil {
+		auo.SetTransactionHash(*s)
+	}
+	return auo
+}
+
+// SetBlockNumber sets the "block_number" field.
+func (auo *AttendeeUpdateOne) SetBlockNumber(i int64) *AttendeeUpdateOne {
+	auo.mutation.ResetBlockNumber()
+	auo.mutation.SetBlockNumber(i)
+	return auo
+}
+
+// SetNillableBlockNumber sets the "block_number" field if the given value is not nil.
+func (auo *AttendeeUpdateOne) SetNillableBlockNumber(i *int64) *AttendeeUpdateOne {
+	if i != nil {
+		auo.SetBlockNumber(*i)
+	}
+	return auo
+}
+
+// AddBlockNumber adds i to the "block_number" field.
+func (auo *AttendeeUpdateOne) AddBlockNumber(i int64) *AttendeeUpdateOne {
+	auo.mutation.AddBlockNumber(i)
+	return auo
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (auo *AttendeeUpdateOne) SetCreatedAt(t time.Time) *AttendeeUpdateOne {
+	auo.mutation.SetCreatedAt(t)
+	return auo
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (auo *AttendeeUpdateOne) SetNillableCreatedAt(t *time.Time) *AttendeeUpdateOne {
+	if t != nil {
+		auo.SetCreatedAt(*t)
+	}
+	return auo
+}
+
 // SetEvent sets the "event" edge to the Event entity.
 func (auo *AttendeeUpdateOne) SetEvent(e *Event) *AttendeeUpdateOne {
 	return auo.SetEventID(e.ID)
@@ -432,6 +591,24 @@ func (auo *AttendeeUpdateOne) sqlSave(ctx context.Context) (_node *Attendee, err
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := auo.mutation.TokenID(); ok {
+		_spec.SetField(attendee.FieldTokenID, field.TypeInt, value)
+	}
+	if value, ok := auo.mutation.AddedTokenID(); ok {
+		_spec.AddField(attendee.FieldTokenID, field.TypeInt, value)
+	}
+	if value, ok := auo.mutation.TransactionHash(); ok {
+		_spec.SetField(attendee.FieldTransactionHash, field.TypeString, value)
+	}
+	if value, ok := auo.mutation.BlockNumber(); ok {
+		_spec.SetField(attendee.FieldBlockNumber, field.TypeInt64, value)
+	}
+	if value, ok := auo.mutation.AddedBlockNumber(); ok {
+		_spec.AddField(attendee.FieldBlockNumber, field.TypeInt64, value)
+	}
+	if value, ok := auo.mutation.CreatedAt(); ok {
+		_spec.SetField(attendee.FieldCreatedAt, field.TypeTime, value)
 	}
 	if auo.mutation.EventCleared() {
 		edge := &sqlgraph.EdgeSpec{

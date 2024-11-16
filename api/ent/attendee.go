@@ -5,6 +5,7 @@ package ent
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -25,6 +26,14 @@ type Attendee struct {
 	EventID int `json:"event_id,omitempty"`
 	// TicketID holds the value of the "ticket_id" field.
 	TicketID int `json:"ticket_id,omitempty"`
+	// TokenID holds the value of the "token_id" field.
+	TokenID int `json:"token_id,omitempty"`
+	// TransactionHash holds the value of the "transaction_hash" field.
+	TransactionHash string `json:"transaction_hash,omitempty"`
+	// BlockNumber holds the value of the "block_number" field.
+	BlockNumber int64 `json:"block_number,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the AttendeeQuery when eager-loading is set.
 	Edges        AttendeeEdges `json:"edges"`
@@ -82,8 +91,12 @@ func (*Attendee) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case attendee.FieldID, attendee.FieldUserID, attendee.FieldEventID, attendee.FieldTicketID:
+		case attendee.FieldID, attendee.FieldUserID, attendee.FieldEventID, attendee.FieldTicketID, attendee.FieldTokenID, attendee.FieldBlockNumber:
 			values[i] = new(sql.NullInt64)
+		case attendee.FieldTransactionHash:
+			values[i] = new(sql.NullString)
+		case attendee.FieldCreatedAt:
+			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -122,6 +135,30 @@ func (a *Attendee) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field ticket_id", values[i])
 			} else if value.Valid {
 				a.TicketID = int(value.Int64)
+			}
+		case attendee.FieldTokenID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field token_id", values[i])
+			} else if value.Valid {
+				a.TokenID = int(value.Int64)
+			}
+		case attendee.FieldTransactionHash:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field transaction_hash", values[i])
+			} else if value.Valid {
+				a.TransactionHash = value.String
+			}
+		case attendee.FieldBlockNumber:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field block_number", values[i])
+			} else if value.Valid {
+				a.BlockNumber = value.Int64
+			}
+		case attendee.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				a.CreatedAt = value.Time
 			}
 		default:
 			a.selectValues.Set(columns[i], values[i])
@@ -182,6 +219,18 @@ func (a *Attendee) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("ticket_id=")
 	builder.WriteString(fmt.Sprintf("%v", a.TicketID))
+	builder.WriteString(", ")
+	builder.WriteString("token_id=")
+	builder.WriteString(fmt.Sprintf("%v", a.TokenID))
+	builder.WriteString(", ")
+	builder.WriteString("transaction_hash=")
+	builder.WriteString(a.TransactionHash)
+	builder.WriteString(", ")
+	builder.WriteString("block_number=")
+	builder.WriteString(fmt.Sprintf("%v", a.BlockNumber))
+	builder.WriteString(", ")
+	builder.WriteString("created_at=")
+	builder.WriteString(a.CreatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

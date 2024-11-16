@@ -3,6 +3,8 @@
 package attendee
 
 import (
+	"time"
+
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/garguelles/archpass/ent/predicate"
@@ -68,6 +70,26 @@ func TicketID(v int) predicate.Attendee {
 	return predicate.Attendee(sql.FieldEQ(FieldTicketID, v))
 }
 
+// TokenID applies equality check predicate on the "token_id" field. It's identical to TokenIDEQ.
+func TokenID(v int) predicate.Attendee {
+	return predicate.Attendee(sql.FieldEQ(FieldTokenID, v))
+}
+
+// TransactionHash applies equality check predicate on the "transaction_hash" field. It's identical to TransactionHashEQ.
+func TransactionHash(v string) predicate.Attendee {
+	return predicate.Attendee(sql.FieldEQ(FieldTransactionHash, v))
+}
+
+// BlockNumber applies equality check predicate on the "block_number" field. It's identical to BlockNumberEQ.
+func BlockNumber(v int64) predicate.Attendee {
+	return predicate.Attendee(sql.FieldEQ(FieldBlockNumber, v))
+}
+
+// CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
+func CreatedAt(v time.Time) predicate.Attendee {
+	return predicate.Attendee(sql.FieldEQ(FieldCreatedAt, v))
+}
+
 // UserIDEQ applies the EQ predicate on the "user_id" field.
 func UserIDEQ(v int) predicate.Attendee {
 	return predicate.Attendee(sql.FieldEQ(FieldUserID, v))
@@ -126,6 +148,191 @@ func TicketIDIn(vs ...int) predicate.Attendee {
 // TicketIDNotIn applies the NotIn predicate on the "ticket_id" field.
 func TicketIDNotIn(vs ...int) predicate.Attendee {
 	return predicate.Attendee(sql.FieldNotIn(FieldTicketID, vs...))
+}
+
+// TokenIDEQ applies the EQ predicate on the "token_id" field.
+func TokenIDEQ(v int) predicate.Attendee {
+	return predicate.Attendee(sql.FieldEQ(FieldTokenID, v))
+}
+
+// TokenIDNEQ applies the NEQ predicate on the "token_id" field.
+func TokenIDNEQ(v int) predicate.Attendee {
+	return predicate.Attendee(sql.FieldNEQ(FieldTokenID, v))
+}
+
+// TokenIDIn applies the In predicate on the "token_id" field.
+func TokenIDIn(vs ...int) predicate.Attendee {
+	return predicate.Attendee(sql.FieldIn(FieldTokenID, vs...))
+}
+
+// TokenIDNotIn applies the NotIn predicate on the "token_id" field.
+func TokenIDNotIn(vs ...int) predicate.Attendee {
+	return predicate.Attendee(sql.FieldNotIn(FieldTokenID, vs...))
+}
+
+// TokenIDGT applies the GT predicate on the "token_id" field.
+func TokenIDGT(v int) predicate.Attendee {
+	return predicate.Attendee(sql.FieldGT(FieldTokenID, v))
+}
+
+// TokenIDGTE applies the GTE predicate on the "token_id" field.
+func TokenIDGTE(v int) predicate.Attendee {
+	return predicate.Attendee(sql.FieldGTE(FieldTokenID, v))
+}
+
+// TokenIDLT applies the LT predicate on the "token_id" field.
+func TokenIDLT(v int) predicate.Attendee {
+	return predicate.Attendee(sql.FieldLT(FieldTokenID, v))
+}
+
+// TokenIDLTE applies the LTE predicate on the "token_id" field.
+func TokenIDLTE(v int) predicate.Attendee {
+	return predicate.Attendee(sql.FieldLTE(FieldTokenID, v))
+}
+
+// TransactionHashEQ applies the EQ predicate on the "transaction_hash" field.
+func TransactionHashEQ(v string) predicate.Attendee {
+	return predicate.Attendee(sql.FieldEQ(FieldTransactionHash, v))
+}
+
+// TransactionHashNEQ applies the NEQ predicate on the "transaction_hash" field.
+func TransactionHashNEQ(v string) predicate.Attendee {
+	return predicate.Attendee(sql.FieldNEQ(FieldTransactionHash, v))
+}
+
+// TransactionHashIn applies the In predicate on the "transaction_hash" field.
+func TransactionHashIn(vs ...string) predicate.Attendee {
+	return predicate.Attendee(sql.FieldIn(FieldTransactionHash, vs...))
+}
+
+// TransactionHashNotIn applies the NotIn predicate on the "transaction_hash" field.
+func TransactionHashNotIn(vs ...string) predicate.Attendee {
+	return predicate.Attendee(sql.FieldNotIn(FieldTransactionHash, vs...))
+}
+
+// TransactionHashGT applies the GT predicate on the "transaction_hash" field.
+func TransactionHashGT(v string) predicate.Attendee {
+	return predicate.Attendee(sql.FieldGT(FieldTransactionHash, v))
+}
+
+// TransactionHashGTE applies the GTE predicate on the "transaction_hash" field.
+func TransactionHashGTE(v string) predicate.Attendee {
+	return predicate.Attendee(sql.FieldGTE(FieldTransactionHash, v))
+}
+
+// TransactionHashLT applies the LT predicate on the "transaction_hash" field.
+func TransactionHashLT(v string) predicate.Attendee {
+	return predicate.Attendee(sql.FieldLT(FieldTransactionHash, v))
+}
+
+// TransactionHashLTE applies the LTE predicate on the "transaction_hash" field.
+func TransactionHashLTE(v string) predicate.Attendee {
+	return predicate.Attendee(sql.FieldLTE(FieldTransactionHash, v))
+}
+
+// TransactionHashContains applies the Contains predicate on the "transaction_hash" field.
+func TransactionHashContains(v string) predicate.Attendee {
+	return predicate.Attendee(sql.FieldContains(FieldTransactionHash, v))
+}
+
+// TransactionHashHasPrefix applies the HasPrefix predicate on the "transaction_hash" field.
+func TransactionHashHasPrefix(v string) predicate.Attendee {
+	return predicate.Attendee(sql.FieldHasPrefix(FieldTransactionHash, v))
+}
+
+// TransactionHashHasSuffix applies the HasSuffix predicate on the "transaction_hash" field.
+func TransactionHashHasSuffix(v string) predicate.Attendee {
+	return predicate.Attendee(sql.FieldHasSuffix(FieldTransactionHash, v))
+}
+
+// TransactionHashEqualFold applies the EqualFold predicate on the "transaction_hash" field.
+func TransactionHashEqualFold(v string) predicate.Attendee {
+	return predicate.Attendee(sql.FieldEqualFold(FieldTransactionHash, v))
+}
+
+// TransactionHashContainsFold applies the ContainsFold predicate on the "transaction_hash" field.
+func TransactionHashContainsFold(v string) predicate.Attendee {
+	return predicate.Attendee(sql.FieldContainsFold(FieldTransactionHash, v))
+}
+
+// BlockNumberEQ applies the EQ predicate on the "block_number" field.
+func BlockNumberEQ(v int64) predicate.Attendee {
+	return predicate.Attendee(sql.FieldEQ(FieldBlockNumber, v))
+}
+
+// BlockNumberNEQ applies the NEQ predicate on the "block_number" field.
+func BlockNumberNEQ(v int64) predicate.Attendee {
+	return predicate.Attendee(sql.FieldNEQ(FieldBlockNumber, v))
+}
+
+// BlockNumberIn applies the In predicate on the "block_number" field.
+func BlockNumberIn(vs ...int64) predicate.Attendee {
+	return predicate.Attendee(sql.FieldIn(FieldBlockNumber, vs...))
+}
+
+// BlockNumberNotIn applies the NotIn predicate on the "block_number" field.
+func BlockNumberNotIn(vs ...int64) predicate.Attendee {
+	return predicate.Attendee(sql.FieldNotIn(FieldBlockNumber, vs...))
+}
+
+// BlockNumberGT applies the GT predicate on the "block_number" field.
+func BlockNumberGT(v int64) predicate.Attendee {
+	return predicate.Attendee(sql.FieldGT(FieldBlockNumber, v))
+}
+
+// BlockNumberGTE applies the GTE predicate on the "block_number" field.
+func BlockNumberGTE(v int64) predicate.Attendee {
+	return predicate.Attendee(sql.FieldGTE(FieldBlockNumber, v))
+}
+
+// BlockNumberLT applies the LT predicate on the "block_number" field.
+func BlockNumberLT(v int64) predicate.Attendee {
+	return predicate.Attendee(sql.FieldLT(FieldBlockNumber, v))
+}
+
+// BlockNumberLTE applies the LTE predicate on the "block_number" field.
+func BlockNumberLTE(v int64) predicate.Attendee {
+	return predicate.Attendee(sql.FieldLTE(FieldBlockNumber, v))
+}
+
+// CreatedAtEQ applies the EQ predicate on the "created_at" field.
+func CreatedAtEQ(v time.Time) predicate.Attendee {
+	return predicate.Attendee(sql.FieldEQ(FieldCreatedAt, v))
+}
+
+// CreatedAtNEQ applies the NEQ predicate on the "created_at" field.
+func CreatedAtNEQ(v time.Time) predicate.Attendee {
+	return predicate.Attendee(sql.FieldNEQ(FieldCreatedAt, v))
+}
+
+// CreatedAtIn applies the In predicate on the "created_at" field.
+func CreatedAtIn(vs ...time.Time) predicate.Attendee {
+	return predicate.Attendee(sql.FieldIn(FieldCreatedAt, vs...))
+}
+
+// CreatedAtNotIn applies the NotIn predicate on the "created_at" field.
+func CreatedAtNotIn(vs ...time.Time) predicate.Attendee {
+	return predicate.Attendee(sql.FieldNotIn(FieldCreatedAt, vs...))
+}
+
+// CreatedAtGT applies the GT predicate on the "created_at" field.
+func CreatedAtGT(v time.Time) predicate.Attendee {
+	return predicate.Attendee(sql.FieldGT(FieldCreatedAt, v))
+}
+
+// CreatedAtGTE applies the GTE predicate on the "created_at" field.
+func CreatedAtGTE(v time.Time) predicate.Attendee {
+	return predicate.Attendee(sql.FieldGTE(FieldCreatedAt, v))
+}
+
+// CreatedAtLT applies the LT predicate on the "created_at" field.
+func CreatedAtLT(v time.Time) predicate.Attendee {
+	return predicate.Attendee(sql.FieldLT(FieldCreatedAt, v))
+}
+
+// CreatedAtLTE applies the LTE predicate on the "created_at" field.
+func CreatedAtLTE(v time.Time) predicate.Attendee {
+	return predicate.Attendee(sql.FieldLTE(FieldCreatedAt, v))
 }
 
 // HasEvent applies the HasEdge predicate on the "event" edge.

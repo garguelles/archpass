@@ -31,6 +31,8 @@ type Ticket struct {
 	Quantity int `json:"quantity,omitempty"`
 	// EventID holds the value of the "event_id" field.
 	EventID int `json:"event_id,omitempty"`
+	// TicketHash holds the value of the "ticket_hash" field.
+	TicketHash string `json:"ticket_hash,omitempty"`
 	// ContractAddress holds the value of the "contract_address" field.
 	ContractAddress string `json:"contract_address,omitempty"`
 	// TransactionHash holds the value of the "transaction_hash" field.
@@ -87,7 +89,7 @@ func (*Ticket) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case ticket.FieldID, ticket.FieldQuantity, ticket.FieldEventID:
 			values[i] = new(sql.NullInt64)
-		case ticket.FieldName, ticket.FieldDescription, ticket.FieldTicketSlug, ticket.FieldMintPrice, ticket.FieldContractAddress, ticket.FieldTransactionHash, ticket.FieldBlockNumber:
+		case ticket.FieldName, ticket.FieldDescription, ticket.FieldTicketSlug, ticket.FieldMintPrice, ticket.FieldTicketHash, ticket.FieldContractAddress, ticket.FieldTransactionHash, ticket.FieldBlockNumber:
 			values[i] = new(sql.NullString)
 		case ticket.FieldCreatedAt, ticket.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -147,6 +149,12 @@ func (t *Ticket) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field event_id", values[i])
 			} else if value.Valid {
 				t.EventID = int(value.Int64)
+			}
+		case ticket.FieldTicketHash:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field ticket_hash", values[i])
+			} else if value.Valid {
+				t.TicketHash = value.String
 			}
 		case ticket.FieldContractAddress:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -241,6 +249,9 @@ func (t *Ticket) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("event_id=")
 	builder.WriteString(fmt.Sprintf("%v", t.EventID))
+	builder.WriteString(", ")
+	builder.WriteString("ticket_hash=")
+	builder.WriteString(t.TicketHash)
 	builder.WriteString(", ")
 	builder.WriteString("contract_address=")
 	builder.WriteString(t.ContractAddress)
