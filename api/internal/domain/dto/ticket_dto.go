@@ -3,11 +3,12 @@ package dto
 import "time"
 
 type CreateTicketInput struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	EventId     int    `json:"eventId"`
-	Quantity    int    `json:"quantity"`
-	MintPrice   string `json:"mintPrice"`
+	Name            string `json:"name"`
+	Description     string `json:"description"`
+	EventId         int    `json:"eventId"`
+	Quantity        int    `json:"quantity"`
+	MintPrice       string `json:"mintPrice"`
+	ContractAddress string `json:"contractAddress"`
 }
 
 type DashboardTicket struct {
