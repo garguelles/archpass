@@ -1,7 +1,4 @@
-'use client';
-
 import { useCallback, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import {
   Dialog,
@@ -36,7 +33,11 @@ type FormData = {
   headerImage: string;
 };
 
-export function CreateEventModal() {
+type CreateEventModalProps = {
+  refetchEventList: () => void;
+};
+
+export function CreateEventModal({ refetchEventList }: CreateEventModalProps) {
   const [open, setOpen] = useState(false);
   const {
     register,
@@ -69,7 +70,10 @@ export function CreateEventModal() {
         contractAddress: eventAddress,
       };
 
-      mutateAsync(payload).then(() => setOpen(false));
+      mutateAsync(payload).then(() => {
+        setOpen(false);
+        refetchEventList();
+      });
     },
     [getValues, mutateAsync],
   );
