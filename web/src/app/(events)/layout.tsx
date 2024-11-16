@@ -5,13 +5,10 @@ import '../global.css';
 import '@coinbase/onchainkit/styles.css';
 import '@rainbow-me/rainbowkit/styles.css';
 import dynamic from 'next/dynamic';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-import LoginButton from '@/components/LoginButton';
-import SignupButton from '@/components/SignupButton';
+import { EventLayoutHeader } from './layout-header';
 
-const OnchainProviders = dynamic(
-  () => import('@/components/OnchainProviders'),
+const PublicOnchainProviders = dynamic(
+  () => import('@/components/PublicOnchainProviders'),
   {
     ssr: false,
   },
@@ -38,20 +35,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-background items-center justify-center">
-        <OnchainProviders>
+        <PublicOnchainProviders>
           <div className="min-h-screen bg-background text-foreground">
-            <header className="container mx-auto py-6 px-4">
-              <nav className="flex justify-between items-center">
-                <h1 className="text-2xl font-bold">ArchPass</h1>
-                <div className="flex items-center space-x-4">
-                  <LoginButton />
-                  <SignupButton />
-                </div>
-              </nav>
-            </header>
+            <EventLayoutHeader />
             {children}
           </div>
-        </OnchainProviders>
+        </PublicOnchainProviders>
       </body>
     </html>
   );

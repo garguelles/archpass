@@ -17,6 +17,18 @@ import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { usePublicEventItemQuery } from '@/queries/public-event-item';
 import { TTicket } from '@/types';
+import {
+  Transaction,
+  TransactionButton,
+  TransactionError,
+  TransactionResponse,
+  TransactionStatus,
+  TransactionStatusAction,
+  TransactionStatusLabel,
+} from '@coinbase/onchainkit/transaction';
+import { BASE_SEPOLIA_CHAIN_ID, eventABI } from '@/constants';
+import { useCallback, useEffect, useState } from 'react';
+import { type Address, parseEther } from 'viem';
 
 // This would typically come from a database or API
 const eventData = {
@@ -42,6 +54,37 @@ const eventData = {
 
 export default function EventPage({ params }: { params: { slug: string } }) {
   const { event } = usePublicEventItemQuery(params.slug);
+  const [selectedTicketContract, setSelectedTicketContract] =
+    useState<string>('');
+
+  useEffect(() => {
+    console.log('THE CONTRACT', selectedTicketContract);
+  }, []);
+
+  let mintPrice = event?.tickets.find(
+    (t: TTicket) => t.contractAddress === selectedTicketContract,
+  )?.mintPrice;
+  mintPrice = mintPrice ? parseEther(mintPrice) : 0n;
+
+  const contracts = [
+    {
+      address: event?.contractAddress as Address,
+      abi: eventABI,
+      functionName: 'mintNFT',
+      args: [selectedTicketContract, 'test'],
+      value: mintPrice,
+    },
+  ];
+
+  console.log('CONTRACTS', contracts);
+
+  const handleError = useCallback((err: TransactionError) => {
+    console.error('Transaction error:', err);
+  }, []);
+
+  const handleSuccess = useCallback(async (response: TransactionResponse) => {
+    console.log(response);
+  }, []);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -125,7 +168,14 @@ export default function EventPage({ params }: { params: { slug: string } }) {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <RadioGroup defaultValue="general" className="space-y-4">
+              <RadioGroup
+                onValueChange={(value: string) => {
+                  console.log('VALUE', value);
+                  value && setSelectedTicketContract(value);
+                }}
+                defaultValue="general"
+                className="space-y-4"
+              >
                 {event?.tickets.map((ticket: TTicket) => (
                   <div key={ticket.id} className="flex items-center space-x-2">
                     <RadioGroupItem
@@ -144,9 +194,21 @@ export default function EventPage({ params }: { params: { slug: string } }) {
               </RadioGroup>
             </CardContent>
             <CardFooter>
-              <Button className="w-full" size="lg">
-                Mint Ticket
-              </Button>
+              <Transaction
+                contracts={contracts}
+                chainId={BASE_SEPOLIA_CHAIN_ID}
+                onError={handleError}
+                onSuccess={handleSuccess}
+              >
+                <TransactionButton
+                  text="Mint ticket"
+                  className="mt-0 mr-auto ml-auto max-w-full text-[white]"
+                />
+                <TransactionStatus>
+                  <TransactionStatusLabel />
+                  <TransactionStatusAction />
+                </TransactionStatus>
+              </Transaction>
             </CardFooter>
           </Card>
         </div>
