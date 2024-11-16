@@ -10,14 +10,14 @@ import '@/app/global.css';
 import '@coinbase/onchainkit/styles.css';
 import '@rainbow-me/rainbowkit/styles.css';
 import LoginButton from '@/components/LoginButton';
-import OnchainProviders from '@/components/OnchainProviders';
+import dynamic from 'next/dynamic';
 
-//const OnchainProviders = dynamic(
-//  () => import('@/components/OnchainProviders'),
-//  {
-//    ssr: false,
-//  },
-//);
+const OnchainProviders = dynamic(
+  () => import('@/components/OnchainProviders'),
+  {
+    ssr: false,
+  },
+);
 
 export default function DashboardLayout({
   children,
