@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import {
@@ -74,24 +74,26 @@ export function CreateEventModal() {
     // router.push(`/dashboard/${slug}`);
   };
 
-  const handleError = (err: TransactionError) => {
+  const handleError = useCallback((err: TransactionError) => {
     console.error('Transaction error:', err);
-  };
+  }, []);
 
-  const handleSuccess = async (response: TransactionResponse) => {
-    console.log('Transaction successful', response);
-    const formValues = getValues();
-    const eventAddress = response.transactionReceipts?.[0].logs?.[0].address;
-    const payload = {
-      name: formValues.eventName,
-      description: formValues.description,
-      date: formValues.eventDate,
-      location: formValues.location,
-      contractAddress: eventAddress,
-    };
+  const handleSuccess = useCallback(
+    (response: TransactionResponse) => {
+      const formValues = getValues();
+      const eventAddress = response.transactionReceipts?.[0].logs?.[0].address;
+      const payload = {
+        name: formValues.eventName,
+        description: formValues.description,
+        date: formValues.eventDate,
+        location: formValues.location,
+        contractAddress: eventAddress,
+      };
 
-    await mutateAsync(payload);
-  };
+      mutateAsync(payload);
+    },
+    [getValues, mutateAsync],
+  );
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

@@ -8,7 +8,7 @@ export const createAuthenticatedClient = () => {
     timeout: 60000,
     headers: {
       Accept: 'application/json',
-      'Content-Type': 'applications/json',
+      'Content-Type': 'application/json',
       Authorization: `Bearer ${accessToken}`,
     },
   });

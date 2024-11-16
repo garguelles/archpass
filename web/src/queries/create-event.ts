@@ -4,9 +4,14 @@ import { useMutation } from '@tanstack/react-query';
 
 export function useCreateEventMutation() {
   return useMutation({
-    mutationFn: (event: Record<string, any>) => {
+    mutationFn: async (event: Record<string, any>) => {
       const api = createAuthenticatedClient();
-      return api.post(`${NEXT_PUBLIC_API_BASE_URL}/admin/event.create`, event);
+      const { data } = await api.post(
+        `${NEXT_PUBLIC_API_BASE_URL}/admin/event.create`,
+        event,
+      );
+
+      return data;
     },
   });
 }
