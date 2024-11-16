@@ -7,6 +7,7 @@ import { base } from 'viem/chains';
 import { WagmiProvider } from 'wagmi';
 import { NEXT_PUBLIC_CDP_API_KEY } from '../config';
 import { useWagmiConfig } from '../wagmi';
+import { AuthProvider } from '@/providers/auth-provider';
 
 type Props = { children: ReactNode };
 
@@ -20,7 +21,7 @@ function OnchainProviders({ children }: Props) {
       <QueryClientProvider client={queryClient}>
         <OnchainKitProvider apiKey={NEXT_PUBLIC_CDP_API_KEY} chain={base}>
           <RainbowKitProvider modalSize="compact">
-            {children}
+            <AuthProvider>{children}</AuthProvider>
           </RainbowKitProvider>
         </OnchainKitProvider>
       </QueryClientProvider>
