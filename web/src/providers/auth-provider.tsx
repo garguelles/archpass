@@ -15,6 +15,7 @@ import { useAccountEffect } from 'wagmi';
 import { useSignMessage } from 'wagmi';
 
 import { NEXT_PUBLIC_API_BASE_URL, DEFAULT_CHAIN_ID } from '../config';
+import { useRouter } from 'next/navigation';
 
 export type TAuthContext = {
   login: (address: string) => void;
@@ -35,6 +36,8 @@ const authContextDefaultValue = {
 export const AuthContext = createContext<TAuthContext>(authContextDefaultValue);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const router = useRouter();
+
   const [accessToken, setAccessToken] = useState<string | null>(null);
   useAccountEffect({
     onDisconnect() {
@@ -110,6 +113,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
       setAccessToken(token);
       window.localStorage.setItem('accessToken', token);
+      router.push('/dashboard');
     },
     [signMessageAsync, verify, createSiweMessage],
   );
