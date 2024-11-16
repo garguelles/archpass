@@ -2,7 +2,7 @@ const { createCanvas, registerFont } = require('canvas');
 const path = require('path');
 
 // Register Fonts
-const fontsPath = path.join(__dirname, '..', 'ticket-generator', 'public', 'fonts');
+const fontsPath = path.join(process.cwd(), 'public', 'fonts');
 console.log(fontsPath)
 registerFont(path.join(fontsPath, 'Space_Grotesk', 'SpaceGrotesk-VariableFont_wght.ttf'), {
     family: 'Space Grotesk',
