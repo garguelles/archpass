@@ -64,7 +64,7 @@ export function CreateTicketModal({
       formValues.mintPrice ? parseEther(formValues.mintPrice) : null,
       '0xtesthash',
     ];
-  }, [getValues()]);
+  }, [getValues]);
 
   const contracts = [
     {
@@ -74,6 +74,8 @@ export function CreateTicketModal({
       args: [...createArgs()],
     },
   ] as unknown as ContractFunctionParameters[];
+
+  console.log(createArgs());
 
   const handleError = useCallback((err: TransactionError) => {
     console.error('Transaction error:', err);
@@ -86,7 +88,7 @@ export function CreateTicketModal({
       const payload = {
         name: formValues.name,
         eventId: event.id,
-        quantity: formValues.quantity,
+        quantity: Number(formValues.quantity),
         mintPrice: formValues.mintPrice,
         contractAddress: ticketAddress,
       };
@@ -124,10 +126,10 @@ export function CreateTicketModal({
           <div>
             <Label htmlFor="price">Price</Label>
             <Input
-              id="price"
+              id="mintPrice"
               type="number"
               step="0.01"
-              {...register('price', {
+              {...register('mintPrice', {
                 required: 'Price is required',
                 min: { value: 0, message: 'Price must be 0 or greater' },
               })}
