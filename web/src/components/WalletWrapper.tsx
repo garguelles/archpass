@@ -17,6 +17,15 @@ import {
   WalletDropdownLink,
 } from '@coinbase/onchainkit/wallet';
 import { useAccount, useDisconnect } from 'wagmi';
+import {
+  AlertDialog,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogTitle,
+} from './ui/alert-dialog';
+import { Button } from './ui/button';
+import { FilePen } from 'lucide-react';
 
 type WalletWrapperParams = {
   text?: string;
@@ -31,6 +40,10 @@ export default function WalletWrapper({
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
   const { login, accessToken } = useAuth();
+
+  const cancelLogin = () => {
+    disconnect();
+  };
 
   return (
     <>
