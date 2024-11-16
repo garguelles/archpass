@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 
+	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/garguelles/archpass/ent/attendee"
@@ -20,6 +21,7 @@ type AttendeeCreate struct {
 	config
 	mutation *AttendeeMutation
 	hooks    []Hook
+	conflict []sql.ConflictOption
 }
 
 // SetUserID sets the "user_id" field.
@@ -133,6 +135,7 @@ func (ac *AttendeeCreate) createSpec() (*Attendee, *sqlgraph.CreateSpec) {
 		_node = &Attendee{config: ac.config}
 		_spec = sqlgraph.NewCreateSpec(attendee.Table, sqlgraph.NewFieldSpec(attendee.FieldID, field.TypeInt))
 	)
+	_spec.OnConflict = ac.conflict
 	if nodes := ac.mutation.EventIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -187,11 +190,212 @@ func (ac *AttendeeCreate) createSpec() (*Attendee, *sqlgraph.CreateSpec) {
 	return _node, _spec
 }
 
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.Attendee.Create().
+//		SetUserID(v).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.AttendeeUpsert) {
+//			SetUserID(v+v).
+//		}).
+//		Exec(ctx)
+func (ac *AttendeeCreate) OnConflict(opts ...sql.ConflictOption) *AttendeeUpsertOne {
+	ac.conflict = opts
+	return &AttendeeUpsertOne{
+		create: ac,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.Attendee.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (ac *AttendeeCreate) OnConflictColumns(columns ...string) *AttendeeUpsertOne {
+	ac.conflict = append(ac.conflict, sql.ConflictColumns(columns...))
+	return &AttendeeUpsertOne{
+		create: ac,
+	}
+}
+
+type (
+	// AttendeeUpsertOne is the builder for "upsert"-ing
+	//  one Attendee node.
+	AttendeeUpsertOne struct {
+		create *AttendeeCreate
+	}
+
+	// AttendeeUpsert is the "OnConflict" setter.
+	AttendeeUpsert struct {
+		*sql.UpdateSet
+	}
+)
+
+// SetUserID sets the "user_id" field.
+func (u *AttendeeUpsert) SetUserID(v int) *AttendeeUpsert {
+	u.Set(attendee.FieldUserID, v)
+	return u
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *AttendeeUpsert) UpdateUserID() *AttendeeUpsert {
+	u.SetExcluded(attendee.FieldUserID)
+	return u
+}
+
+// SetEventID sets the "event_id" field.
+func (u *AttendeeUpsert) SetEventID(v int) *AttendeeUpsert {
+	u.Set(attendee.FieldEventID, v)
+	return u
+}
+
+// UpdateEventID sets the "event_id" field to the value that was provided on create.
+func (u *AttendeeUpsert) UpdateEventID() *AttendeeUpsert {
+	u.SetExcluded(attendee.FieldEventID)
+	return u
+}
+
+// SetTicketID sets the "ticket_id" field.
+func (u *AttendeeUpsert) SetTicketID(v int) *AttendeeUpsert {
+	u.Set(attendee.FieldTicketID, v)
+	return u
+}
+
+// UpdateTicketID sets the "ticket_id" field to the value that was provided on create.
+func (u *AttendeeUpsert) UpdateTicketID() *AttendeeUpsert {
+	u.SetExcluded(attendee.FieldTicketID)
+	return u
+}
+
+// UpdateNewValues updates the mutable fields using the new values that were set on create.
+// Using this option is equivalent to using:
+//
+//	client.Attendee.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//		).
+//		Exec(ctx)
+func (u *AttendeeUpsertOne) UpdateNewValues() *AttendeeUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.Attendee.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
+func (u *AttendeeUpsertOne) Ignore() *AttendeeUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *AttendeeUpsertOne) DoNothing() *AttendeeUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the AttendeeCreate.OnConflict
+// documentation for more info.
+func (u *AttendeeUpsertOne) Update(set func(*AttendeeUpsert)) *AttendeeUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&AttendeeUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetUserID sets the "user_id" field.
+func (u *AttendeeUpsertOne) SetUserID(v int) *AttendeeUpsertOne {
+	return u.Update(func(s *AttendeeUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *AttendeeUpsertOne) UpdateUserID() *AttendeeUpsertOne {
+	return u.Update(func(s *AttendeeUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// SetEventID sets the "event_id" field.
+func (u *AttendeeUpsertOne) SetEventID(v int) *AttendeeUpsertOne {
+	return u.Update(func(s *AttendeeUpsert) {
+		s.SetEventID(v)
+	})
+}
+
+// UpdateEventID sets the "event_id" field to the value that was provided on create.
+func (u *AttendeeUpsertOne) UpdateEventID() *AttendeeUpsertOne {
+	return u.Update(func(s *AttendeeUpsert) {
+		s.UpdateEventID()
+	})
+}
+
+// SetTicketID sets the "ticket_id" field.
+func (u *AttendeeUpsertOne) SetTicketID(v int) *AttendeeUpsertOne {
+	return u.Update(func(s *AttendeeUpsert) {
+		s.SetTicketID(v)
+	})
+}
+
+// UpdateTicketID sets the "ticket_id" field to the value that was provided on create.
+func (u *AttendeeUpsertOne) UpdateTicketID() *AttendeeUpsertOne {
+	return u.Update(func(s *AttendeeUpsert) {
+		s.UpdateTicketID()
+	})
+}
+
+// Exec executes the query.
+func (u *AttendeeUpsertOne) Exec(ctx context.Context) error {
+	if len(u.create.conflict) == 0 {
+		return errors.New("ent: missing options for AttendeeCreate.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *AttendeeUpsertOne) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// Exec executes the UPSERT query and returns the inserted/updated ID.
+func (u *AttendeeUpsertOne) ID(ctx context.Context) (id int, err error) {
+	node, err := u.create.Save(ctx)
+	if err != nil {
+		return id, err
+	}
+	return node.ID, nil
+}
+
+// IDX is like ID, but panics if an error occurs.
+func (u *AttendeeUpsertOne) IDX(ctx context.Context) int {
+	id, err := u.ID(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return id
+}
+
 // AttendeeCreateBulk is the builder for creating many Attendee entities in bulk.
 type AttendeeCreateBulk struct {
 	config
 	err      error
 	builders []*AttendeeCreate
+	conflict []sql.ConflictOption
 }
 
 // Save creates the Attendee entities in the database.
@@ -220,6 +424,7 @@ func (acb *AttendeeCreateBulk) Save(ctx context.Context) ([]*Attendee, error) {
 					_, err = mutators[i+1].Mutate(root, acb.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
+					spec.OnConflict = acb.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
 					if err = sqlgraph.BatchCreate(ctx, acb.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
@@ -270,6 +475,152 @@ func (acb *AttendeeCreateBulk) Exec(ctx context.Context) error {
 // ExecX is like Exec, but panics if an error occurs.
 func (acb *AttendeeCreateBulk) ExecX(ctx context.Context) {
 	if err := acb.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.Attendee.CreateBulk(builders...).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.AttendeeUpsert) {
+//			SetUserID(v+v).
+//		}).
+//		Exec(ctx)
+func (acb *AttendeeCreateBulk) OnConflict(opts ...sql.ConflictOption) *AttendeeUpsertBulk {
+	acb.conflict = opts
+	return &AttendeeUpsertBulk{
+		create: acb,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.Attendee.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (acb *AttendeeCreateBulk) OnConflictColumns(columns ...string) *AttendeeUpsertBulk {
+	acb.conflict = append(acb.conflict, sql.ConflictColumns(columns...))
+	return &AttendeeUpsertBulk{
+		create: acb,
+	}
+}
+
+// AttendeeUpsertBulk is the builder for "upsert"-ing
+// a bulk of Attendee nodes.
+type AttendeeUpsertBulk struct {
+	create *AttendeeCreateBulk
+}
+
+// UpdateNewValues updates the mutable fields using the new values that
+// were set on create. Using this option is equivalent to using:
+//
+//	client.Attendee.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//		).
+//		Exec(ctx)
+func (u *AttendeeUpsertBulk) UpdateNewValues() *AttendeeUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.Attendee.Create().
+//		OnConflict(sql.ResolveWithIgnore()).
+//		Exec(ctx)
+func (u *AttendeeUpsertBulk) Ignore() *AttendeeUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *AttendeeUpsertBulk) DoNothing() *AttendeeUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the AttendeeCreateBulk.OnConflict
+// documentation for more info.
+func (u *AttendeeUpsertBulk) Update(set func(*AttendeeUpsert)) *AttendeeUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&AttendeeUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetUserID sets the "user_id" field.
+func (u *AttendeeUpsertBulk) SetUserID(v int) *AttendeeUpsertBulk {
+	return u.Update(func(s *AttendeeUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *AttendeeUpsertBulk) UpdateUserID() *AttendeeUpsertBulk {
+	return u.Update(func(s *AttendeeUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// SetEventID sets the "event_id" field.
+func (u *AttendeeUpsertBulk) SetEventID(v int) *AttendeeUpsertBulk {
+	return u.Update(func(s *AttendeeUpsert) {
+		s.SetEventID(v)
+	})
+}
+
+// UpdateEventID sets the "event_id" field to the value that was provided on create.
+func (u *AttendeeUpsertBulk) UpdateEventID() *AttendeeUpsertBulk {
+	return u.Update(func(s *AttendeeUpsert) {
+		s.UpdateEventID()
+	})
+}
+
+// SetTicketID sets the "ticket_id" field.
+func (u *AttendeeUpsertBulk) SetTicketID(v int) *AttendeeUpsertBulk {
+	return u.Update(func(s *AttendeeUpsert) {
+		s.SetTicketID(v)
+	})
+}
+
+// UpdateTicketID sets the "ticket_id" field to the value that was provided on create.
+func (u *AttendeeUpsertBulk) UpdateTicketID() *AttendeeUpsertBulk {
+	return u.Update(func(s *AttendeeUpsert) {
+		s.UpdateTicketID()
+	})
+}
+
+// Exec executes the query.
+func (u *AttendeeUpsertBulk) Exec(ctx context.Context) error {
+	if u.create.err != nil {
+		return u.create.err
+	}
+	for i, b := range u.create.builders {
+		if len(b.conflict) != 0 {
+			return fmt.Errorf("ent: OnConflict was set for builder %d. Set it on the AttendeeCreateBulk instead", i)
+		}
+	}
+	if len(u.create.conflict) == 0 {
+		return errors.New("ent: missing options for AttendeeCreateBulk.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *AttendeeUpsertBulk) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
