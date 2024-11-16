@@ -1,4 +1,5 @@
 'use client';
+import { useAuth } from '@/providers/auth-provider';
 import {
   Address,
   Avatar,
@@ -15,6 +16,7 @@ import {
   WalletDropdownFundLink,
   WalletDropdownLink,
 } from '@coinbase/onchainkit/wallet';
+import { useAccount, useDisconnect } from 'wagmi';
 
 type WalletWrapperParams = {
   text?: string;
@@ -26,6 +28,10 @@ export default function WalletWrapper({
   text,
   withWalletAggregator = false,
 }: WalletWrapperParams) {
+  const { address, isConnected } = useAccount();
+  const { disconnect } = useDisconnect();
+  const { login, accessToken } = useAuth();
+
   return (
     <>
       <Wallet>
@@ -52,6 +58,27 @@ export default function WalletWrapper({
           <WalletDropdownDisconnect />
         </WalletDropdown>
       </Wallet>
+
+      <AlertDialog open={isConnected && !accessToken}>
+        <AlertDialogContent
+          onEscapeKeyDown={cancelLogin}
+          className="flex flex-col"
+        >
+          <AlertDialogHeader>
+            <AlertDialogTitle>Verify your account</AlertDialogTitle>
+            <AlertDialogDescription>
+              To finish connecting, you must sign a message in your wallet to
+              verify that you are the owner of this account.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <Button
+            onClick={() => login(address as `0xString`)}
+            className="w-full"
+          >
+            <FilePen className="mr-2 h-4 w-4" /> Sign message
+          </Button>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
