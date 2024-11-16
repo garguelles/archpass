@@ -120,9 +120,10 @@ func saveMint(ctx context.Context, event *contract.EventFactoryTicketMinted) {
 		return
 	}
 
+	fmt.Println(event.TicketAddress.Hex())
 	ticket, err := ticketRepo.GetByContractAddress(event.TicketAddress.Hex())
 	if err != nil {
-		fmt.Println("Ticket not found")
+		fmt.Println(err.Error())
 		return
 	}
 	input := dto.CreateAttendeeInput{

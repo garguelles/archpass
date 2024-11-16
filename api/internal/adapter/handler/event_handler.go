@@ -143,9 +143,10 @@ func GetEvent(c echo.Context) error {
 	}
 
 	eventDto := dto.PublicEvent{
-		Name:     event.Name,
-		Location: event.Location,
-		ImageUrl: event.ImageURL,
+		Name:        event.Name,
+		Description: event.Description,
+		Location:    event.Location,
+		ImageUrl:    event.ImageURL,
 		// StartDate:       event.StartDate,
 		// EndDate:         event.EndDate,
 		Date:            event.Date,
@@ -166,6 +167,7 @@ func GetEvent(c echo.Context) error {
 			TicketSlug:      ticket.TicketSlug,
 			MintPrice:       ticket.MintPrice,
 			ContractAddress: ticket.ContractAddress,
+			ImageUrl:        ticket.ImageURL,
 		})
 	}
 
