@@ -83,7 +83,7 @@ export default function EventPage({ params }: { params: { slug: string } }) {
       eventName: event.name,
       eventLocation: event.location,
       eventDate: event.date,
-      attendeeName: `${getSlicedAddress(address ?? '')}`,
+      attendeeName: `${getSlicedAddress(address ?? '0x0')}`,
       ticketName: ticket?.name?.toUpperCase(),
     });
 
