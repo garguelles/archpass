@@ -1,6 +1,10 @@
+'use client';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CalendarIcon, MapPinIcon, UserIcon } from 'lucide-react';
 import Image from 'next/image';
+import { useEventTicketQuery } from '@/queries/event-ticket';
+import { convertIpfsToHttps } from '@/lib/utils';
 
 // Mock data (in a real app, this would come from an API or database)
 const ticketData = {
@@ -14,7 +18,10 @@ const ticketData = {
 
 export default function TicketPage({
   params,
-}: { params: { ticketId: string } }) {
+}: { params: { id: string } }) {
+  console.log(params)
+  const { ticket } = useEventTicketQuery(params?.id);
+  console.log(ticket);
   return (
     <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-4">
       <Card className="w-full max-w-md overflow-hidden">
@@ -26,29 +33,27 @@ export default function TicketPage({
         <CardContent className="p-6">
           <div className="relative w-full aspect-video mb-6">
             <Image
-              src={ticketData.imageUrl}
-              alt={ticketData.eventName}
-              fill={true}
+              src={convertIpfsToHttps(ticket?.imageUrl ?? '')}
+              alt={ticket?.eventName}
+              width={400}
+              height={400}
+              fill={false}
               style={{ objectFit: 'cover' }}
               className="rounded-md"
             />
           </div>
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
-              <UserIcon className="h-5 w-5 text-muted-foreground" />
-              <span className="font-semibold">{ticketData.name}</span>
-            </div>
-            <div className="flex items-center space-x-2">
               <CalendarIcon className="h-5 w-5 text-muted-foreground" />
-              <span>{ticketData.date}</span>
+              <span>{ticket?.date}</span>
             </div>
             <div className="flex items-center space-x-2">
               <MapPinIcon className="h-5 w-5 text-muted-foreground" />
-              <span>{ticketData.location}</span>
+              <span>{ticket?.location}</span>
             </div>
           </div>
           <div className="mt-6 text-center">
-            <h2 className="text-2xl font-bold">{ticketData.eventName}</h2>
+            <h2 className="text-2xl font-bold">{ticket?.eventName}</h2>
           </div>
         </CardContent>
       </Card>

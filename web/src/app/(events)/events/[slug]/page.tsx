@@ -204,7 +204,7 @@ export default function EventPage({ params }: { params: { slug: string } }) {
               </span>
               <span className="flex items-center">
                 <MapPinIcon className="mr-2 h-5 w-5" />
-                {eventData.location}
+                {event?.location}
               </span>
             </div>
           </div>

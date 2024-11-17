@@ -54,6 +54,7 @@ func Router() *echo.Echo {
 	// Public event
 	r.GET("/event.get", handler.GetEvent)
 	r.GET("/attendeeTicket.get", handler.GetAttendeeTickets)
+	r.GET("/eventTicket.get", handler.GetEventTicket)
 
 	// Private routes
 	p := r.Group("")

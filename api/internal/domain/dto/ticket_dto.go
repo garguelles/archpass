@@ -46,6 +46,10 @@ type SimplePublicTicket struct {
 	TicketSlug  string `json:"ticketSlug"`
 	MintPrice   string `json:"mintPrice"`
 	EventSlug   string `json:"eventSlug"`
+	ImageUrl    string `json:"imageUrl"`
+	Location    string `json:"location"`
+	Date        string `json:"date"`
+	EventName   string `json:"eventName"`
 }
 
 type AttendeeSimpleTicket struct {
