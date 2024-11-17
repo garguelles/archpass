@@ -10,7 +10,7 @@ import { http, createConfig } from 'wagmi';
 import { base, baseSepolia } from 'wagmi/chains';
 import { NEXT_PUBLIC_WC_PROJECT_ID } from './config';
 
-export function useWagmiConfig() {
+export function useWagmiConfig(hideSmartWallet: boolean) {
   const projectId = NEXT_PUBLIC_WC_PROJECT_ID ?? '';
   if (!projectId) {
     const providerErrMessage =
@@ -19,7 +19,7 @@ export function useWagmiConfig() {
   }
 
   return useMemo(() => {
-    const connectors = connectorsForWallets(
+    let connectors = connectorsForWallets(
       [
         {
           groupName: 'Recommended Wallet',
@@ -31,10 +31,25 @@ export function useWagmiConfig() {
         },
       ],
       {
-        appName: 'onchainkit',
+        appName: 'ArchPass',
         projectId,
       },
     );
+
+    if (hideSmartWallet) {
+      connectors = connectorsForWallets(
+        [
+          {
+            groupName: 'Wallets',
+            wallets: [rainbowWallet, metaMaskWallet],
+          },
+        ],
+        {
+          appName: 'ArchPass',
+          projectId,
+        },
+      );
+    }
 
     const wagmiConfig = createConfig({
       chains: [base, baseSepolia],
