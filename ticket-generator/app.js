@@ -1,9 +1,11 @@
 require("dotenv").config();
 const express = require("express");
 const { generateTicket } = require("./ticketGenerator");
+const cors = require('cors')
 
 const app = express();
 app.use(express.json());
+app.use(cors())
 
 app.post("/generate-ticket", (req, res) => {
 	const { eventName, eventLocation, eventDate, attendeeName, ticketName } =
