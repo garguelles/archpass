@@ -31,7 +31,7 @@ export function useWagmiConfig() {
         },
       ],
       {
-        appName: 'onchainkit',
+        appName: 'ArchPass',
         projectId,
       },
     );
