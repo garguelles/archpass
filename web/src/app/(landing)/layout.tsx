@@ -36,7 +36,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-background items-center justify-center">
-        <OnchainProviders>
+        <OnchainProviders hideSmartWallet>
           <div className="min-h-screen bg-background text-foreground">
             <header className="container mx-auto py-6 px-4">
               <nav className="flex justify-between items-center">
