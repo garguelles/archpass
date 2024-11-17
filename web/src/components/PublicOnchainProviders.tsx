@@ -14,7 +14,7 @@ type Props = { children: ReactNode };
 const queryClient = new QueryClient();
 
 function OnchainProviders({ children }: Props) {
-  const wagmiConfig = useWagmiConfig();
+  const wagmiConfig = useWagmiConfig(false); // do not hide smart wallet on public view
 
   return (
     <WagmiProvider config={wagmiConfig}>
