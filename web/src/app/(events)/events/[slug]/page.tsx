@@ -28,6 +28,13 @@ import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 import { type Address, parseEther } from 'viem';
 import { useAccount, useWriteContract } from 'wagmi';
+import {
+  Transaction,
+  TransactionButton,
+  TransactionStatus,
+  TransactionStatusAction,
+  TransactionStatusLabel,
+} from '@coinbase/onchainkit/transaction';
 
 // This would typically come from a database or API
 const eventData = {
@@ -289,39 +296,21 @@ export default function EventPage({ params }: { params: { slug: string } }) {
               </RadioGroup>
             </CardContent>
             <CardFooter>
-              <Button
-                onClick={() => mintTicket()}
-                className="w-full"
-                disabled={
-                  isApiLoading ||
-                  isLoading ||
-                  isPending ||
-                  !selectedTicketContract
-                }
+              <Transaction
+                contracts={contracts}
+                chainId={BASE_SEPOLIA_CHAIN_ID}
+                onError={handleError}
+                onSuccess={handleSuccess}
               >
-                <Ticket className="mr-2 h-4 w-4" /> Mint Ticket
-              </Button>
-              {/*<Transaction*/}
-              {/*  contracts={contracts}*/}
-              {/*  chainId={BASE_SEPOLIA_CHAIN_ID}*/}
-              {/*  onError={handleError}*/}
-              {/*  onSuccess={handleSuccess}*/}
-              {/*  onStatus={async (status) => {*/}
-              {/*    console.log(status)*/}
-              {/*    if (status.statusName === "init") {*/}
-
-              {/*    }*/}
-              {/*  }}*/}
-              {/*>*/}
-              {/*  <TransactionButton*/}
-              {/*    text="Mint ticket"*/}
-              {/*    className="mt-0 mr-auto ml-auto max-w-full text-[white]"*/}
-              {/*  />*/}
-              {/*  <TransactionStatus>*/}
-              {/*    <TransactionStatusLabel />*/}
-              {/*    <TransactionStatusAction />*/}
-              {/*  </TransactionStatus>*/}
-              {/*</Transaction>*/}
+                <TransactionButton
+                  text="Mint ticket"
+                  className="mt-0 mr-auto ml-auto max-w-full text-[white]"
+                />
+                <TransactionStatus>
+                  <TransactionStatusLabel />
+                  <TransactionStatusAction />
+                </TransactionStatus>
+              </Transaction>
             </CardFooter>
           </Card>
         </div>
