@@ -9,11 +9,11 @@ import { WagmiProvider } from 'wagmi';
 import { NEXT_PUBLIC_CDP_API_KEY, RPC_URL } from '../config';
 import { useWagmiConfig } from '../wagmi';
 
-type Props = { children: ReactNode; hideSmartWallet: boolean };
+type Props = { children: ReactNode; hideSmartWallet?: boolean };
 
 const queryClient = new QueryClient();
 
-function OnchainProviders({ children, hideSmartWallet }: Props) {
+function OnchainProviders({ children, hideSmartWallet = false }: Props) {
   const wagmiConfig = useWagmiConfig(hideSmartWallet);
 
   return (
