@@ -89,18 +89,13 @@ func ListDashboardTickets(c echo.Context) error {
 func GetEventTicket(c echo.Context) error {
 	ctx := context.Background()
 
-	eventSlug := c.QueryParam("eventSlug")
-	if len(eventSlug) == 0 {
-		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{Message: "'eventSlug' parameter is required."})
-	}
-
 	ticketSlug := c.QueryParam("ticketSlug")
 	if len(ticketSlug) == 0 {
 		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{Message: "'ticketSlug' parameter is required."})
 	}
 
 	ticketRepo := repository.NewTicketRepository(&ctx)
-	ticket, err := ticketRepo.GetBySlugAndEvent(eventSlug, ticketSlug)
+	ticket, err := ticketRepo.GetBySlugAndEvent(ticketSlug)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{Message: err.Error()})
 	}
@@ -111,6 +106,10 @@ func GetEventTicket(c echo.Context) error {
 		TicketSlug:  ticket.TicketSlug,
 		MintPrice:   ticket.MintPrice,
 		EventSlug:   ticket.Edges.Event.EventSlug,
+		ImageUrl:    ticket.ImageURL,
+		Location:    ticket.Edges.Event.Location,
+		Date:        ticket.Edges.Event.Date,
+		EventName:   ticket.Edges.Event.Name,
 	})
 }
 

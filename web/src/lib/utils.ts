@@ -12,6 +12,8 @@ export function cn(...inputs: ClassValue[]) {
  * @returns {string} - The corresponding HTTPS URL.
  */
 export function convertIpfsToHttps(ipfsUrl: string): string {
+  if (!ipfsUrl) return ''
+  
   if (!ipfsUrl.startsWith('ipfs://')) {
     throw new Error('Invalid IPFS URL format');
   }

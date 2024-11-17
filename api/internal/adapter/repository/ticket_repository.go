@@ -124,21 +124,7 @@ func (t *TicketRepository) ListByEventId(eventId int, userId int) (ent.Tickets, 
 	return tickets, nil
 }
 
-func (t *TicketRepository) GetBySlugAndEvent(eventSlug string, ticketSlug string) (ent.Ticket, error) {
-	exists, err := t.client.Event.
-		Query().
-		Where(
-			event.EventSlugEQ(eventSlug),
-		).
-		Exist(*t.ctx)
-	if err != nil {
-		return ent.Ticket{}, err
-	}
-
-	if !exists {
-		return ent.Ticket{}, fmt.Errorf("Ticket does not belong to the event.")
-	}
-
+func (t *TicketRepository) GetBySlugAndEvent(ticketSlug string) (ent.Ticket, error) {
 	ticket, err := t.client.Ticket.
 		Query().
 		Where(ticket.TicketSlugEQ(ticketSlug)).
