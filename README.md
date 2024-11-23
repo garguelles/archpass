@@ -1,3 +1,5 @@
 # Archpass
 
-EthGlobal BKK 24
+EthGlobal Bangkok Hackathon 24
+
+Showcase: https://ethglobal.com/showcase/archpass-xi903
